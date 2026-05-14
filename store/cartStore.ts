@@ -1,4 +1,8 @@
+'use client'
+
 import { create } from 'zustand'
+
+import { persist } from 'zustand/middleware'
 
 interface CartItem {
   id: string
@@ -17,62 +21,74 @@ interface CartStore {
 
 }
 
-export const useCartStore = create<CartStore>((set) => ({
+export const useCartStore = create<CartStore>()(
 
-  items: [],
+  persist(
 
-  addItem: (producto) =>
+    (set) => ({
 
-    set((state) => {
+      items: [],
 
-      const existente = state.items.find(
-        (item) => item.id === producto.id
-      )
+      addItem: (producto) =>
 
-      if (existente) {
+        set((state) => {
 
-        return {
-
-          items: state.items.map((item) =>
-
-            item.id === producto.id
-
-              ? {
-                  ...item,
-                  cantidad: item.cantidad + 1
-                }
-
-              : item
+          const existente = state.items.find(
+            (item) => item.id === producto.id
           )
-        }
 
-      }
+          if (existente) {
 
-      return {
+            return {
 
-        items: [
+              items: state.items.map((item) =>
 
-          ...state.items,
+                item.id === producto.id
 
-          {
-            id: producto.id,
-            nombre: producto.nombre,
-            precio: producto.precio,
-            cantidad: 1
+                  ? {
+                      ...item,
+                      cantidad: item.cantidad + 1
+                    }
+
+                  : item
+              )
+            }
+
           }
-        ]
-      }
+
+          return {
+
+            items: [
+
+              ...state.items,
+
+              {
+                id: producto.id,
+                nombre: producto.nombre,
+                precio: producto.precio,
+                cantidad: 1
+              }
+            ]
+          }
+
+        }),
+
+      removeItem: (id) =>
+
+        set((state) => ({
+
+          items: state.items.filter(
+            (item) => item.id !== id
+          )
+
+        }))
 
     }),
 
-  removeItem: (id) =>
+    {
+      name: 'frutall-cart'
+    }
 
-    set((state) => ({
+  )
 
-      items: state.items.filter(
-        (item) => item.id !== id
-      )
-
-    }))
-
-}))
+)
