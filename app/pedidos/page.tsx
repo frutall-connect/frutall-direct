@@ -20,7 +20,19 @@ export default function PedidosPage() {
     const { data, error } = await supabase
 
       .from('pedidos')
+.select(`
+  *,
+  lineas_pedido (
+    *
+  )
+`)
+.eq('usuario_id', usuario.id)
+const { data: authData } =
+  await supabase.auth.getUser()
 
+const usuario = authData.user
+
+if (!usuario) return
       .select(`
         *,
         lineas_pedido (

@@ -43,17 +43,30 @@ async function finalizarPedido() {
 
   )
 
+const { data: authData } =
+  await supabase.auth.getUser()
+
+const usuario = authData.user
+
+if (!usuario) {
+
+  alert('Debes iniciar sesión')
+
+  return
+}
+
   // 1️⃣ Crear pedido
 
   const { data: pedidoData, error: pedidoError } =
     await supabase
       .from('pedidos')
       .insert([
-        {
-          estado: 'pendiente',
-          total
-        }
-      ])
+  {
+    usuario_id: usuario.id,
+    estado: 'pendiente',
+    total
+  }
+])
       .select()
       .single()
 
