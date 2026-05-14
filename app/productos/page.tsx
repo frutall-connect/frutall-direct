@@ -89,8 +89,9 @@ export default function ProductosPage() {
             </div>
 
             <button
+  type="button"
   onClick={() => addItem(producto)}
-  className="bg-green-600 text-white px-4 py-2 rounded-xl font-semibold"
+  className="bg-green-600 text-white px-4 py-2 rounded-xl font-semibold cursor-pointer"
 >
   +
 </button>
