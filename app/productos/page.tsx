@@ -90,7 +90,10 @@ export default function ProductosPage() {
 
             <button
   type="button"
-  onClick={() => addItem(producto)}
+  onClick={() => {
+    alert(`Añadiendo ${producto.nombre}`)
+    addItem(producto)
+  }}
   className="bg-green-600 text-white px-4 py-2 rounded-xl font-semibold cursor-pointer"
 >
   +
