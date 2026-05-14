@@ -5,6 +5,8 @@ import BottomNav from '@/components/layout/BottomNav'
 
 import { useCartStore } from '@/store/cartStore'
 
+import { supabase } from '@/lib/supabaseClient'
+
 export default function CarritoPage() {
 
   const items = useCartStore((state) => state.items)
@@ -12,6 +14,10 @@ export default function CarritoPage() {
   const removeItem = useCartStore(
     (state) => state.removeItem
   )
+
+const clearCart = useCartStore(
+  (state) => state.clearCart
+)
 
   const total = items.reduce(
 
@@ -22,6 +28,81 @@ export default function CarritoPage() {
     0
 
   )
+
+async function finalizarPedido() {
+
+  if (items.length === 0) return
+
+  const total = items.reduce(
+
+    (acc, item) =>
+
+      acc + item.precio * item.cantidad,
+
+    0
+
+  )
+
+  // 1️⃣ Crear pedido
+
+  const { data: pedidoData, error: pedidoError } =
+    await supabase
+      .from('pedidos')
+      .insert([
+        {
+          estado: 'pendiente',
+          total
+        }
+      ])
+      .select()
+      .single()
+
+  if (pedidoError || !pedidoData) {
+
+    console.error(pedidoError)
+
+    return
+  }
+
+  // 2️⃣ Crear líneas
+
+  const lineas = items.map((item) => ({
+
+    pedido_id: pedidoData.id,
+
+    producto_id: item.id,
+
+    nombre_producto: item.nombre,
+
+    precio: item.precio,
+
+    cantidad: item.cantidad,
+
+    subtotal: item.precio * item.cantidad
+
+  }))
+
+  const { error: lineasError } =
+    await supabase
+      .from('lineas_pedido')
+      .insert(lineas)
+
+  if (lineasError) {
+
+    console.error(lineasError)
+
+    return
+  }
+
+  // 3️⃣ Vaciar carrito
+
+  clearCart()
+
+  // 4️⃣ Aviso
+
+  alert('Pedido realizado correctamente')
+
+}
 
   return (
 
@@ -84,10 +165,11 @@ export default function CarritoPage() {
             </div>
 
             <button
-              className="w-full bg-green-600 text-white py-4 rounded-2xl font-bold"
-            >
-              Finalizar pedido
-            </button>
+  onClick={finalizarPedido}
+  className="w-full bg-green-600 text-white py-4 rounded-2xl font-bold"
+>
+  Finalizar pedido
+</button>
 
           </div>
 
