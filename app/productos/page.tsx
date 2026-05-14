@@ -13,6 +13,8 @@ export default function ProductosPage() {
 
   const [productos, setProductos] = useState<any[]>([])
 
+  const addItem = useCartStore((state) => state.addItem)
+
   useEffect(() => {
     cargarProductos()
   }, [])
