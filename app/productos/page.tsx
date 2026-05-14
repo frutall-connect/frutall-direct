@@ -7,6 +7,8 @@ import BottomNav from '@/components/layout/BottomNav'
 
 import { supabase } from '@/lib/supabaseClient'
 
+import { useCartStore } from '@/store/cartStore'
+
 export default function ProductosPage() {
 
   const [productos, setProductos] = useState<any[]>([])
@@ -85,10 +87,11 @@ export default function ProductosPage() {
             </div>
 
             <button
-              className="bg-green-600 text-white px-4 py-2 rounded-xl font-semibold"
-            >
-              +
-            </button>
+  onClick={() => addItem(producto)}
+  className="bg-green-600 text-white px-4 py-2 rounded-xl font-semibold"
+>
+  +
+</button>
 
           </div>
 
