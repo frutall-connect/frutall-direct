@@ -1,10 +1,11 @@
 import MobileLayout from '@/components/layout/MobileLayout'
+import BottomNav from '@/components/layout/BottomNav'
 
 export default function InicioPage() {
   return (
     <MobileLayout title="Bienvenido">
 
-      <div className="space-y-6">
+      <div className="p-4 pb-24 space-y-6">
 
         <div>
           <h2 className="text-3xl font-bold text-green-800">
@@ -49,6 +50,8 @@ export default function InicioPage() {
         </div>
 
       </div>
+
+      <BottomNav />
 
     </MobileLayout>
   )
