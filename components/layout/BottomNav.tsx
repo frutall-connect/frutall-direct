@@ -19,6 +19,11 @@ const items = [
     href: '/pedidos',
     icon: '📦',
   },
+{
+  label: 'Carrito',
+  href: '/carrito',
+  icon: '🛒',
+},
   {
     label: 'Cuenta',
     href: '/cuenta',
