@@ -11,9 +11,34 @@ export default function InicioPage() {
 
   const [categorias, setCategorias] = useState<any[]>([])
 
+  const [user, setUser] = useState<any>(null)
+
+  const [loading, setLoading] = useState(true)
+
   useEffect(() => {
+
+    comprobarUsuario()
+
     cargarCategorias()
+
   }, [])
+
+  async function comprobarUsuario() {
+
+    const { data } = await supabase.auth.getUser()
+
+    if (!data.user) {
+
+      window.location.href = '/login'
+
+      return
+    }
+
+    setUser(data.user)
+
+    setLoading(false)
+
+  }
 
   async function cargarCategorias() {
 
@@ -24,6 +49,22 @@ export default function InicioPage() {
     if (!error && data) {
       setCategorias(data)
     }
+
+  }
+
+  if (loading) {
+
+    return (
+
+      <main className="min-h-screen bg-[#f5f3eb] flex items-center justify-center">
+
+        <p className="text-gray-500">
+          Cargando...
+        </p>
+
+      </main>
+
+    )
 
   }
 
@@ -42,6 +83,14 @@ export default function InicioPage() {
           <p className="text-gray-600 mt-2">
             Productos frescos directos del almacén.
           </p>
+
+          {user && (
+
+            <p className="text-sm text-gray-400 mt-2">
+              {user.email}
+            </p>
+
+          )}
 
         </div>
 
