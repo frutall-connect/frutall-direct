@@ -77,13 +77,13 @@ export const useCartStore = create<CartStore>()(
 
       removeItem: (id) =>
 
-        set((state) => ({
+  set((state) => ({
 
-          items: state.items.filter(
-            (item) => item.id !== id
-          )
+    items: state.items.filter(
+      (item) => item.id !== id
+    )
 
-        }))
+  })),
 
 clearCart: () =>
 
