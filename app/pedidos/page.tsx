@@ -17,35 +17,35 @@ export default function PedidosPage() {
 
   async function cargarPedidos() {
 
-  const { data: authData } =
-    await supabase.auth.getUser()
+    const { data: authData } =
+      await supabase.auth.getUser()
 
-  const usuario = authData.user
+    const usuario = authData.user
 
-  if (!usuario) return
+    if (!usuario) return
 
-  const { data, error } = await supabase
+    const { data, error } = await supabase
 
-    .from('pedidos')
+      .from('pedidos')
 
-    .select(`
-      *,
-      lineas_pedido (
-        *
-      )
-    `)
+      .select(`
+        *,
+        lineas_pedido (
+          *
+        )
+      `)
 
-    .eq('usuario_id', usuario.id)
+      .eq('usuario_id', usuario.id)
 
-    .order('created_at', {
-      ascending: false
-    })
+      .order('created_at', {
+        ascending: false
+      })
 
-  if (!error && data) {
-    setPedidos(data)
+    if (!error && data) {
+      setPedidos(data)
+    }
+
   }
-
-}
 
   return (
 
