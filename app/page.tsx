@@ -1,55 +1,59 @@
-import MobileLayout from '@/components/layout/MobileLayout'
+'use client'
 
-export default function InicioPage() {
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabaseClient'
+
+export default function HomePage() {
+  const [productos, setProductos] = useState<any[]>([])
+
+  useEffect(() => {
+    cargarProductos()
+  }, [])
+
+  async function cargarProductos() {
+    const { data, error } = await supabase
+      .from('productos')
+      .select('*')
+
+    if (!error && data) {
+      setProductos(data)
+    }
+  }
+
   return (
-    <MobileLayout title="Bienvenido">
+    <main className="min-h-screen bg-[#f5f3eb] p-4">
+      <h1 className="text-3xl font-bold text-green-700 mb-6">
+        FrutALL Direct
+      </h1>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
+        {productos.map((producto) => (
+          <div
+            key={producto.id}
+            className="bg-white rounded-2xl shadow p-4 flex gap-4"
+          >
+            <img
+              src={producto.imagen}
+              alt={producto.nombre}
+              className="w-24 h-24 rounded-xl object-cover"
+            />
 
-        <div>
-          <h2 className="text-3xl font-bold text-green-800">
-            ¿Qué necesitas hoy?
-          </h2>
+            <div className="flex-1">
+              <h2 className="text-xl font-semibold">
+                {producto.nombre}
+              </h2>
 
-          <p className="text-gray-600 mt-2">
-            Productos frescos directos del almacén.
-          </p>
-        </div>
+              <p className="text-gray-500 text-sm">
+                {producto.descripcion}
+              </p>
 
-        <div className="grid grid-cols-2 gap-4">
-
-          <div className="bg-green-500 rounded-2xl p-6 text-white font-bold text-xl shadow-lg">
-            🍎
-            <div className="mt-4">
-              Frutas
+              <p className="text-green-700 font-bold text-lg mt-2">
+                € {producto.precio}
+              </p>
             </div>
           </div>
-
-          <div className="bg-orange-400 rounded-2xl p-6 text-white font-bold text-xl shadow-lg">
-            🥬
-            <div className="mt-4">
-              Verduras
-            </div>
-          </div>
-
-          <div className="bg-yellow-500 rounded-2xl p-6 text-white font-bold text-xl shadow-lg">
-            🥔
-            <div className="mt-4">
-              Tubérculos
-            </div>
-          </div>
-
-          <div className="bg-red-500 rounded-2xl p-6 text-white font-bold text-xl shadow-lg">
-            🍅
-            <div className="mt-4">
-              Temporada
-            </div>
-          </div>
-
-        </div>
-
+        ))}
       </div>
-
-    </MobileLayout>
+    </main>
   )
 }
