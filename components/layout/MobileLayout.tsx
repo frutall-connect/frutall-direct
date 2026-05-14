@@ -1,27 +1,21 @@
-'use client'
+import Link from 'next/link'
 
-import { ReactNode } from 'react'
-import BottomNav from './BottomNav'
-import Header from './Header'
-
-interface Props {
-  children: ReactNode
-  title?: string
-}
-
-export default function MobileLayout({ children, title }: Props) {
+export default function BottomNav() {
   return (
-    <main className="min-h-screen bg-[#f5f3ee] flex justify-center">
-      <div className="w-full max-w-md min-h-screen bg-[#f5f3ee] shadow-xl relative pb-24">
+    <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t flex justify-around py-3">
 
-        <Header title={title} />
+      <Link href="/">
+        Inicio
+      </Link>
 
-        <div className="p-4">
-          {children}
-        </div>
+      <Link href="/pedidos">
+        Pedidos
+      </Link>
 
-        <BottomNav />
-      </div>
-    </main>
+      <Link href="/cuenta">
+        Cuenta
+      </Link>
+
+    </nav>
   )
 }

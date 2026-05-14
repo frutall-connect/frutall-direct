@@ -1,7 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+
 import { supabase } from '@/lib/supabaseClient'
+
+import MobileLayout from '@/components/layout/MobileLayout'
+import BottomNav from '@/components/layout/BottomNav'
 
 export default function HomePage() {
   const [productos, setProductos] = useState<any[]>([])
@@ -11,49 +15,86 @@ export default function HomePage() {
   }, [])
 
   async function cargarProductos() {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('productos')
       .select('*')
 
-    if (!error && data) {
-      setProductos(data)
-    }
+    if (data) setProductos(data)
   }
 
   return (
-    <main className="min-h-screen bg-[#f5f3eb] p-4">
-      <h1 className="text-3xl font-bold text-green-700 mb-6">
-        FrutALL Direct
-      </h1>
+    <MobileLayout>
 
-      <div className="space-y-4">
-        {productos.map((producto) => (
-          <div
-            key={producto.id}
-            className="bg-white rounded-2xl shadow p-4 flex gap-4"
-          >
-            <img
-              src={producto.imagen}
-              alt={producto.nombre}
-              className="w-24 h-24 rounded-xl object-cover"
-            />
+      <div className="p-4 pb-24">
 
-            <div className="flex-1">
-              <h2 className="text-xl font-semibold">
-                {producto.nombre}
-              </h2>
+        <div className="mb-6">
 
-              <p className="text-gray-500 text-sm">
-                {producto.descripcion}
-              </p>
+          <h1 className="text-4xl font-bold text-green-700">
+            FrutALL
+          </h1>
 
-              <p className="text-green-700 font-bold text-lg mt-2">
-                € {producto.precio}
-              </p>
+          <p className="text-gray-600 mt-1">
+            ¿Qué necesitas hoy?
+          </p>
+
+        </div>
+
+        <input
+          placeholder="Buscar productos..."
+          className="w-full bg-white rounded-2xl p-4 mb-6 shadow-sm"
+        />
+
+        <div className="space-y-4">
+
+          {productos.map((producto) => (
+
+            <div
+              key={producto.id}
+              className="bg-white rounded-3xl shadow overflow-hidden"
+            >
+
+              <img
+                src={producto.imagen}
+                alt={producto.nombre}
+                className="w-full h-48 object-cover"
+              />
+
+              <div className="p-4">
+
+                <div className="flex justify-between items-start">
+
+                  <div>
+                    <h2 className="text-xl font-bold">
+                      {producto.nombre}
+                    </h2>
+
+                    <p className="text-gray-500 text-sm mt-1">
+                      {producto.descripcion}
+                    </p>
+                  </div>
+
+                  <p className="text-green-700 font-bold text-xl">
+                    € {producto.precio}
+                  </p>
+
+                </div>
+
+                <button className="mt-4 w-full bg-green-600 text-white py-3 rounded-2xl font-semibold">
+                  Añadir
+                </button>
+
+              </div>
+
             </div>
-          </div>
-        ))}
+
+          ))}
+
+        </div>
+
       </div>
-    </main>
+
+      <BottomNav />
+
+    </MobileLayout>
   )
 }
