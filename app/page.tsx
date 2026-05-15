@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 
 import MobileLayout from '@/components/layout/MobileLayout'
 import BottomNav from '@/components/layout/BottomNav'
+import HamburgerMenu from '@/components/layout/HamburgerMenu'
 
 import { supabase } from '@/lib/supabaseClient'
 
@@ -74,7 +75,7 @@ export default function InicioPage() {
 
       <div className="p-4 pb-24 space-y-6">
 
-        <div>
+        <div className="flex justify-between items-start">
 
           <h2 className="text-3xl font-bold text-green-800">
             ¿Qué necesitas hoy?
@@ -91,6 +92,8 @@ export default function InicioPage() {
             </p>
 
           )}
+
+         <HamburgerMenu />
 
         </div>
 
