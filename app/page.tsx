@@ -75,27 +75,27 @@ export default function InicioPage() {
 
       <div className="p-4 pb-24 space-y-6">
 
-        <div className="flex justify-between items-start">
+        <div className="flex items-start justify-between">
 
-          <h2 className="text-3xl font-bold text-green-800">
-            ¿Qué necesitas hoy?
-          </h2>
+  <div>
 
-          <p className="text-gray-600 mt-2">
-            Productos frescos directos del almacén.
-          </p>
+    <h2 className="text-3xl font-bold text-green-800">
+      Bienvenido
+    </h2>
 
-          {user && (
+    <p className="text-gray-600 mt-2 text-lg font-semibold">
+      ¿Qué necesitas hoy?
+    </p>
 
-            <p className="text-sm text-gray-400 mt-2">
-              {user.email}
-            </p>
+    <p className="text-gray-500 mt-1">
+      Productos frescos directos del almacén.
+    </p>
 
-          )}
+  </div>
 
-         <HamburgerMenu />
+  <HamburgerMenu />
 
-        </div>
+</div>
 
         <div className="grid grid-cols-2 gap-4">
 
