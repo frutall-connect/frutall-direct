@@ -52,6 +52,40 @@ export default function LoginPage() {
 
   }
 
+async function recuperarPassword() {
+
+  if (!email) {
+
+    alert('Introduce tu email')
+
+    return
+  }
+
+  const { error } =
+    await supabase.auth.resetPasswordForEmail(
+
+      email,
+
+      {
+        redirectTo:
+          'https://frutall-direct.vercel.app/reset-password'
+      }
+
+    )
+
+  if (error) {
+
+    alert(error.message)
+
+    return
+  }
+
+  alert(
+    'Te hemos enviado un email para recuperar tu contraseña'
+  )
+
+}
+
   return (
 
     <main className="min-h-screen bg-[#f5f3eb] flex items-center justify-center p-4">
@@ -97,6 +131,13 @@ export default function LoginPage() {
           >
             Crear cuenta
           </button>
+
+	  <button
+  onClick={recuperarPassword}
+  className="w-full text-sm text-green-700 mt-2"
+>
+  He olvidado mi contraseña
+</button>
 
         </div>
 
