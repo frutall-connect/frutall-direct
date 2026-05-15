@@ -33,6 +33,22 @@ async function finalizarPedido() {
 
   if (items.length === 0) return
 
+  // Usuario autenticado
+
+  const { data: authData } =
+    await supabase.auth.getUser()
+
+  const usuario = authData.user
+
+  if (!usuario) {
+
+    alert('Debes iniciar sesión')
+
+    return
+  }
+
+  // Total
+
   const total = items.reduce(
 
     (acc, item) =>
@@ -43,41 +59,35 @@ async function finalizarPedido() {
 
   )
 
-const { data: authData } =
-  await supabase.auth.getUser()
-
-const usuario = authData.user
-
-if (!usuario) {
-
-  alert('Debes iniciar sesión')
-
-  return
-}
-
-  // 1️⃣ Crear pedido
+  // Crear pedido
 
   const { data: pedidoData, error: pedidoError } =
     await supabase
+
       .from('pedidos')
+
       .insert([
-  {
-    usuario_id: usuario.id,
-    estado: 'pendiente',
-    total
-  }
-])
+        {
+          usuario_id: usuario.id,
+          estado: 'pendiente',
+          total
+        }
+      ])
+
       .select()
+
       .single()
 
   if (pedidoError || !pedidoData) {
 
     console.error(pedidoError)
 
+    alert('Error creando pedido')
+
     return
   }
 
-  // 2️⃣ Crear líneas
+  // Crear líneas
 
   const lineas = items.map((item) => ({
 
@@ -104,19 +114,20 @@ if (!usuario) {
 
     console.error(lineasError)
 
+    alert('Error creando líneas')
+
     return
   }
 
-  // 3️⃣ Vaciar carrito
+  // Vaciar carrito
 
   clearCart()
 
-  // 4️⃣ Aviso
-
   alert('Pedido realizado correctamente')
 
-}
+  window.location.href = '/pedidos'
 
+}
   return (
 
     <MobileLayout title="Carrito">
