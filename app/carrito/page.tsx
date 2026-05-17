@@ -9,15 +9,17 @@ import { supabase } from '@/lib/supabaseClient'
 
 export default function CarritoPage() {
 
-  const items = useCartStore((state) => state.items)
+  const items = useCartStore(
+    (state) => state.items
+  )
 
   const removeItem = useCartStore(
     (state) => state.removeItem
   )
 
-const clearCart = useCartStore(
-  (state) => state.clearCart
-)
+  const clearCart = useCartStore(
+    (state) => state.clearCart
+  )
 
   const total = items.reduce(
 
@@ -29,175 +31,270 @@ const clearCart = useCartStore(
 
   )
 
-async function finalizarPedido() {
+  async function finalizarPedido() {
 
-  if (items.length === 0) return
+    if (items.length === 0) return
 
-  // Usuario autenticado
+    // Usuario autenticado
 
-  const { data: authData } =
-    await supabase.auth.getUser()
+    const { data: authData } =
+      await supabase.auth.getUser()
 
-  const usuario = authData.user
+    const usuario = authData.user
 
-  if (!usuario) {
+    if (!usuario) {
 
-    alert('Debes iniciar sesión')
+      alert('Debes iniciar sesión')
 
-    return
+      return
+    }
+
+    // Crear pedido
+
+    const { data: pedidoData, error: pedidoError } =
+      await supabase
+
+        .from('pedidos')
+
+        .insert([
+          {
+            usuario_id: usuario.id,
+            estado: 'pendiente',
+            total
+          }
+        ])
+
+        .select()
+
+        .single()
+
+    if (pedidoError || !pedidoData) {
+
+      console.error(pedidoError)
+
+      alert('Error creando pedido')
+
+      return
+    }
+
+    // Crear líneas
+
+    const lineas = items.map((item) => ({
+
+      pedido_id: pedidoData.id,
+
+      producto_id: item.id,
+
+      nombre_producto: item.nombre,
+
+      precio: item.precio,
+
+      cantidad: item.cantidad,
+
+      subtotal: item.precio * item.cantidad
+
+    }))
+
+    const { error: lineasError } =
+      await supabase
+        .from('lineas_pedido')
+        .insert(lineas)
+
+    if (lineasError) {
+
+      console.error(lineasError)
+
+      alert('Error creando líneas')
+
+      return
+    }
+
+    // Vaciar carrito
+
+    clearCart()
+
+    alert('Pedido realizado correctamente')
+
+    window.location.href = '/pedidos'
+
   }
 
-  // Total
-
-  const total = items.reduce(
-
-    (acc, item) =>
-
-      acc + item.precio * item.cantidad,
-
-    0
-
-  )
-
-  // Crear pedido
-
-  const { data: pedidoData, error: pedidoError } =
-    await supabase
-
-      .from('pedidos')
-
-      .insert([
-        {
-          usuario_id: usuario.id,
-          estado: 'pendiente',
-          total
-        }
-      ])
-
-      .select()
-
-      .single()
-
-  if (pedidoError || !pedidoData) {
-
-    console.error(pedidoError)
-
-    alert('Error creando pedido')
-
-    return
-  }
-
-  // Crear líneas
-
-  const lineas = items.map((item) => ({
-
-    pedido_id: pedidoData.id,
-
-    producto_id: item.id,
-
-    nombre_producto: item.nombre,
-
-    precio: item.precio,
-
-    cantidad: item.cantidad,
-
-    subtotal: item.precio * item.cantidad
-
-  }))
-
-  const { error: lineasError } =
-    await supabase
-      .from('lineas_pedido')
-      .insert(lineas)
-
-  if (lineasError) {
-
-    console.error(lineasError)
-
-    alert('Error creando líneas')
-
-    return
-  }
-
-  // Vaciar carrito
-
-  clearCart()
-
-  alert('Pedido realizado correctamente')
-
-  window.location.href = '/pedidos'
-
-}
   return (
 
     <MobileLayout title="Carrito">
 
-      <div className="p-4 pb-24 space-y-4">
+      <div className="pb-28">
 
-        {items.length === 0 && (
+        {/* HEADER */}
 
-          <div className="bg-white rounded-2xl p-6 text-center shadow">
+        <div
+          className="
+            bg-gradient-to-b
+            from-green-700
+            to-green-600
+            px-5
+            pt-6
+            pb-8
+            rounded-b-[2rem]
+            shadow-lg
+          "
+        >
 
-            <p className="text-gray-500">
-              Tu carrito está vacío.
-            </p>
+          <h1 className="text-4xl font-black text-white">
+            Carrito
+          </h1>
 
-          </div>
+          <p className="text-green-100 mt-2">
+            Revisa tu pedido antes de finalizar
+          </p>
 
-        )}
+        </div>
 
-        {items.map((item) => (
+        {/* ITEMS */}
 
-          <div
-            key={item.id}
-            className="bg-white rounded-2xl p-4 shadow flex justify-between items-center"
-          >
+        <div className="p-4 space-y-4 -mt-5">
 
-            <div>
+          {items.length === 0 && (
 
-              <h3 className="font-bold">
-                {item.nombre}
-              </h3>
+            <div
+              className="
+                bg-white
+                rounded-3xl
+                shadow-lg
+                p-8
+                text-center
+              "
+            >
 
-              <p className="text-gray-500">
-                {item.cantidad} x {item.precio} €
+              <p className="text-gray-500 text-lg">
+                Tu carrito está vacío
               </p>
 
             </div>
 
-            <button
-              onClick={() => removeItem(item.id)}
-              className="bg-red-500 text-white px-3 py-2 rounded-xl"
+          )}
+
+          {items.map((item, index) => (
+
+            <div
+              key={`${item.id}-${index}`}
+              className="
+                bg-white
+                rounded-3xl
+                shadow-lg
+                p-5
+              "
             >
-              ✕
-            </button>
 
-          </div>
+              <div className="flex justify-between items-start">
 
-        ))}
+                <div>
 
-        {items.length > 0 && (
+                  <h2 className="text-2xl font-black text-gray-800">
+                    {item.nombre}
+                  </h2>
 
-          <div className="bg-white rounded-2xl p-6 shadow space-y-4">
+                  <div className="mt-2 space-y-1">
 
-            <div className="flex justify-between text-xl font-bold">
+                    <p className="text-gray-500">
+                      📦 {item.envase}
+                    </p>
 
-              <span>Total</span>
+                    <p className="text-gray-500">
+                      ⭐ {item.variedad}
+                    </p>
 
-              <span>{total.toFixed(2)} €</span>
+                    <p className="text-gray-500">
+                      🔢 Cantidad: {item.cantidad}
+                    </p>
+
+                  </div>
+
+                </div>
+
+                <div className="text-right">
+
+                  <p className="text-2xl font-black text-green-700">
+                    {(
+                      item.precio * item.cantidad
+                    ).toFixed(2)} €
+                  </p>
+
+                  <p className="text-sm text-gray-400">
+                    {item.precio} € unidad
+                  </p>
+
+                </div>
+
+              </div>
+
+              <button
+                onClick={() => removeItem(item.id)}
+                className="
+                  w-full
+                  mt-5
+                  bg-red-500
+                  hover:bg-red-600
+                  text-white
+                  py-3
+                  rounded-2xl
+                  font-bold
+                "
+              >
+                Eliminar
+              </button>
 
             </div>
 
-            <button
-  onClick={finalizarPedido}
-  className="w-full bg-green-600 text-white py-4 rounded-2xl font-bold"
->
-  Finalizar pedido
-</button>
+          ))}
 
-          </div>
+          {/* TOTAL */}
 
-        )}
+          {items.length > 0 && (
+
+            <div
+              className="
+                bg-white
+                rounded-3xl
+                shadow-lg
+                p-6
+              "
+            >
+
+              <div className="flex justify-between items-center">
+
+                <span className="text-2xl font-black">
+                  Total
+                </span>
+
+                <span className="text-3xl font-black text-green-700">
+                  {total.toFixed(2)} €
+                </span>
+
+              </div>
+
+              <button
+                onClick={finalizarPedido}
+                className="
+                  w-full
+                  mt-6
+                  bg-green-600
+                  hover:bg-green-700
+                  text-white
+                  py-4
+                  rounded-2xl
+                  font-bold
+                  text-lg
+                "
+              >
+                Finalizar pedido
+              </button>
+
+            </div>
+
+          )}
+
+        </div>
 
       </div>
 
