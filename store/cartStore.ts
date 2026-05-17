@@ -5,10 +5,19 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 interface CartItem {
+
   id: string
+
   nombre: string
+
   precio: number
+
   cantidad: number
+
+  envase?: string
+
+  variedad?: string
+
 }
 
 interface CartStore {
@@ -19,7 +28,7 @@ interface CartStore {
 
   removeItem: (id: string) => void
 
-  clearCart: () => void 
+  clearCart: () => void
 
 }
 
@@ -35,9 +44,21 @@ export const useCartStore = create<CartStore>()(
 
         set((state) => {
 
+          // MISMO PRODUCTO + MISMA VARIEDAD + MISMO ENVASE
+
           const existente = state.items.find(
-            (item) => item.id === producto.id
+
+            (item) =>
+
+              item.id === producto.id
+
+              && item.envase === producto.envase
+
+              && item.variedad === producto.variedad
+
           )
+
+          // SI YA EXISTE → SUMAR CANTIDAD
 
           if (existente) {
 
@@ -46,17 +67,27 @@ export const useCartStore = create<CartStore>()(
               items: state.items.map((item) =>
 
                 item.id === producto.id
+                && item.envase === producto.envase
+                && item.variedad === producto.variedad
 
                   ? {
+
                       ...item,
-                      cantidad: item.cantidad + 1
+
+                      cantidad:
+                        item.cantidad + producto.cantidad
+
                     }
 
                   : item
+
               )
+
             }
 
           }
+
+          // SI NO EXISTE → NUEVA LÍNEA
 
           return {
 
@@ -65,31 +96,42 @@ export const useCartStore = create<CartStore>()(
               ...state.items,
 
               {
+
                 id: producto.id,
+
                 nombre: producto.nombre,
+
                 precio: producto.precio,
-                cantidad: 1
+
+                cantidad: producto.cantidad,
+
+                envase: producto.envase,
+
+                variedad: producto.variedad
+
               }
+
             ]
+
           }
 
         }),
 
       removeItem: (id) =>
 
-  set((state) => ({
+        set((state) => ({
 
-    items: state.items.filter(
-      (item) => item.id !== id
-    )
+          items: state.items.filter(
+            (item) => item.id !== id
+          )
 
-  })),
+        })),
 
-clearCart: () =>
+      clearCart: () =>
 
-  set({
-    items: []
-  })
+        set({
+          items: []
+        })
 
     }),
 
