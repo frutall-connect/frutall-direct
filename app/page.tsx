@@ -22,6 +22,10 @@ export default function InicioPage() {
     (state) => state.items
   )
 
+  const setItems = useCartStore(
+    (state) => state.setItems
+  )
+
   useEffect(() => {
 
     cargarCategorias()
@@ -56,6 +60,68 @@ export default function InicioPage() {
     if (!error && data) {
       setCategorias(data)
     }
+
+  }
+
+  async function repetirUltimoPedido() {
+
+    const { data: authData } =
+      await supabase.auth.getUser()
+
+    const usuario = authData.user
+
+    if (!usuario) return
+
+    const { data: pedido } = await supabase
+
+      .from('pedidos')
+
+      .select(`
+        *,
+        lineas_pedido (*)
+      `)
+
+      .eq('usuario_id', usuario.id)
+
+      .order('created_at', {
+        ascending: false
+      })
+
+      .limit(1)
+
+      .single()
+
+    if (!pedido) {
+
+      alert('No tienes pedidos anteriores')
+
+      return
+
+    }
+
+    const nuevosItems = pedido.lineas_pedido.map(
+      (linea: any) => ({
+
+        id: linea.producto_id,
+
+        nombre: linea.nombre_producto,
+
+        precio: linea.precio,
+
+        cantidad: linea.cantidad,
+
+        envase: linea.envase || 'Caja',
+
+        variedad: linea.variedad || 'Normal'
+
+      })
+    )
+
+    setItems(nuevosItems)
+
+    alert('Pedido cargado en carrito')
+
+    window.location.href = '/carrito'
 
   }
 
@@ -162,8 +228,6 @@ export default function InicioPage() {
                   }}
                 >
 
-                  {/* ICONO */}
-
                   <div
                     className="
                       absolute
@@ -174,8 +238,6 @@ export default function InicioPage() {
                   >
                     {categoria.icono}
                   </div>
-
-                  {/* TEXTO */}
 
                   <div
                     className="
@@ -264,8 +326,6 @@ export default function InicioPage() {
               "
             >
 
-              {/* IMAGEN */}
-
               <div
                 className="
                   w-24
@@ -286,8 +346,6 @@ export default function InicioPage() {
                 />
 
               </div>
-
-              {/* INFO */}
 
               <div className="flex-1">
 
@@ -343,6 +401,7 @@ export default function InicioPage() {
           <div className="grid grid-cols-2 gap-4 mt-6">
 
             <button
+              onClick={repetirUltimoPedido}
               className="
                 bg-green-700
                 text-white
