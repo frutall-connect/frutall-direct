@@ -13,6 +13,8 @@ export default function AdminProductosPage() {
 
   const [categorias, setCategorias] = useState<any[]>([])
 
+  const [subiendo, setSubiendo] = useState(false)
+
   const [nuevoProducto, setNuevoProducto] =
     useState({
 
@@ -158,6 +160,71 @@ export default function AdminProductosPage() {
 
   }
 
+  async function subirImagen(
+    e: any,
+    productoId: string
+  ) {
+
+    try {
+
+      setSubiendo(true)
+
+      const file = e.target.files[0]
+
+      if (!file) return
+
+      const fileExt =
+        file.name.split('.').pop()
+
+      const fileName =
+        `${productoId}-${Date.now()}.${fileExt}`
+
+      const filePath =
+        `productos/${fileName}`
+
+      const { error: uploadError } =
+        await supabase.storage
+
+          .from('producto-imagenes')
+
+          .upload(filePath, file)
+
+      if (uploadError) {
+
+        console.error(uploadError)
+
+        alert('Error subiendo imagen')
+
+        return
+
+      }
+
+      const { data } = supabase.storage
+
+        .from('producto-imagenes')
+
+        .getPublicUrl(filePath)
+
+      await actualizarProducto(
+        productoId,
+        'imagen_url',
+        data.publicUrl
+      )
+
+      alert('Imagen subida')
+
+    } catch (error) {
+
+      console.error(error)
+
+    } finally {
+
+      setSubiendo(false)
+
+    }
+
+  }
+
   return (
 
     <MobileLayout>
@@ -245,7 +312,6 @@ export default function AdminProductosPage() {
                   rounded-2xl
                   px-4
                   py-3
-                  outline-none
                 "
               />
 
@@ -268,7 +334,6 @@ export default function AdminProductosPage() {
                   rounded-2xl
                   px-4
                   py-3
-                  outline-none
                 "
               />
 
@@ -291,7 +356,6 @@ export default function AdminProductosPage() {
                   rounded-2xl
                   px-4
                   py-3
-                  outline-none
                 "
               />
 
@@ -350,7 +414,7 @@ export default function AdminProductosPage() {
               >
 
                 <option value="">
-                  Selecciona categoría
+                  Categoría
                 </option>
 
                 {categorias.map((categoria) => (
@@ -402,59 +466,135 @@ export default function AdminProductosPage() {
               "
             >
 
-              <div
-                className="
-                  flex
-                  justify-between
-                  items-start
-                "
-              >
+              {/* TOP */}
 
-                <div>
+              <div className="flex gap-4">
 
-                  <h2
+                {/* IMAGEN */}
+
+                <div
+                  className="
+                    w-24
+                    h-24
+                    rounded-2xl
+                    overflow-hidden
+                    bg-[#f5f3eb]
+                    shrink-0
+                  "
+                >
+
+                  <img
+                    src={
+                      producto.imagen_url
+                      || 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200'
+                    }
                     className="
-                      text-xl
-                      font-black
+                      w-full
+                      h-full
+                      object-cover
                     "
-                  >
-                    {producto.nombre}
-                  </h2>
-
-                  <p
-                    className="
-                      text-sm
-                      text-gray-500
-                      mt-1
-                    "
-                  >
-                    {producto.categorias?.nombre}
-                  </p>
+                  />
 
                 </div>
 
-                <div
-                  className={`
-                    px-3
-                    py-1
-                    rounded-full
-                    text-sm
-                    font-bold
+                {/* INFO */}
 
-                    ${
-                      producto.activo
+                <div className="flex-1">
 
-                        ? 'bg-green-100 text-green-700'
+                  <div
+                    className="
+                      flex
+                      justify-between
+                      items-start
+                    "
+                  >
 
-                        : 'bg-red-100 text-red-700'
+                    <div>
+
+                      <h2
+                        className="
+                          text-xl
+                          font-black
+                        "
+                      >
+                        {producto.nombre}
+                      </h2>
+
+                      <p
+                        className="
+                          text-sm
+                          text-gray-500
+                          mt-1
+                        "
+                      >
+                        {producto.categorias?.nombre}
+                      </p>
+
+                    </div>
+
+                    <div
+                      className={`
+                        px-3
+                        py-1
+                        rounded-full
+                        text-sm
+                        font-bold
+
+                        ${
+                          producto.activo
+
+                            ? 'bg-green-100 text-green-700'
+
+                            : 'bg-red-100 text-red-700'
+                        }
+                      `}
+                    >
+                      {
+                        producto.activo
+                          ? 'Activo'
+                          : 'Inactivo'
+                      }
+                    </div>
+
+                  </div>
+
+                  {/* SUBIR */}
+
+                  <label
+                    className="
+                      inline-block
+                      mt-4
+                      bg-black
+                      text-white
+                      px-4
+                      py-2
+                      rounded-2xl
+                      text-sm
+                      font-bold
+                      cursor-pointer
+                    "
+                  >
+
+                    {
+                      subiendo
+                        ? 'Subiendo...'
+                        : 'Subir Imagen'
                     }
-                  `}
-                >
-                  {
-                    producto.activo
-                      ? 'Activo'
-                      : 'Inactivo'
-                  }
+
+                    <input
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      onChange={(e) =>
+                        subirImagen(
+                          e,
+                          producto.id
+                        )
+                      }
+                    />
+
+                  </label>
+
                 </div>
 
               </div>
