@@ -2,18 +2,26 @@
 
 import { useEffect, useMemo, useState } from 'react'
 
+import Link from 'next/link'
+
 import MobileLayout from '@/components/layout/MobileLayout'
 import BottomNav from '@/components/layout/BottomNav'
 
 import { supabase } from '@/lib/supabaseClient'
 
-import ProductCard from '@/components/productos/ProductCard'
+import { useCartStore } from '@/store/cartStore'
+
+import ProductHorizontalCard from '@/components/productos/ProductHorizontalCard'
 
 export default function ProductosPage() {
 
   const [productos, setProductos] = useState<any[]>([])
 
   const [busqueda, setBusqueda] = useState('')
+
+  const items = useCartStore(
+    (state) => state.items
+  )
 
   useEffect(() => {
     cargarProductos()
@@ -52,57 +60,198 @@ export default function ProductosPage() {
 
   }, [productos, busqueda])
 
+  const totalProductos = items.reduce(
+
+    (acc, item) =>
+
+      acc + item.cantidad,
+
+    0
+
+  )
+
+  const totalImporte = items.reduce(
+
+    (acc, item) =>
+
+      acc + item.precio * item.cantidad,
+
+    0
+
+  )
+
   return (
 
-    <MobileLayout title="Productos">
+    <MobileLayout>
 
-      <div className="pb-28">
+      <div className="min-h-screen bg-[#f5f3eb] pb-44">
 
         {/* HEADER */}
 
         <div
           className="
-            bg-gradient-to-b
-            from-green-700
-            to-green-600
+            bg-white
             px-5
-            pt-6
-            pb-8
-            rounded-b-[2rem]
-            shadow-lg
+            pt-5
+            pb-4
+            border-b
+            sticky
+            top-0
+            z-40
           "
         >
 
-          <h1 className="text-4xl font-black text-white">
-            Productos
-          </h1>
+          <div className="flex items-center justify-between">
 
-          <p className="text-green-100 mt-2">
-            Catálogo actualizado del almacén
-          </p>
+            <div>
+
+              <h1
+                className="
+                  text-3xl
+                  font-black
+                  text-black
+                "
+              >
+                Productos
+              </h1>
+
+              <p
+                className="
+                  text-sm
+                  text-gray-500
+                  mt-1
+                "
+              >
+                Catálogo actualizado
+              </p>
+
+            </div>
+
+            <Link href="/carrito">
+
+              <button
+                className="
+                  bg-green-600
+                  text-white
+                  rounded-2xl
+                  px-4
+                  py-3
+                  font-bold
+                "
+              >
+                🛒 {totalProductos}
+              </button>
+
+            </Link>
+
+          </div>
 
           {/* BUSCADOR */}
 
-          <div className="mt-5">
+          <div className="mt-4">
 
             <input
               type="text"
-              placeholder="Buscar producto..."
+              placeholder="Buscar productos..."
               value={busqueda}
               onChange={(e) =>
                 setBusqueda(e.target.value)
               }
               className="
                 w-full
-                bg-white
+                bg-[#f5f3eb]
                 rounded-2xl
                 px-5
                 py-4
                 outline-none
-                text-lg
-                shadow
+                text-base
               "
             />
+
+          </div>
+
+          {/* FILTROS */}
+
+          <div
+            className="
+              flex
+              gap-2
+              overflow-x-auto
+              mt-4
+              pb-1
+            "
+          >
+
+            <button
+              className="
+                bg-green-700
+                text-white
+                rounded-full
+                px-4
+                py-2
+                text-sm
+                font-semibold
+                whitespace-nowrap
+              "
+            >
+              Todos
+            </button>
+
+            <button
+              className="
+                bg-white
+                rounded-full
+                px-4
+                py-2
+                text-sm
+                font-semibold
+                whitespace-nowrap
+              "
+            >
+              🍎 Frutas
+            </button>
+
+            <button
+              className="
+                bg-white
+                rounded-full
+                px-4
+                py-2
+                text-sm
+                font-semibold
+                whitespace-nowrap
+              "
+            >
+              🥦 Verduras
+            </button>
+
+            <button
+              className="
+                bg-white
+                rounded-full
+                px-4
+                py-2
+                text-sm
+                font-semibold
+                whitespace-nowrap
+              "
+            >
+              ⭐ Premium
+            </button>
+
+            <button
+              className="
+                bg-white
+                rounded-full
+                px-4
+                py-2
+                text-sm
+                font-semibold
+                whitespace-nowrap
+              "
+            >
+              🔥 Oferta
+            </button>
 
           </div>
 
@@ -110,11 +259,11 @@ export default function ProductosPage() {
 
         {/* PRODUCTOS */}
 
-        <div className="p-4 space-y-4 -mt-5">
+        <div className="p-4 space-y-4">
 
           {productosFiltrados.map((producto) => (
 
-            <ProductCard
+            <ProductHorizontalCard
               key={producto.id}
               producto={producto}
             />
@@ -122,6 +271,71 @@ export default function ProductosPage() {
           ))}
 
         </div>
+
+        {/* BARRA FLOTANTE */}
+
+        {items.length > 0 && (
+
+          <div
+            className="
+              fixed
+              bottom-24
+              left-1/2
+              -translate-x-1/2
+              w-[92%]
+              max-w-md
+              z-50
+            "
+          >
+
+            <Link href="/carrito">
+
+              <div
+                className="
+                  bg-green-700
+                  text-white
+                  rounded-3xl
+                  shadow-2xl
+                  px-5
+                  py-4
+                  flex
+                  items-center
+                  justify-between
+                "
+              >
+
+                <div>
+
+                  <p className="text-sm text-green-100">
+                    {totalProductos} productos
+                  </p>
+
+                  <p className="font-black text-xl">
+                    {totalImporte.toFixed(2)} €
+                  </p>
+
+                </div>
+
+                <button
+                  className="
+                    bg-white
+                    text-green-700
+                    px-5
+                    py-3
+                    rounded-2xl
+                    font-black
+                  "
+                >
+                  Ver carrito
+                </button>
+
+              </div>
+
+            </Link>
+
+          </div>
+
+        )}
 
       </div>
 
