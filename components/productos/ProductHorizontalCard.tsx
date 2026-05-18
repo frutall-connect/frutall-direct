@@ -4,9 +4,6 @@ import { useState } from 'react'
 
 import { useCartStore } from '@/store/cartStore'
 
-const imagenPlaceholder =
-  'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200'
-
 interface Props {
   producto: any
 }
@@ -65,13 +62,16 @@ export default function ProductHorizontalCard({
       >
 
         <img
-          src={imagenPlaceholder}
-          className="
-            w-full
-            h-full
-            object-cover
-          "
-        />
+  src={
+    producto.imagen_url
+    || 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200'
+  }
+  className="
+    w-full
+    h-full
+    object-cover
+  "
+/>
 
         <div
           className="
