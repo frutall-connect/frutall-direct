@@ -1,19 +1,51 @@
 import './globals.css'
-import BottomNav from '../components/BottomNav'
+
+export const metadata = {
+
+  title: 'FrutALL Direct',
+
+  description: 'Pedidos directos al almacén',
+
+  manifest: '/manifest.json',
+
+  themeColor: '#15803d',
+
+  appleWebApp: {
+
+    capable: true,
+
+    statusBarStyle: 'default',
+
+    title: 'FrutALL',
+
+  },
+
+  icons: {
+
+    apple: '/icon-192.png',
+
+  },
+
+}
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+
   return (
+
     <html lang="es">
-      <body className="bg-gray-100 flex justify-center">
-        <div className="w-full max-w-md min-h-screen bg-white relative pb-20 shadow-xl">
-          {children}
-          <BottomNav />
-        </div>
+
+      <body className="bg-[#f5f3eb]">
+
+        {children}
+
       </body>
+
     </html>
+
   )
+
 }
