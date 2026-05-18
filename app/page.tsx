@@ -81,8 +81,8 @@ export default function InicioPage() {
           className="
             bg-white
             px-5
-            pt-6
-            pb-4
+            pt-3
+            pb-2
             border-b
           "
         >
@@ -92,8 +92,8 @@ export default function InicioPage() {
             <Image
               src="/logo-frutall-direct.png"
               alt="FrutALL Direct"
-              width={340}
-              height={100}
+              width={240}
+              height={70}
               priority
               className="h-auto"
             />
@@ -104,13 +104,13 @@ export default function InicioPage() {
 
         {/* CONTENIDO */}
 
-        <div className="px-5 pt-6">
+        <div className="px-5 pt-5">
 
           {/* BIENVENIDA */}
 
           <div>
 
-            <h2 className="text-2xl font-bold text-black">
+            <h2 className="text-lg font-bold text-black">
 
               Bienvenido,
 
@@ -123,11 +123,11 @@ export default function InicioPage() {
 
             <h1
               className="
-                text-4xl
+                text-3xl
                 leading-tight
                 font-black
                 text-black
-                mt-3
+                mt-2
               "
             >
               ¿Qué necesitas hoy?
@@ -137,7 +137,7 @@ export default function InicioPage() {
 
           {/* CATEGORÍAS */}
 
-          <div className="grid grid-cols-2 gap-4 mt-8">
+          <div className="grid grid-cols-2 gap-4 mt-6">
 
             {categorias.map((categoria) => (
 
@@ -152,10 +152,10 @@ export default function InicioPage() {
                     rounded-3xl
                     overflow-hidden
                     shadow-lg
-                    h-40
+                    h-28
                     flex
                     items-end
-                    p-5
+                    p-3
                   "
                   style={{
                     background: categoria.color
@@ -167,9 +167,9 @@ export default function InicioPage() {
                   <div
                     className="
                       absolute
-                      top-4
-                      left-4
-                      text-5xl
+                      top-3
+                      left-3
+                      text-3xl
                     "
                   >
                     {categoria.icono}
@@ -189,7 +189,7 @@ export default function InicioPage() {
                     <span
                       className="
                         text-white
-                        text-2xl
+                        text-lg
                         font-black
                         leading-tight
                       "
@@ -200,7 +200,7 @@ export default function InicioPage() {
                     <span
                       className="
                         text-white
-                        text-4xl
+                        text-3xl
                         font-light
                       "
                     >
@@ -219,20 +219,20 @@ export default function InicioPage() {
 
           {/* OFERTAS */}
 
-          <div className="mt-10">
+          <div className="mt-8">
 
             <div
               className="
                 flex
                 items-center
                 justify-between
-                mb-4
+                mb-3
               "
             >
 
               <h3
                 className="
-                  text-3xl
+                  text-2xl
                   font-black
                   text-black
                 "
@@ -243,7 +243,7 @@ export default function InicioPage() {
               <span
                 className="
                   text-green-700
-                  text-5xl
+                  text-4xl
                   font-light
                 "
               >
@@ -268,8 +268,8 @@ export default function InicioPage() {
 
               <div
                 className="
-                  w-28
-                  h-28
+                  w-24
+                  h-24
                   rounded-2xl
                   overflow-hidden
                   shrink-0
@@ -293,7 +293,7 @@ export default function InicioPage() {
 
                 <h4
                   className="
-                    text-2xl
+                    text-xl
                     font-black
                     text-green-800
                   "
@@ -305,15 +305,15 @@ export default function InicioPage() {
                   className="
                     flex
                     items-center
-                    gap-3
-                    mt-3
+                    gap-2
+                    mt-2
                     flex-wrap
                   "
                 >
 
                   <span
                     className="
-                      text-3xl
+                      text-2xl
                       font-black
                     "
                   >
@@ -323,7 +323,7 @@ export default function InicioPage() {
                   <span
                     className="
                       text-green-700
-                      text-lg
+                      text-sm
                       font-semibold
                     "
                   >
@@ -340,20 +340,20 @@ export default function InicioPage() {
 
           {/* BOTONES */}
 
-          <div className="grid grid-cols-2 gap-4 mt-8">
+          <div className="grid grid-cols-2 gap-4 mt-6">
 
             <button
               className="
                 bg-green-700
                 text-white
                 rounded-2xl
-                py-5
-                text-lg
+                py-3
+                text-base
                 font-bold
                 shadow-lg
               "
             >
-              🔄 Repetir Último Pedido
+              🔄 Repetir Pedido
             </button>
 
             <Link href="/carrito">
@@ -364,8 +364,8 @@ export default function InicioPage() {
                   bg-green-700
                   text-white
                   rounded-2xl
-                  py-5
-                  text-lg
+                  py-3
+                  text-base
                   font-bold
                   shadow-lg
                 "
