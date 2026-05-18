@@ -24,6 +24,8 @@ interface CartStore {
 
   items: CartItem[]
 
+  setItems: (items: CartItem[]) => void
+
   addItem: (producto: any) => void
 
   removeItem: (id: string) => void
@@ -131,7 +133,13 @@ export const useCartStore = create<CartStore>()(
 
         set({
           items: []
-        })
+        }),
+
+setItems: (items) =>
+
+  set({
+    items
+  })
 
     }),
 
