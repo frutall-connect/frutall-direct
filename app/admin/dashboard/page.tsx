@@ -1,6 +1,20 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+
+import {
+
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell
+
+} from 'recharts'
 
 import MobileLayout from '@/components/layout/MobileLayout'
 import BottomNav from '@/components/layout/BottomNav'
@@ -11,11 +25,14 @@ import { supabase } from '@/lib/supabaseClient'
 
 export default function AdminDashboardPage() {
 
-  const [pedidos, setPedidos] = useState<any[]>([])
+  const [pedidos, setPedidos] =
+    useState<any[]>([])
 
-  const [productos, setProductos] = useState<any[]>([])
+  const [productos, setProductos] =
+    useState<any[]>([])
 
-  const [usuarios, setUsuarios] = useState(0)
+  const [usuarios, setUsuarios] =
+    useState(0)
 
   useEffect(() => {
 
@@ -25,20 +42,19 @@ export default function AdminDashboardPage() {
 
   async function cargarDatos() {
 
-    // PEDIDOS
-
     const { data: pedidosData } =
       await supabase
 
         .from('pedidos')
 
-        .select('*')
+        .select(`
+          *,
+          lineas_pedido (*)
+        `)
 
         .order('created_at', {
           ascending: false
         })
-
-    // PRODUCTOS
 
     const { data: productosData } =
       await supabase
@@ -46,8 +62,6 @@ export default function AdminDashboardPage() {
         .from('productos')
 
         .select('*')
-
-    // USUARIOS
 
     const { data: perfilesData } =
       await supabase
@@ -66,7 +80,7 @@ export default function AdminDashboardPage() {
 
   }
 
-  // KPIs
+  // KPIS
 
   const ventasTotales =
     pedidos.reduce(
@@ -87,6 +101,133 @@ export default function AdminDashboardPage() {
       (p) => p.activo
     ).length
 
+  // VENTAS POR DÍA
+
+  const ventasPorDia = useMemo(() => {
+
+    const grouped: any = {}
+
+    pedidos.forEach((pedido) => {
+
+      const fecha =
+        new Date(
+          pedido.created_at
+        ).toLocaleDateString()
+
+      if (!grouped[fecha]) {
+
+        grouped[fecha] = 0
+
+      }
+
+      grouped[fecha] += pedido.total || 0
+
+    })
+
+    return Object.entries(grouped).map(
+      ([fecha, total]) => ({
+
+        fecha,
+
+        total
+
+      })
+    )
+
+  }, [pedidos])
+
+  // ESTADOS
+
+  const pedidosPorEstado = [
+
+    {
+      name: 'Pendiente',
+      value: pedidos.filter(
+        (p) => p.estado === 'pendiente'
+      ).length
+    },
+
+    {
+      name: 'Preparando',
+      value: pedidos.filter(
+        (p) => p.estado === 'preparando'
+      ).length
+    },
+
+    {
+      name: 'Enviado',
+      value: pedidos.filter(
+        (p) => p.estado === 'enviado'
+      ).length
+    },
+
+    {
+      name: 'Entregado',
+      value: pedidos.filter(
+        (p) => p.estado === 'entregado'
+      ).length
+    }
+
+  ]
+
+  const COLORS = [
+    '#eab308',
+    '#3b82f6',
+    '#9333ea',
+    '#16a34a'
+  ]
+
+  // TOP PRODUCTOS
+
+  const topProductos = useMemo(() => {
+
+    const contador: any = {}
+
+    pedidos.forEach((pedido) => {
+
+      pedido.lineas_pedido?.forEach(
+        (linea: any) => {
+
+          if (
+            !contador[
+              linea.nombre_producto
+            ]
+          ) {
+
+            contador[
+              linea.nombre_producto
+            ] = 0
+
+          }
+
+          contador[
+            linea.nombre_producto
+          ] += linea.cantidad
+
+        }
+      )
+
+    })
+
+    return Object.entries(contador)
+
+      .map(([nombre, cantidad]) => ({
+
+        nombre,
+
+        cantidad
+
+      }))
+
+      .sort(
+        (a: any, b: any) =>
+          b.cantidad - a.cantidad
+      )
+
+      .slice(0, 5)
+
+  }, [pedidos])
+
   return (
 
     <AdminGuard>
@@ -104,9 +245,6 @@ export default function AdminDashboardPage() {
               pt-5
               pb-4
               border-b
-              sticky
-              top-0
-              z-40
             "
           >
 
@@ -114,7 +252,6 @@ export default function AdminDashboardPage() {
               className="
                 text-3xl
                 font-black
-                text-black
               "
             >
               Dashboard
@@ -127,16 +264,14 @@ export default function AdminDashboardPage() {
                 mt-1
               "
             >
-              Control operativo FrutALL
+              Analytics FrutALL
             </p>
 
           </div>
 
-          {/* KPIs */}
+          {/* KPIS */}
 
           <div className="p-4 grid grid-cols-2 gap-4">
-
-            {/* VENTAS */}
 
             <div
               className="
@@ -144,11 +279,10 @@ export default function AdminDashboardPage() {
                 text-white
                 rounded-3xl
                 p-5
-                shadow-lg
               "
             >
 
-              <p className="text-sm opacity-80">
+              <p className="opacity-70">
                 Ventas
               </p>
 
@@ -164,19 +298,16 @@ export default function AdminDashboardPage() {
 
             </div>
 
-            {/* PEDIDOS */}
-
             <div
               className="
                 bg-black
                 text-white
                 rounded-3xl
                 p-5
-                shadow-lg
               "
             >
 
-              <p className="text-sm opacity-80">
+              <p className="opacity-70">
                 Pedidos
               </p>
 
@@ -192,19 +323,16 @@ export default function AdminDashboardPage() {
 
             </div>
 
-            {/* PENDIENTES */}
-
             <div
               className="
                 bg-yellow-500
                 text-white
                 rounded-3xl
                 p-5
-                shadow-lg
               "
             >
 
-              <p className="text-sm opacity-80">
+              <p className="opacity-70">
                 Pendientes
               </p>
 
@@ -220,19 +348,16 @@ export default function AdminDashboardPage() {
 
             </div>
 
-            {/* PRODUCTOS */}
-
             <div
               className="
                 bg-purple-700
                 text-white
                 rounded-3xl
                 p-5
-                shadow-lg
               "
             >
 
-              <p className="text-sm opacity-80">
+              <p className="opacity-70">
                 Productos
               </p>
 
@@ -250,7 +375,7 @@ export default function AdminDashboardPage() {
 
           </div>
 
-          {/* USUARIOS */}
+          {/* VENTAS */}
 
           <div className="px-4">
 
@@ -258,35 +383,55 @@ export default function AdminDashboardPage() {
               className="
                 bg-white
                 rounded-3xl
-                shadow-lg
                 p-5
+                shadow-lg
               "
             >
 
-              <p
-                className="
-                  text-sm
-                  text-gray-500
-                "
-              >
-                Usuarios registrados
-              </p>
-
               <h2
                 className="
-                  text-4xl
+                  text-2xl
                   font-black
-                  mt-2
+                  mb-5
                 "
               >
-                {usuarios}
+                Ventas por día
               </h2>
+
+              <div className="h-72">
+
+                <ResponsiveContainer
+                  width="100%"
+                  height="100%"
+                >
+
+                  <BarChart
+                    data={ventasPorDia}
+                  >
+
+                    <XAxis dataKey="fecha" />
+
+                    <YAxis />
+
+                    <Tooltip />
+
+                    <Bar
+                      dataKey="total"
+                      fill="#16a34a"
+                      radius={[10, 10, 0, 0]}
+                    />
+
+                  </BarChart>
+
+                </ResponsiveContainer>
+
+              </div>
 
             </div>
 
           </div>
 
-          {/* ÚLTIMOS PEDIDOS */}
+          {/* ESTADOS */}
 
           <div className="p-4">
 
@@ -294,39 +439,98 @@ export default function AdminDashboardPage() {
               className="
                 bg-white
                 rounded-3xl
-                shadow-lg
                 p-5
+                shadow-lg
               "
             >
 
-              <div
+              <h2
                 className="
-                  flex
-                  justify-between
-                  items-center
+                  text-2xl
+                  font-black
                   mb-5
                 "
               >
+                Estados pedidos
+              </h2>
 
-                <h2
-                  className="
-                    text-2xl
-                    font-black
-                  "
+              <div className="h-72">
+
+                <ResponsiveContainer
+                  width="100%"
+                  height="100%"
                 >
-                  Últimos pedidos
-                </h2>
+
+                  <PieChart>
+
+                    <Pie
+
+                      data={pedidosPorEstado}
+
+                      dataKey="value"
+
+                      outerRadius={100}
+
+                    >
+
+                      {pedidosPorEstado.map(
+                        (_, index) => (
+
+                          <Cell
+                            key={index}
+                            fill={COLORS[index]}
+                          />
+
+                        )
+                      )}
+
+                    </Pie>
+
+                    <Tooltip />
+
+                  </PieChart>
+
+                </ResponsiveContainer>
 
               </div>
 
+            </div>
+
+          </div>
+
+          {/* TOP PRODUCTOS */}
+
+          <div className="px-4">
+
+            <div
+              className="
+                bg-white
+                rounded-3xl
+                p-5
+                shadow-lg
+              "
+            >
+
+              <h2
+                className="
+                  text-2xl
+                  font-black
+                  mb-5
+                "
+              >
+                Top productos
+              </h2>
+
               <div className="space-y-4">
 
-                {pedidos
-                  .slice(0, 5)
-                  .map((pedido) => (
+                {topProductos.map(
+                  (
+                    producto: any,
+                    index
+                  ) => (
 
                     <div
-                      key={pedido.id}
+                      key={index}
                       className="
                         bg-[#f5f3eb]
                         rounded-2xl
@@ -340,36 +544,25 @@ export default function AdminDashboardPage() {
                       <div>
 
                         <p className="font-bold">
-                          Pedido
-                        </p>
-
-                        <p
-                          className="
-                            text-sm
-                            text-gray-500
-                          "
-                        >
-                          {pedido.estado}
+                          {producto.nombre}
                         </p>
 
                       </div>
 
-                      <div className="text-right">
-
-                        <p
-                          className="
-                            font-black
-                            text-green-700
-                          "
-                        >
-                          {pedido.total?.toFixed(2)} €
-                        </p>
-
+                      <div
+                        className="
+                          text-green-700
+                          font-black
+                          text-xl
+                        "
+                      >
+                        {producto.cantidad}
                       </div>
 
                     </div>
 
-                  ))}
+                  )
+                )}
 
               </div>
 
