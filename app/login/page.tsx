@@ -12,18 +12,20 @@ export default function LoginPage() {
 
   async function login() {
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } =
+      await supabase.auth.signInWithPassword({
 
-      email,
-      password
+        email,
+        password
 
-    })
+      })
 
     if (error) {
 
       alert(error.message)
 
       return
+
     }
 
     alert('Login correcto')
@@ -34,65 +36,69 @@ export default function LoginPage() {
 
   async function register() {
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } =
+      await supabase.auth.signUp({
 
-      email,
-      password,
+        email,
+        password,
 
-    })
-
-if (data.user) {
-
-  await fetch(
-    `/auth/callback?id=${data.user.id}`
-  )
-
-}
+      })
 
     if (error) {
 
       alert(error.message)
 
       return
+
+    }
+
+    if (data.user) {
+
+      await fetch(
+        `/auth/callback?id=${data.user.id}`
+      )
+
     }
 
     alert('Cuenta creada')
 
   }
 
-async function recuperarPassword() {
+  async function recuperarPassword() {
 
-  if (!email) {
+    if (!email) {
 
-    alert('Introduce tu email')
+      alert('Introduce tu email')
 
-    return
-  }
+      return
 
-  const { error } =
-    await supabase.auth.resetPasswordForEmail(
+    }
 
-      email,
+    const { error } =
+      await supabase.auth.resetPasswordForEmail(
 
-      {
-        redirectTo:
-          'https://frutall-direct.vercel.app/reset-password'
-      }
+        email,
 
+        {
+          redirectTo:
+            'https://frutall-direct.vercel.app/reset-password'
+        }
+
+      )
+
+    if (error) {
+
+      alert(error.message)
+
+      return
+
+    }
+
+    alert(
+      'Te hemos enviado un email para recuperar tu contraseña'
     )
 
-  if (error) {
-
-    alert(error.message)
-
-    return
   }
-
-  alert(
-    'Te hemos enviado un email para recuperar tu contraseña'
-  )
-
-}
 
   return (
 
@@ -114,38 +120,71 @@ async function recuperarPassword() {
             type="email"
             placeholder="Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-4 rounded-2xl bg-gray-100"
+            onChange={(e) =>
+              setEmail(e.target.value)
+            }
+            className="
+              w-full
+              p-4
+              rounded-2xl
+              bg-gray-100
+            "
           />
 
           <input
             type="password"
             placeholder="Contraseña"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-4 rounded-2xl bg-gray-100"
+            onChange={(e) =>
+              setPassword(e.target.value)
+            }
+            className="
+              w-full
+              p-4
+              rounded-2xl
+              bg-gray-100
+            "
           />
 
           <button
             onClick={login}
-            className="w-full bg-green-600 text-white py-4 rounded-2xl font-bold"
+            className="
+              w-full
+              bg-green-600
+              text-white
+              py-4
+              rounded-2xl
+              font-bold
+            "
           >
             Entrar
           </button>
 
           <button
             onClick={register}
-            className="w-full bg-black text-white py-4 rounded-2xl font-bold"
+            className="
+              w-full
+              bg-black
+              text-white
+              py-4
+              rounded-2xl
+              font-bold
+            "
           >
             Crear cuenta
           </button>
 
-	  <button
-  onClick={recuperarPassword}
-  className="w-full text-sm text-green-700 mt-2"
->
-  He olvidado mi contraseña
-</button>
+          <button
+            onClick={recuperarPassword}
+            className="
+              w-full
+              text-sm
+              text-green-700
+              mt-2
+            "
+          >
+            He olvidado mi contraseña
+          </button>
 
         </div>
 
