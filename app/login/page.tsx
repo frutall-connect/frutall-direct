@@ -6,13 +6,34 @@ import { supabase } from '@/lib/supabaseClient'
 
 export default function LoginPage() {
 
-  const [email, setEmail] = useState('')
+  const [modoRegistro, setModoRegistro] =
+    useState(false)
 
-  const [password, setPassword] = useState('')
+  const [email, setEmail] =
+    useState('')
+
+  const [password, setPassword] =
+    useState('')
+
+  const [empresa, setEmpresa] =
+    useState('')
+
+  const [contacto, setContacto] =
+    useState('')
+
+  const [telefono, setTelefono] =
+    useState('')
+
+  const [direccion, setDireccion] =
+    useState('')
+
+  const [cif, setCif] =
+    useState('')
 
   async function login() {
 
     const { error } =
+
       await supabase.auth.signInWithPassword({
 
         email,
@@ -28,8 +49,6 @@ export default function LoginPage() {
 
     }
 
-    alert('Login correcto')
-
     window.location.href = '/'
 
   }
@@ -37,10 +56,11 @@ export default function LoginPage() {
   async function register() {
 
     const { data, error } =
+
       await supabase.auth.signUp({
 
         email,
-        password,
+        password
 
       })
 
@@ -54,9 +74,27 @@ export default function LoginPage() {
 
     if (data.user) {
 
-      await fetch(
-        `/auth/callback?id=${data.user.id}`
-      )
+      await supabase
+
+        .from('perfiles')
+
+        .upsert([{
+
+          id: data.user.id,
+
+          rol: 'cliente',
+
+          empresa,
+
+          contacto,
+
+          telefono,
+
+          direccion,
+
+          cif
+
+        }])
 
     }
 
@@ -75,6 +113,7 @@ export default function LoginPage() {
     }
 
     const { error } =
+
       await supabase.auth.resetPasswordForEmail(
 
         email,
@@ -95,26 +134,155 @@ export default function LoginPage() {
     }
 
     alert(
-      'Te hemos enviado un email para recuperar tu contraseña'
+      'Te hemos enviado un email'
     )
 
   }
 
   return (
 
-    <main className="min-h-screen bg-[#f5f3eb] flex items-center justify-center p-4">
+    <main
+      className="
+        min-h-screen
+        bg-[#f5f3eb]
+        flex
+        items-center
+        justify-center
+        p-4
+      "
+    >
 
-      <div className="bg-white rounded-3xl shadow-xl p-8 w-full max-w-md">
+      <div
+        className="
+          bg-white
+          rounded-3xl
+          shadow-xl
+          p-8
+          w-full
+          max-w-md
+        "
+      >
 
-        <h1 className="text-4xl font-bold text-green-700 mb-2">
+        <h1
+          className="
+            text-4xl
+            font-black
+            text-green-700
+          "
+        >
           FrutALL
         </h1>
 
-        <p className="text-gray-500 mb-8">
-          Accede a tu cuenta
+        <p
+          className="
+            text-gray-500
+            mt-2
+            mb-8
+          "
+        >
+          {
+            modoRegistro
+
+              ? 'Crear cuenta empresa'
+
+              : 'Accede a tu cuenta'
+          }
         </p>
 
         <div className="space-y-4">
+
+          {modoRegistro && (
+
+            <>
+
+              <input
+                type="text"
+                placeholder="Empresa"
+                value={empresa}
+                onChange={(e) =>
+                  setEmpresa(
+                    e.target.value
+                  )
+                }
+                className="
+                  w-full
+                  p-4
+                  rounded-2xl
+                  bg-gray-100
+                "
+              />
+
+              <input
+                type="text"
+                placeholder="Persona contacto"
+                value={contacto}
+                onChange={(e) =>
+                  setContacto(
+                    e.target.value
+                  )
+                }
+                className="
+                  w-full
+                  p-4
+                  rounded-2xl
+                  bg-gray-100
+                "
+              />
+
+              <input
+                type="text"
+                placeholder="Teléfono"
+                value={telefono}
+                onChange={(e) =>
+                  setTelefono(
+                    e.target.value
+                  )
+                }
+                className="
+                  w-full
+                  p-4
+                  rounded-2xl
+                  bg-gray-100
+                "
+              />
+
+              <input
+                type="text"
+                placeholder="Dirección"
+                value={direccion}
+                onChange={(e) =>
+                  setDireccion(
+                    e.target.value
+                  )
+                }
+                className="
+                  w-full
+                  p-4
+                  rounded-2xl
+                  bg-gray-100
+                "
+              />
+
+              <input
+                type="text"
+                placeholder="CIF / NIF"
+                value={cif}
+                onChange={(e) =>
+                  setCif(
+                    e.target.value
+                  )
+                }
+                className="
+                  w-full
+                  p-4
+                  rounded-2xl
+                  bg-gray-100
+                "
+              />
+
+            </>
+
+          )}
 
           <input
             type="email"
@@ -146,45 +314,75 @@ export default function LoginPage() {
             "
           />
 
-          <button
-            onClick={login}
-            className="
-              w-full
-              bg-green-600
-              text-white
-              py-4
-              rounded-2xl
-              font-bold
-            "
-          >
-            Entrar
-          </button>
+          {!modoRegistro ? (
+
+            <button
+              onClick={login}
+              className="
+                w-full
+                bg-green-600
+                text-white
+                py-4
+                rounded-2xl
+                font-black
+              "
+            >
+              Entrar
+            </button>
+
+          ) : (
+
+            <button
+              onClick={register}
+              className="
+                w-full
+                bg-black
+                text-white
+                py-4
+                rounded-2xl
+                font-black
+              "
+            >
+              Crear cuenta
+            </button>
+
+          )}
 
           <button
-            onClick={register}
+            onClick={() =>
+              setModoRegistro(
+                !modoRegistro
+              )
+            }
             className="
               w-full
-              bg-black
-              text-white
-              py-4
-              rounded-2xl
-              font-bold
-            "
-          >
-            Crear cuenta
-          </button>
-
-          <button
-            onClick={recuperarPassword}
-            className="
-              w-full
-              text-sm
               text-green-700
-              mt-2
+              font-bold
             "
           >
-            He olvidado mi contraseña
+            {
+              modoRegistro
+
+                ? 'Ya tengo cuenta'
+
+                : 'Crear cuenta empresa'
+            }
           </button>
+
+          {!modoRegistro && (
+
+            <button
+              onClick={recuperarPassword}
+              className="
+                w-full
+                text-sm
+                text-gray-500
+              "
+            >
+              He olvidado mi contraseña
+            </button>
+
+          )}
 
         </div>
 
