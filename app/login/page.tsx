@@ -37,7 +37,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signUp({
 
       email,
-      password
+      password,
 
     })
 
