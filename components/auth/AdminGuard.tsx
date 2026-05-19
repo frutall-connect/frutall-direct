@@ -24,42 +24,60 @@ export default function AdminGuard({
 
   async function verificar() {
 
-    const { data: authData } =
-      await supabase.auth.getUser()
+    try {
 
-    const usuario = authData.user
+      const { data: authData } =
+        await supabase.auth.getUser()
 
-    if (!usuario) {
+      const usuario = authData.user
 
-      window.location.href = '/login'
+      console.log('USUARIO:', usuario)
 
-      return
+      if (!usuario) {
 
-    }
+        window.location.href = '/login'
 
-    const { data } = await supabase
+        return
 
-      .from('perfiles')
+      }
 
-      .select('rol')
+      const { data, error } = await supabase
 
-      .eq('id', usuario.id)
+        .from('perfiles')
 
-      .single()
+        .select('*')
 
-    if (
-      data?.rol === 'admin'
-    ) {
+        .eq('id', usuario.id)
 
-      setPermitido(true)
+        .maybeSingle()
 
-    } else {
+      console.log('PERFIL:', data)
+
+      console.log('ERROR:', error)
+
+      if (data?.rol === 'admin') {
+
+        setPermitido(true)
+
+      } else {
+
+        alert('No eres admin')
+
+        window.location.href = '/'
+
+      }
+
+    } catch (error) {
+
+      console.error(error)
 
       window.location.href = '/'
 
-    }
+    } finally {
 
-    setLoading(false)
+      setLoading(false)
+
+    }
 
   }
 
