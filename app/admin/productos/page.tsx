@@ -7,6 +7,8 @@ import BottomNav from '@/components/layout/BottomNav'
 
 import { supabase } from '@/lib/supabaseClient'
 
+import AdminGuard from '@/components/auth/AdminGuard'
+
 export default function AdminProductosPage() {
 
   const [productos, setProductos] = useState<any[]>([])
@@ -226,6 +228,8 @@ export default function AdminProductosPage() {
   }
 
   return (
+
+  <AdminGuard>
 
     <MobileLayout>
 
@@ -711,6 +715,8 @@ export default function AdminProductosPage() {
       <BottomNav />
 
     </MobileLayout>
+
+  </AdminGuard>
 
   )
 

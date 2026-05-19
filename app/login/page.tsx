@@ -41,6 +41,14 @@ export default function LoginPage() {
 
     })
 
+if (data.user) {
+
+  await fetch(
+    `/auth/callback?id=${data.user.id}`
+  )
+
+}
+
     if (error) {
 
       alert(error.message)
