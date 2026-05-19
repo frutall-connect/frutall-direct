@@ -7,9 +7,14 @@ import BottomNav from '@/components/layout/BottomNav'
 
 import { supabase } from '@/lib/supabaseClient'
 
+import {
+  generarAlbaran
+} from '@/lib/generarAlbaran'
+
 export default function PedidosPage() {
 
-  const [pedidos, setPedidos] = useState<any[]>([])
+  const [pedidos, setPedidos] =
+    useState<any[]>([])
 
   useEffect(() => {
 
@@ -28,23 +33,26 @@ export default function PedidosPage() {
 
     if (!usuario) return
 
-    const { data, error } = await supabase
+    const { data, error } =
+      await supabase
 
-      .from('pedidos')
+        .from('pedidos')
 
-      .select(`
-        *,
-        lineas_pedido (*)
-      `)
+        .select(`
+          *,
+          lineas_pedido (*)
+        `)
 
-      .eq('usuario_id', usuario.id)
+        .eq('usuario_id', usuario.id)
 
-      .order('created_at', {
-        ascending: false
-      })
+        .order('created_at', {
+          ascending: false
+        })
 
     if (!error && data) {
+
       setPedidos(data)
+
     }
 
   }
@@ -76,12 +84,16 @@ export default function PedidosPage() {
       .subscribe()
 
     return () => {
+
       supabase.removeChannel(channel)
+
     }
 
   }
 
-  function colorEstado(estado: string) {
+  function colorEstado(
+    estado: string
+  ) {
 
     switch (estado) {
 
@@ -104,7 +116,9 @@ export default function PedidosPage() {
 
   }
 
-  function iconoEstado(estado: string) {
+  function iconoEstado(
+    estado: string
+  ) {
 
     switch (estado) {
 
@@ -255,12 +269,19 @@ export default function PedidosPage() {
                       rounded-full
                       text-sm
                       font-bold
-                      ${colorEstado(pedido.estado)}
+                      ${colorEstado(
+                        pedido.estado
+                      )}
                     `}
                   >
-                    {iconoEstado(pedido.estado)}
+                    {iconoEstado(
+                      pedido.estado
+                    )}
+
                     {' '}
+
                     {pedido.estado}
+
                   </div>
 
                 </div>
@@ -277,141 +298,86 @@ export default function PedidosPage() {
                     "
                   >
 
-                    <div className="flex flex-col items-center">
+                    {[
+                      'pendiente',
+                      'preparando',
+                      'enviado',
+                      'entregado'
+                    ].map(
+                      (
+                        estado,
+                        index
+                      ) => (
 
-                      <div
-                        className={`
-                          w-10
-                          h-10
-                          rounded-full
-                          flex
-                          items-center
-                          justify-center
-                          text-white
-                          font-bold
+                        <div
+                          key={estado}
+                          className="
+                            flex
+                            flex-col
+                            items-center
+                            flex-1
+                          "
+                        >
 
-                          ${
-                            pedido.estado === 'pendiente'
-                            || pedido.estado === 'preparando'
-                            || pedido.estado === 'enviado'
-                            || pedido.estado === 'entregado'
+                          <div
+                            className={`
+                              w-10
+                              h-10
+                              rounded-full
+                              flex
+                              items-center
+                              justify-center
+                              text-white
+                              font-bold
 
-                              ? 'bg-yellow-500'
+                              ${
+                                pedido.estado === estado
+                                || (
+                                  estado ===
+                                  'pendiente'
+                                )
+                                || (
+                                  estado ===
+                                  'preparando'
+                                  &&
+                                  (
+                                    pedido.estado
+                                    === 'enviado'
+                                    ||
+                                    pedido.estado
+                                    === 'entregado'
+                                  )
+                                )
+                                || (
+                                  estado ===
+                                  'enviado'
+                                  &&
+                                  pedido.estado
+                                  === 'entregado'
+                                )
 
-                              : 'bg-gray-300'
-                          }
-                        `}
-                      >
-                        1
-                      </div>
+                                  ? 'bg-green-600'
 
-                      <p className="text-xs mt-2">
-                        Pendiente
-                      </p>
+                                  : 'bg-gray-300'
+                              }
+                            `}
+                          >
+                            {index + 1}
+                          </div>
 
-                    </div>
+                          <p
+                            className="
+                              text-xs
+                              mt-2
+                            "
+                          >
+                            {estado}
+                          </p>
 
-                    <div className="flex-1 h-1 bg-gray-200 mx-2" />
+                        </div>
 
-                    <div className="flex flex-col items-center">
-
-                      <div
-                        className={`
-                          w-10
-                          h-10
-                          rounded-full
-                          flex
-                          items-center
-                          justify-center
-                          text-white
-                          font-bold
-
-                          ${
-                            pedido.estado === 'preparando'
-                            || pedido.estado === 'enviado'
-                            || pedido.estado === 'entregado'
-
-                              ? 'bg-blue-500'
-
-                              : 'bg-gray-300'
-                          }
-                        `}
-                      >
-                        2
-                      </div>
-
-                      <p className="text-xs mt-2">
-                        Preparando
-                      </p>
-
-                    </div>
-
-                    <div className="flex-1 h-1 bg-gray-200 mx-2" />
-
-                    <div className="flex flex-col items-center">
-
-                      <div
-                        className={`
-                          w-10
-                          h-10
-                          rounded-full
-                          flex
-                          items-center
-                          justify-center
-                          text-white
-                          font-bold
-
-                          ${
-                            pedido.estado === 'enviado'
-                            || pedido.estado === 'entregado'
-
-                              ? 'bg-purple-500'
-
-                              : 'bg-gray-300'
-                          }
-                        `}
-                      >
-                        3
-                      </div>
-
-                      <p className="text-xs mt-2">
-                        Enviado
-                      </p>
-
-                    </div>
-
-                    <div className="flex-1 h-1 bg-gray-200 mx-2" />
-
-                    <div className="flex flex-col items-center">
-
-                      <div
-                        className={`
-                          w-10
-                          h-10
-                          rounded-full
-                          flex
-                          items-center
-                          justify-center
-                          text-white
-                          font-bold
-
-                          ${
-                            pedido.estado === 'entregado'
-
-                              ? 'bg-green-600'
-
-                              : 'bg-gray-300'
-                          }
-                        `}
-                      >
-                        4
-                      </div>
-
-                      <p className="text-xs mt-2">
-                        Entregado
-                      </p>
-
-                    </div>
+                      )
+                    )}
 
                   </div>
 
@@ -433,7 +399,10 @@ export default function PedidosPage() {
                 <div className="space-y-3">
 
                   {pedido.lineas_pedido?.map(
-                    (linea: any, index: number) => (
+                    (
+                      linea: any,
+                      index: number
+                    ) => (
 
                       <div
                         key={index}
@@ -447,7 +416,9 @@ export default function PedidosPage() {
                         <div>
 
                           <p className="font-bold">
-                            {linea.nombre_producto}
+                            {
+                              linea.nombre_producto
+                            }
                           </p>
 
                           <p
@@ -469,7 +440,10 @@ export default function PedidosPage() {
                             text-green-700
                           "
                         >
-                          {linea.subtotal?.toFixed(2)} €
+                          {
+                            linea.subtotal
+                              ?.toFixed(2)
+                          } €
                         </p>
 
                       </div>
@@ -508,10 +482,38 @@ export default function PedidosPage() {
                       text-green-700
                     "
                   >
-                    {pedido.total?.toFixed(2)} €
+                    {
+                      pedido.total
+                        ?.toFixed(2)
+                    } €
                   </span>
 
                 </div>
+
+                {/* PDF */}
+
+                <button
+
+                  onClick={() =>
+                    generarAlbaran(
+                      pedido
+                    )
+                  }
+
+                  className="
+                    w-full
+                    mt-5
+                    bg-black
+                    text-white
+                    rounded-2xl
+                    py-3
+                    font-bold
+                  "
+                >
+
+                  Descargar albarán
+
+                </button>
 
               </div>
 
