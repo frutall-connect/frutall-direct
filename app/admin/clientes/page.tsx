@@ -1,13 +1,22 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import {
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 
-import MobileLayout from '@/components/layout/MobileLayout'
-import BottomNav from '@/components/layout/BottomNav'
+import MobileLayout
+  from '@/components/layout/MobileLayout'
 
-import AdminGuard from '@/components/auth/AdminGuard'
+import BottomNav
+  from '@/components/layout/BottomNav'
 
-import { supabase } from '@/lib/supabaseClient'
+import AdminGuard
+  from '@/components/auth/AdminGuard'
+
+import { supabase }
+  from '@/lib/supabaseClient'
 
 export default function AdminClientesPage() {
 
@@ -17,6 +26,9 @@ export default function AdminClientesPage() {
   const [pedidos, setPedidos] =
     useState<any[]>([])
 
+  const [busqueda, setBusqueda] =
+    useState('')
+
   useEffect(() => {
 
     cargarDatos()
@@ -25,16 +37,12 @@ export default function AdminClientesPage() {
 
   async function cargarDatos() {
 
-    // CLIENTES
-
     const { data: perfilesData } =
       await supabase
 
         .from('perfiles')
 
         .select('*')
-
-    // PEDIDOS
 
     const { data: pedidosData } =
       await supabase
@@ -55,41 +63,58 @@ export default function AdminClientesPage() {
 
   const clientesConStats = useMemo(() => {
 
-    return clientes.map((cliente) => {
+    return clientes
 
-      const pedidosCliente =
-        pedidos.filter(
-          (pedido) =>
-            pedido.usuario_id === cliente.id
+      .map((cliente) => {
+
+        const pedidosCliente =
+          pedidos.filter(
+            (pedido) =>
+              pedido.usuario_id === cliente.id
+          )
+
+        const totalGastado =
+          pedidosCliente.reduce(
+
+            (acc, pedido) =>
+              acc + (pedido.total || 0),
+
+            0
+          )
+
+        const ultimoPedido =
+          pedidosCliente[0]
+
+        return {
+
+          ...cliente,
+
+          pedidos: pedidosCliente.length,
+
+          totalGastado,
+
+          ultimoPedido
+
+        }
+
+      })
+
+      .filter((cliente) => {
+
+        const texto = `
+          ${cliente.empresa || ''}
+          ${cliente.contacto || ''}
+          ${cliente.telefono || ''}
+          ${cliente.cif || ''}
+        `.toLowerCase()
+
+        return texto.includes(
+          busqueda.toLowerCase()
         )
 
-      const totalGastado =
-        pedidosCliente.reduce(
+      })
 
-          (acc, pedido) =>
-            acc + (pedido.total || 0),
-
-          0
-        )
-
-      const ultimoPedido =
-        pedidosCliente[0]
-
-      return {
-
-        ...cliente,
-
-        pedidos: pedidosCliente.length,
-
-        totalGastado,
-
-        ultimoPedido
-
-      }
-
-    })
-
-  }, [clientes, pedidos])
+  }, [clientes, pedidos, busqueda])
 
   return (
 
@@ -117,7 +142,7 @@ export default function AdminClientesPage() {
                 font-black
               "
             >
-              Clientes
+              CRM Clientes
             </h1>
 
             <p
@@ -127,14 +152,40 @@ export default function AdminClientesPage() {
                 mt-1
               "
             >
-              CRM FrutALL
+              Gestión comercial
             </p>
 
           </div>
 
-          {/* LISTA */}
+          {/* BUSCADOR */}
 
-          <div className="p-4 space-y-4">
+          <div className="p-4">
+
+            <input
+              type="text"
+              placeholder="Buscar cliente..."
+              value={busqueda}
+              onChange={(e) =>
+                setBusqueda(
+                  e.target.value
+                )
+              }
+              className="
+                w-full
+                bg-white
+                rounded-3xl
+                px-5
+                py-4
+                shadow-lg
+                outline-none
+              "
+            />
+
+          </div>
+
+          {/* CLIENTES */}
+
+          <div className="px-4 space-y-5">
 
             {clientesConStats.map(
               (cliente) => (
@@ -145,74 +196,199 @@ export default function AdminClientesPage() {
                     bg-white
                     rounded-3xl
                     shadow-lg
-                    p-5
+                    overflow-hidden
                   "
                 >
 
                   {/* TOP */}
 
-                  <div
-                    className="
-                      flex
-                      justify-between
-                      items-start
-                    "
-                  >
-
-                    <div>
-
-                      <h2
-                        className="
-                          text-xl
-                          font-black
-                          break-all
-                        "
-                      >
-                        {cliente.id}
-                      </h2>
-
-                      <p
-                        className="
-                          text-sm
-                          text-gray-500
-                          mt-1
-                        "
-                      >
-                        {cliente.rol}
-                      </p>
-
-                    </div>
+                  <div className="p-5">
 
                     <div
                       className="
-                        bg-green-100
-                        text-green-700
-                        px-4
-                        py-2
-                        rounded-full
-                        text-sm
-                        font-bold
+                        flex
+                        justify-between
+                        items-start
+                        gap-4
                       "
                     >
-                      {cliente.pedidos} pedidos
+
+                      <div>
+
+                        <h2
+                          className="
+                            text-2xl
+                            font-black
+                          "
+                        >
+                          {
+                            cliente.empresa
+                            || 'Sin empresa'
+                          }
+                        </h2>
+
+                        <p
+                          className="
+                            text-gray-500
+                            mt-1
+                          "
+                        >
+                          {
+                            cliente.contacto
+                            || 'Sin contacto'
+                          }
+                        </p>
+
+                      </div>
+
+                      <div
+                        className="
+                          bg-green-100
+                          text-green-700
+                          px-4
+                          py-2
+                          rounded-full
+                          text-sm
+                          font-bold
+                          shrink-0
+                        "
+                      >
+                        {cliente.pedidos} pedidos
+                      </div>
+
+                    </div>
+
+                    {/* INFO */}
+
+                    <div className="mt-5 space-y-3">
+
+                      <div
+                        className="
+                          bg-[#f5f3eb]
+                          rounded-2xl
+                          p-4
+                        "
+                      >
+
+                        <p
+                          className="
+                            text-xs
+                            text-gray-500
+                          "
+                        >
+                          Email
+                        </p>
+
+                        <p className="font-bold break-all">
+                          {
+                            cliente.email
+                            || 'No disponible'
+                          }
+                        </p>
+
+                      </div>
+
+                      <a
+                        href={`tel:${cliente.telefono}`}
+                        className="
+                          block
+                          bg-[#f5f3eb]
+                          rounded-2xl
+                          p-4
+                        "
+                      >
+
+                        <p
+                          className="
+                            text-xs
+                            text-gray-500
+                          "
+                        >
+                          Teléfono
+                        </p>
+
+                        <p className="font-bold">
+                          {
+                            cliente.telefono
+                            || 'No disponible'
+                          }
+                        </p>
+
+                      </a>
+
+                      <div
+                        className="
+                          bg-[#f5f3eb]
+                          rounded-2xl
+                          p-4
+                        "
+                      >
+
+                        <p
+                          className="
+                            text-xs
+                            text-gray-500
+                          "
+                        >
+                          Dirección
+                        </p>
+
+                        <p className="font-bold">
+                          {
+                            cliente.direccion
+                            || 'No disponible'
+                          }
+                        </p>
+
+                      </div>
+
+                      <div
+                        className="
+                          bg-[#f5f3eb]
+                          rounded-2xl
+                          p-4
+                        "
+                      >
+
+                        <p
+                          className="
+                            text-xs
+                            text-gray-500
+                          "
+                        >
+                          CIF / NIF
+                        </p>
+
+                        <p className="font-bold">
+                          {
+                            cliente.cif
+                            || 'No disponible'
+                          }
+                        </p>
+
+                      </div>
+
                     </div>
 
                   </div>
 
-                  {/* STATS */}
+                  {/* KPIS */}
 
                   <div
                     className="
+                      bg-[#faf9f6]
+                      border-t
+                      px-5
+                      py-5
                       grid
                       grid-cols-2
                       gap-4
-                      mt-5
                     "
                   >
 
                     <div
                       className="
-                        bg-[#f5f3eb]
+                        bg-white
                         rounded-2xl
                         p-4
                       "
@@ -220,7 +396,7 @@ export default function AdminClientesPage() {
 
                       <p
                         className="
-                          text-sm
+                          text-xs
                           text-gray-500
                         "
                       >
@@ -231,18 +407,21 @@ export default function AdminClientesPage() {
                         className="
                           text-2xl
                           font-black
-                          mt-2
                           text-green-700
+                          mt-2
                         "
                       >
-                        {cliente.totalGastado.toFixed(2)} €
+                        {
+                          cliente.totalGastado
+                            .toFixed(2)
+                        } €
                       </h3>
 
                     </div>
 
                     <div
                       className="
-                        bg-[#f5f3eb]
+                        bg-white
                         rounded-2xl
                         p-4
                       "
@@ -250,7 +429,7 @@ export default function AdminClientesPage() {
 
                       <p
                         className="
-                          text-sm
+                          text-xs
                           text-gray-500
                         "
                       >
