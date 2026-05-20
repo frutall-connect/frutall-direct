@@ -36,7 +36,9 @@ export default function CarritoPage() {
 
   )
 
-  async function pagar() {
+  async function pagar(
+  metodoPago: string
+) {
 
     if (items.length === 0) return
 
@@ -72,6 +74,8 @@ export default function CarritoPage() {
         .insert([{
 
           usuario_id: usuario.id,
+
+          metodo_pago: metodoPago,
 
           estado: 'pendiente',
 
@@ -415,7 +419,7 @@ export default function CarritoPage() {
 
               <button
 
-                onClick={pagar}
+                onClick={() => pagar('tarjeta')}
 
                 className="
                   w-full
@@ -433,6 +437,26 @@ export default function CarritoPage() {
                 Pagar con tarjeta
 
               </button>
+<button
+
+  onClick={() => pagar('pendiente')}
+
+  className="
+    w-full
+    mt-4
+    bg-green-600
+    hover:bg-green-700
+    text-white
+    py-4
+    rounded-2xl
+    font-black
+    text-lg
+  "
+>
+
+  Hacer pedido sin pagar
+
+</button>
 
             </div>
 
