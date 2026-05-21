@@ -171,6 +171,9 @@ alert('Error creando pedido')
     const data =
       await response.json()
 
+console.log(data)
+console.log(response.status)
+
     if (data.url) {
 
       clearCart()
