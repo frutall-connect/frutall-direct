@@ -3,21 +3,22 @@ import { NextResponse }
 
 import Stripe from 'stripe'
 
-const stripe = new Stripe(
-
-  process.env.STRIPE_SECRET_KEY!,
-
-  {
-    apiVersion: '2026-04-22.dahlia'
-  }
-
-)
-
 export async function POST(
   request: Request
 ) {
 
   try {
+
+    const stripe = new Stripe(
+
+      process.env.STRIPE_SECRET_KEY!,
+
+      {
+        apiVersion:
+          '2026-04-22.dahlia'
+      }
+
+    )
 
     const body =
       await request.json()
@@ -88,13 +89,16 @@ export async function POST(
     console.error(error)
 
     return NextResponse.json(
+
       {
         error:
           'Error creando checkout'
       },
+
       {
         status: 500
       }
+
     )
 
   }
