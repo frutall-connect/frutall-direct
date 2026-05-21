@@ -206,16 +206,26 @@ export default function CarritoPage() {
 
       if (data?.url) {
 
-        clearCart()
+  clearCart()
 
-        window.location.href =
-          data.url
+  window.location.href =
+    data.url
 
-      } else {
+  return
 
-        alert(
-          'Error iniciando pago'
-        )
+}
+
+if (data?.ok) {
+
+  alert('API funcionando')
+
+  return
+
+}
+
+console.log(data)
+
+alert('Error iniciando pago')
 
       }
 
