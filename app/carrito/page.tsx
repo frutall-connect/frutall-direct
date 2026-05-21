@@ -206,42 +206,39 @@ export default function CarritoPage() {
 
       if (data?.url) {
 
-  clearCart()
+        clearCart()
 
-  window.location.href =
-    data.url
+        window.location.href =
+          data.url
 
-  return
+        return
 
-}
+      }
 
-if (data?.ok) {
+      if (data?.ok) {
 
-  alert('API funcionando')
+        alert('API funcionando')
 
-  return
+        return
 
-}
+      }
 
-console.log(data)
+      console.log(data)
 
-alert('Error iniciando pago')
+      alert('Error iniciando pago')
 
-}
+    } catch (error) {
 
-catch (error) {
+      console.error(error)
 
-  console.error(error)
+      alert(
+        'Fetch Stripe roto'
+      )
 
-  alert(
-    'Fetch Stripe roto'
-  )
+    }
 
-}
+  }
 
-}
-
-return (
   return (
 
     <MobileLayout>
