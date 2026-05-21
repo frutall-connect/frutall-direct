@@ -143,28 +143,80 @@ alert('Error creando pedido')
 
     // ===== STRIPE =====
 
-    const response = await fetch(
+    try {
 
-      '/api/create-checkout',
+  const response = await fetch(
 
-      {
+    '/api/create-checkout',
 
-        method: 'POST',
+    {
 
-        headers: {
+      method: 'POST',
 
-          'Content-Type':
-            'application/json'
+      headers: {
 
-        },
+        'Content-Type':
+          'application/json'
 
-        body: JSON.stringify({
+      },
 
-          items
+      body: JSON.stringify({
 
-        })
+        items
 
-      }
+      })
+
+    }
+
+  )
+
+  console.log(response)
+
+  const text =
+    await response.text()
+
+  console.log(text)
+
+  let data = null
+
+  try {
+
+    data = JSON.parse(text)
+
+  } catch {
+
+    console.log(
+      'Respuesta no JSON'
+    )
+
+  }
+
+  console.log(data)
+
+  if (data?.url) {
+
+    clearCart()
+
+    window.location.href =
+      data.url
+
+  } else {
+
+    alert(
+      'Error iniciando pago'
+    )
+
+  }
+
+} catch (error) {
+
+  console.error(error)
+
+  alert(
+    'Fetch Stripe roto'
+  )
+
+}
 
     )
 
