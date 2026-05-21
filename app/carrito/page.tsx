@@ -238,16 +238,10 @@ catch (error) {
   )
 
 }
-      console.error(error)
 
-      alert(
-        'Fetch Stripe roto'
-      )
+}
 
-    }
-
-  }
-
+return (
   return (
 
     <MobileLayout>
