@@ -168,8 +168,22 @@ alert('Error creando pedido')
 
     )
 
-    const data =
-      await response.json()
+    const text =
+  await response.text()
+
+console.log(text)
+
+let data = null
+
+try {
+
+  data = JSON.parse(text)
+
+} catch {
+
+  console.log('No es JSON')
+
+}
 
 console.log(data)
 console.log(response.status)
