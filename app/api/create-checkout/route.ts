@@ -9,6 +9,14 @@ export async function POST(
 
   try {
 
+    console.log(
+      'API CREATE CHECKOUT'
+    )
+
+    console.log(
+      process.env.STRIPE_SECRET_KEY
+    )
+
     const stripe = new Stripe(
 
       process.env.STRIPE_SECRET_KEY!,
@@ -22,6 +30,8 @@ export async function POST(
 
     const body =
       await request.json()
+
+    console.log(body)
 
     const items =
       body.items || []
@@ -78,23 +88,27 @@ export async function POST(
 
       })
 
+    console.log(session)
+
     return NextResponse.json({
 
       url: session.url
 
     })
 
-  } catch (error) {
+  } catch (error: any) {
 
-  console.log(error)
-
-  console.error(error)
+    console.error(error)
 
     return NextResponse.json(
 
       {
+
         error:
+          error?.message ||
+
           'Error creando checkout'
+
       },
 
       {
