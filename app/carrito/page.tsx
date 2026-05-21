@@ -225,7 +225,10 @@ export default function CarritoPage() {
 
       console.log(data)
 
-      alert('Error iniciando pago')
+      alert(
+  data?.error ||
+  'Error iniciando pago'
+)
 
     } catch (error) {
 
