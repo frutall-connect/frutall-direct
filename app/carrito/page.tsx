@@ -38,11 +38,10 @@ export default function CarritoPage() {
 
   async function pagar(
     metodoPago: string
-) 
-
-{
+  ) {
 
     console.log('PAGAR CLICK')
+
     if (items.length === 0) return
 
     // ===== USUARIO =====
@@ -51,6 +50,8 @@ export default function CarritoPage() {
       await supabase.auth.getUser()
 
     const usuario = authData.user
+
+    console.log(usuario)
 
     if (!usuario) {
 
@@ -63,40 +64,36 @@ export default function CarritoPage() {
     // ===== CREAR PEDIDO =====
 
     const {
-
       data: pedidoData,
-
       error: pedidoError
+    } = await supabase
 
-    } =
+      .from('pedidos')
 
-      await supabase
+      .insert([{
 
-        .from('pedidos')
+        usuario_id: usuario.id,
 
-        .insert([{
+        metodo_pago: metodoPago,
 
-          usuario_id: usuario.id,
+        estado: 'pendiente',
 
-          metodo_pago: metodoPago,
+        total
 
-          estado: 'pendiente',
+      }])
 
-          total
+      .select()
 
-        }])
+      .single()
 
-        .select()
-
-        .single()
+    console.log(pedidoData)
+    console.log(pedidoError)
 
     if (pedidoError || !pedidoData) {
 
       console.error(pedidoError)
 
-      console.log(pedidoError)
-      
-alert('Error creando pedido')
+      alert('Error creando pedido')
 
       return
 
@@ -124,7 +121,6 @@ alert('Error creando pedido')
     )
 
     const { error: lineasError } =
-
       await supabase
 
         .from('lineas_pedido')
@@ -141,116 +137,94 @@ alert('Error creando pedido')
 
     }
 
+    // ===== PEDIDO SIN PAGO =====
+
+    if (metodoPago === 'pendiente') {
+
+      clearCart()
+
+      alert('Pedido realizado')
+
+      window.location.href =
+        '/pedidos'
+
+      return
+
+    }
+
     // ===== STRIPE =====
 
     try {
 
-  const response = await fetch(
+      const response = await fetch(
 
-    '/api/create-checkout',
+        '/api/create-checkout',
 
-    {
+        {
 
-      method: 'POST',
+          method: 'POST',
 
-      headers: {
+          headers: {
 
-        'Content-Type':
-          'application/json'
+            'Content-Type':
+              'application/json'
 
-      },
+          },
 
-      body: JSON.stringify({
+          body: JSON.stringify({
 
-        items
+            items
 
-      })
+          })
 
-    }
+        }
 
-  )
+      )
 
-  console.log(response)
+      console.log(response)
 
-  const text =
-    await response.text()
+      const text =
+        await response.text()
 
-  console.log(text)
+      console.log(text)
 
-  let data = null
+      let data = null
 
-  try {
+      try {
 
-    data = JSON.parse(text)
+        data = JSON.parse(text)
 
-  } catch {
+      } catch {
 
-    console.log(
-      'Respuesta no JSON'
-    )
+        console.log(
+          'Respuesta no JSON'
+        )
 
-  }
+      }
 
-  console.log(data)
+      console.log(data)
 
-  if (data?.url) {
+      if (data?.url) {
 
-    clearCart()
+        clearCart()
 
-    window.location.href =
-      data.url
+        window.location.href =
+          data.url
 
-  } else {
+      } else {
 
-    alert(
-      'Error iniciando pago'
-    )
+        alert(
+          'Error iniciando pago'
+        )
 
-  }
+      }
 
-} catch (error) {
+    } catch (error) {
 
-  console.error(error)
-
-  alert(
-    'Fetch Stripe roto'
-  )
-
-}
-
-    )
-
-    const text =
-  await response.text()
-
-console.log(text)
-
-let data = null
-
-try {
-
-  data = JSON.parse(text)
-
-} catch {
-
-  console.log('No es JSON')
-
-}
-
-console.log(data)
-console.log(response.status)
-
-    if (data.url) {
-
-      clearCart()
-
-      window.location.href =
-        data.url
-
-    } else {
+      console.error(error)
 
       alert(
-        'Error iniciando pago'
+        'Fetch Stripe roto'
       )
 
     }
@@ -511,26 +485,27 @@ console.log(response.status)
                 Pagar con tarjeta
 
               </button>
-<button
 
-  onClick={() => pagar('pendiente')}
+              <button
 
-  className="
-    w-full
-    mt-4
-    bg-green-600
-    hover:bg-green-700
-    text-white
-    py-4
-    rounded-2xl
-    font-black
-    text-lg
-  "
->
+                onClick={() => pagar('pendiente')}
 
-  Hacer pedido sin pagar
+                className="
+                  w-full
+                  mt-4
+                  bg-green-600
+                  hover:bg-green-700
+                  text-white
+                  py-4
+                  rounded-2xl
+                  font-black
+                  text-lg
+                "
+              >
 
-</button>
+                Hacer pedido sin pagar
+
+              </button>
 
             </div>
 
