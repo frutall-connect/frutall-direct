@@ -227,10 +227,17 @@ console.log(data)
 
 alert('Error iniciando pago')
 
-      }
+}
 
-    } catch (error) {
+catch (error) {
 
+  console.error(error)
+
+  alert(
+    'Fetch Stripe roto'
+  )
+
+}
       console.error(error)
 
       alert(
