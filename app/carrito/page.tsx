@@ -37,9 +37,10 @@ export default function CarritoPage() {
   )
 
   async function pagar(
-  console.log('PAGAR CLICK')
-  metodoPago: string
-) {
+    metodoPago: string
+) 
+console.log('PAGAR CLICK')
+{
 
     if (items.length === 0) return
 
