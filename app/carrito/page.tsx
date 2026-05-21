@@ -39,9 +39,10 @@ export default function CarritoPage() {
   async function pagar(
     metodoPago: string
 ) 
-console.log('PAGAR CLICK')
+
 {
 
+    console.log('PAGAR CLICK')
     if (items.length === 0) return
 
     // ===== USUARIO =====
