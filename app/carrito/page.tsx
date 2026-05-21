@@ -90,8 +90,10 @@ export default function CarritoPage() {
     if (pedidoError || !pedidoData) {
 
       console.error(pedidoError)
-console.log(pedidoError)
-      alert('Error creando pedido')
+
+      console.log(pedidoError)
+      
+alert('Error creando pedido')
 
       return
 
