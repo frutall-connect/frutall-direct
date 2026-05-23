@@ -3,26 +3,40 @@ import { NextResponse }
 
 import Stripe from 'stripe'
 
+import { createClient }
+  from '@supabase/supabase-js'
+
+const stripe = new Stripe(
+
+  process.env.STRIPE_SECRET_KEY || '',
+
+  {
+    apiVersion:
+      '2026-04-22.dahlia'
+  }
+
+)
+
+const supabase =
+  createClient(
+
+    process.env
+      .NEXT_PUBLIC_SUPABASE_URL || '',
+
+    process.env
+      .SUPABASE_SERVICE_ROLE_KEY || ''
+
+  )
+
 export async function POST(
   request: Request
 ) {
 
   try {
 
-console.log(
-  'STRIPE KEY:',
-  process.env.STRIPE_SECRET_KEY
-)
-
-    const stripe = new Stripe(
-
-      process.env.STRIPE_SECRET_KEY || '',
-
-      {
-        apiVersion:
-          '2026-04-22.dahlia'
-      }
-
+    console.log(
+      'STRIPE KEY:',
+      process.env.STRIPE_SECRET_KEY
     )
 
     const body =
@@ -30,6 +44,9 @@ console.log(
 
     const items =
       body.items || []
+
+    const pedidoId =
+      body.pedidoId
 
     const session =
       await stripe.checkout.sessions.create({
@@ -80,6 +97,25 @@ console.log(
           )}/carrito`
 
       })
+
+    // ===== GUARDAR SESSION ID =====
+
+    if (pedidoId) {
+
+      await supabase
+
+        .from('pedidos')
+
+        .update({
+
+          stripe_session_id:
+            session.id
+
+        })
+
+        .eq('id', pedidoId)
+
+    }
 
     return NextResponse.json({
 

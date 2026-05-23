@@ -173,9 +173,12 @@ export default function CarritoPage() {
 
           body: JSON.stringify({
 
-            items
+  items,
 
-          })
+  pedidoId:
+    pedidoData.id
+
+})
 
         }
 
