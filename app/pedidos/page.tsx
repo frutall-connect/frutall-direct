@@ -26,68 +26,63 @@ export default function PedidosPage() {
 
   async function cargarPedidos() {
 
-  const { data: authData } =
-    await supabase.auth.getUser()
+    const { data: authData } =
+      await supabase.auth.getUser()
 
-  const usuario = authData.user
+    const usuario = authData.user
 
-  if (!usuario) return
+    if (!usuario) return
 
-  // ===== PERFIL =====
+    // ===== PERFIL =====
 
-  const { data: perfil } =
-    await supabase
+    const { data: perfil } =
+      await supabase
 
-      .from('perfiles')
+        .from('perfiles')
 
-      .select('rol')
+        .select('rol')
 
-      .eq('id', usuario.id)
+        .eq('id', usuario.id)
 
-      .single()
+        .single()
 
-  // ===== QUERY BASE =====
+    // ===== QUERY =====
 
-  let query =
-    supabase
+    let query =
+      supabase
 
-      .from('pedidos')
+        .from('pedidos')
 
-      .select(`
-        *,
-        lineas_pedido (*)
-      `)
+        .select(`
+          *,
+          lineas_pedido (*)
+        `)
 
-      .order('created_at', {
-        ascending: false
-      })
+        .order('created_at', {
+          ascending: false
+        })
 
-  // ===== CLIENTE =====
+    // ===== CLIENTE =====
 
-  if (perfil?.rol !== 'admin') {
+    if (perfil?.rol !== 'admin') {
 
-    query = query.eq(
+      query = query.eq(
+        'usuario_id',
+        usuario.id
+      )
 
-      'usuario_id',
+    }
 
-      usuario.id
+    const {
+      data,
+      error
+    } = await query
 
-    )
+    if (!error && data) {
 
-  }
+      setPedidos(data)
 
-  const {
-    data,
-    error
-  } = await query
-
-  if (!error && data) {
-
-    setPedidos(data)
-
-  }
-
-}
+    }
 
   }
 
@@ -259,8 +254,6 @@ export default function PedidosPage() {
               "
             >
 
-              {/* TOP */}
-
               <div className="p-5">
 
                 <div
@@ -279,7 +272,7 @@ export default function PedidosPage() {
                         font-black
                       "
                     >
-                      Pedido
+                      Pedido #{pedido.id}
                     </h2>
 
                     <p
@@ -308,6 +301,7 @@ export default function PedidosPage() {
                       )}
                     `}
                   >
+
                     {iconoEstado(
                       pedido.estado
                     )}
@@ -315,103 +309,6 @@ export default function PedidosPage() {
                     {' '}
 
                     {pedido.estado}
-
-                  </div>
-
-                </div>
-
-                {/* TIMELINE */}
-
-                <div className="mt-6">
-
-                  <div
-                    className="
-                      flex
-                      items-center
-                      justify-between
-                    "
-                  >
-
-                    {[
-                      'pendiente',
-                      'preparando',
-                      'enviado',
-                      'entregado'
-                    ].map(
-                      (
-                        estado,
-                        index
-                      ) => (
-
-                        <div
-                          key={estado}
-                          className="
-                            flex
-                            flex-col
-                            items-center
-                            flex-1
-                          "
-                        >
-
-                          <div
-                            className={`
-                              w-10
-                              h-10
-                              rounded-full
-                              flex
-                              items-center
-                              justify-center
-                              text-white
-                              font-bold
-
-                              ${
-                                pedido.estado === estado
-                                || (
-                                  estado ===
-                                  'pendiente'
-                                )
-                                || (
-                                  estado ===
-                                  'preparando'
-                                  &&
-                                  (
-                                    pedido.estado
-                                    === 'enviado'
-                                    ||
-                                    pedido.estado
-                                    === 'entregado'
-                                  )
-                                )
-                                || (
-                                  estado ===
-                                  'enviado'
-                                  &&
-                                  pedido.estado
-                                  === 'entregado'
-                                )
-
-                                  ? 'bg-green-600'
-
-                                  : 'bg-gray-300'
-                              }
-                            `}
-                          >
-                            {index + 1}
-                          </div>
-
-                          <p
-                            className="
-                              text-xs
-                              mt-2
-                            "
-                          >
-                            {estado}
-                          </p>
-
-                        </div>
-
-                      )
-                    )}
 
                   </div>
 
