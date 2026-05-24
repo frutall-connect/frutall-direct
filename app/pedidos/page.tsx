@@ -26,34 +26,68 @@ export default function PedidosPage() {
 
   async function cargarPedidos() {
 
-    const { data: authData } =
-      await supabase.auth.getUser()
+  const { data: authData } =
+    await supabase.auth.getUser()
 
-    const usuario = authData.user
+  const usuario = authData.user
 
-    if (!usuario) return
+  if (!usuario) return
 
-    const { data, error } =
-      await supabase
+  // ===== PERFIL =====
 
-        .from('pedidos')
+  const { data: perfil } =
+    await supabase
 
-        .select(`
-          *,
-          lineas_pedido (*)
-        `)
+      .from('perfiles')
 
-        .eq('usuario_id', usuario.id)
+      .select('rol')
 
-        .order('created_at', {
-          ascending: false
-        })
+      .eq('id', usuario.id)
 
-    if (!error && data) {
+      .single()
 
-      setPedidos(data)
+  // ===== QUERY BASE =====
 
-    }
+  let query =
+    supabase
+
+      .from('pedidos')
+
+      .select(`
+        *,
+        lineas_pedido (*)
+      `)
+
+      .order('created_at', {
+        ascending: false
+      })
+
+  // ===== CLIENTE =====
+
+  if (perfil?.rol !== 'admin') {
+
+    query = query.eq(
+
+      'usuario_id',
+
+      usuario.id
+
+    )
+
+  }
+
+  const {
+    data,
+    error
+  } = await query
+
+  if (!error && data) {
+
+    setPedidos(data)
+
+  }
+
+}
 
   }
 
