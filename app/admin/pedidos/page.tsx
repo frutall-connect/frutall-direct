@@ -197,6 +197,26 @@ export default function AdminPedidosPage() {
 
               </select>
 
+<a
+
+  href={`/admin/pedidos/${pedido.id}`}
+
+  className="
+    block
+    mt-4
+    bg-black
+    text-white
+    text-center
+    py-3
+    rounded-2xl
+    font-bold
+  "
+>
+
+  Ver detalle
+
+</a>
+
             </div>
 
           </div>
