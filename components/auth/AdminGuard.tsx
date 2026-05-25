@@ -1,13 +1,23 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState }
+  from 'react'
 
-import { supabase } from '@/lib/supabaseClient'
+import { supabase }
+  from '@/lib/supabaseClient'
 
 export default function AdminGuard({
-  children
+
+  children,
+
+  allow = ['admin']
+
 }: {
+
   children: React.ReactNode
+
+  allow?: string[]
+
 }) {
 
   const [loading, setLoading] =
@@ -29,19 +39,27 @@ export default function AdminGuard({
       const { data: authData } =
         await supabase.auth.getUser()
 
-      const usuario = authData.user
+      const usuario =
+        authData.user
 
-      console.log('USUARIO:', usuario)
+      console.log(
+        'USUARIO:',
+        usuario
+      )
 
       if (!usuario) {
 
-        window.location.href = '/login'
+        window.location.href =
+          '/login'
 
         return
 
       }
 
-      const { data, error } = await supabase
+      const {
+        data,
+        error
+      } = await supabase
 
         .from('perfiles')
 
@@ -51,19 +69,38 @@ export default function AdminGuard({
 
         .maybeSingle()
 
-      console.log('PERFIL:', data)
+      console.log(
+        'PERFIL:',
+        data
+      )
 
-      console.log('ERROR:', error)
+      console.log(
+        'ERROR:',
+        error
+      )
 
-      if (data?.rol === 'admin') {
+      if (
+
+        data?.rol
+
+        &&
+
+        allow.includes(
+          data.rol
+        )
+
+      ) {
 
         setPermitido(true)
 
       } else {
 
-        alert('No eres admin')
+        alert(
+          'No tienes permisos'
+        )
 
-        window.location.href = '/'
+        window.location.href =
+          '/'
 
       }
 
@@ -71,7 +108,8 @@ export default function AdminGuard({
 
       console.error(error)
 
-      window.location.href = '/'
+      window.location.href =
+        '/'
 
     } finally {
 
@@ -93,14 +131,17 @@ export default function AdminGuard({
           justify-center
         "
       >
+
         Cargando...
+
       </div>
 
     )
 
   }
 
-  if (!permitido) return null
+  if (!permitido)
+    return null
 
   return children
 
