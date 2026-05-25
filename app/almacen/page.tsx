@@ -37,11 +37,18 @@ export default function AlmacenPage() {
   }
 
   async function cambiarEstado(
-    id: string,
-    estado: string
-  ) {
+  id: string,
+  estado: string
+) {
 
-    const { error } = await supabase
+  console.log(
+    'CLICK:',
+    id,
+    estado
+  )
+
+  const { data, error } =
+    await supabase
 
       .from('pedidos')
 
@@ -51,9 +58,31 @@ export default function AlmacenPage() {
 
       .eq('id', id)
 
-    if (!error) {
-      cargarPedidos()
-    }
+      .select()
+
+  console.log(
+    'DATA:',
+    data
+  )
+
+  console.log(
+    'ERROR:',
+    error
+  )
+
+  if (error) {
+
+    alert(
+      error.message
+    )
+
+    return
+
+  }
+
+  cargarPedidos()
+
+}
 
   }
 
@@ -84,7 +113,7 @@ export default function AlmacenPage() {
 
     <MobileLayout>
 
-      <div className="min-h-screen bg-[#f5f3eb] pb-32">
+      <div className="min-h-screen bg-[#f5f3eb] pb-48">
 
         {/* HEADER */}
 
