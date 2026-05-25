@@ -430,4 +430,6 @@ export default function AlmacenPage() {
 <BottomNav />
     </div>
 
-  )
+</>
+
+)
