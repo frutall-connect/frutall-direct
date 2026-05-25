@@ -127,6 +127,8 @@ export default function AlmacenPage() {
 
   return (
 
+<>
+
 <Header />
 
     <div
