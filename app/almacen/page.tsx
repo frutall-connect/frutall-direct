@@ -76,8 +76,6 @@ export default function AlmacenPage() {
       error.message
     )
 
-}
-
     return
 
   }
@@ -85,8 +83,6 @@ export default function AlmacenPage() {
   cargarPedidos()
 
 }
-
-  }
 
   function colorEstado(estado: string) {
 
