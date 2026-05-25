@@ -1,5 +1,11 @@
 'use client'
 
+import Header
+  from '@/components/layout/Header'
+
+import BottomNav
+  from '@/components/layout/BottomNav'
+
 import { useEffect, useState }
   from 'react'
 
@@ -120,6 +126,8 @@ export default function AlmacenPage() {
   }
 
   return (
+
+<Header />
 
     <div
       className="
@@ -417,7 +425,7 @@ export default function AlmacenPage() {
         ))}
 
       </div>
-
+<BottomNav />
     </div>
 
   )
