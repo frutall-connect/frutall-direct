@@ -427,7 +427,12 @@ export default function AlmacenPage() {
         ))}
 
       </div>
-      <BottomNav />
+           <BottomNav />
+
     </div>
-    </>
+
+  </>
+
   )
+
+}
