@@ -122,9 +122,8 @@ export default function AlmacenPage() {
             pt-5
             pb-4
             border-b
-            sticky
-            top-0
-            z-40
+            relative
+            z-10
           "
         >
 
@@ -321,6 +320,8 @@ export default function AlmacenPage() {
                     )
                   }
                   className="
+	            relative
+                    z-50
                     bg-blue-600
                     text-white
                     rounded-2xl
@@ -339,6 +340,8 @@ export default function AlmacenPage() {
                     )
                   }
                   className="
+	            relative
+                    z-50
                     bg-purple-600
                     text-white
                     rounded-2xl
@@ -357,6 +360,8 @@ export default function AlmacenPage() {
                     )
                   }
                   className="
+	            relative
+                    z-50
                     col-span-2
                     bg-green-700
                     text-white
