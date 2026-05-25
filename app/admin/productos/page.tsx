@@ -229,7 +229,7 @@ export default function AdminProductosPage() {
 
   return (
 
-  <AdminGuard>
+  <AdminGuard allow={['admin']}>
 
     <MobileLayout>
 

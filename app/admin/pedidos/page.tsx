@@ -6,6 +6,9 @@ import { useEffect, useState }
 import { supabase }
   from '@/lib/supabaseClient'
 
+import AdminGuard
+  from '@/components/auth/AdminGuard'
+
 export default function AdminPedidosPage() {
 
   const [pedidos, setPedidos] =
@@ -60,172 +63,181 @@ export default function AdminPedidosPage() {
 
   return (
 
-    <main
-      className="
-        min-h-screen
-        bg-[#f5f3eb]
-        p-6
-      "
+    <AdminGuard
+      allow={[
+        'admin',
+        'almacen'
+      ]}
     >
 
-      <h1
+      <main
         className="
-          text-4xl
-          font-black
-          mb-8
+          min-h-screen
+          bg-[#f5f3eb]
+          p-6
         "
       >
-        Admin Pedidos
-      </h1>
 
-      <div className="space-y-4">
+        <h1
+          className="
+            text-4xl
+            font-black
+            mb-8
+          "
+        >
+          Admin Pedidos
+        </h1>
 
-        {pedidos.map((pedido) => (
+        <div className="space-y-4">
 
-          <div
-
-            key={pedido.id}
-
-            className="
-              bg-white
-              rounded-3xl
-              shadow-lg
-              p-6
-            "
-          >
+          {pedidos.map((pedido) => (
 
             <div
+
+              key={pedido.id}
+
               className="
-                flex
-                justify-between
-                items-start
+                bg-white
+                rounded-3xl
+                shadow-lg
+                p-6
               "
             >
 
-              <div>
-
-                <h2
-                  className="
-                    text-2xl
-                    font-black
-                  "
-                >
-                  Pedido #{pedido.id}
-                </h2>
-
-                <p className="text-gray-500">
-                  Usuario:
-                  {' '}
-                  {pedido.usuario_id}
-                </p>
-
-                <p className="text-gray-500">
-                  Método:
-                  {' '}
-                  {pedido.metodo_pago}
-                </p>
-
-                <p className="text-gray-500">
-                  Pagado:
-                  {' '}
-                  {pedido.pagado
-                    ? 'Sí'
-                    : 'No'}
-                </p>
-
-              </div>
-
-              <div className="text-right">
-
-                <p
-                  className="
-                    text-3xl
-                    font-black
-                    text-green-700
-                  "
-                >
-                  {pedido.total} €
-                </p>
-
-              </div>
-
-            </div>
-
-            <div className="mt-6">
-
-              <select
-
-                value={pedido.estado}
-
-                onChange={(e) =>
-                  cambiarEstado(
-
-                    pedido.id,
-
-                    e.target.value
-
-                  )
-                }
-
+              <div
                 className="
-                  w-full
-                  p-4
-                  rounded-2xl
-                  bg-gray-100
+                  flex
+                  justify-between
+                  items-start
                 "
               >
 
-                <option value="pendiente">
-                  Pendiente
-                </option>
+                <div>
 
-                <option value="pagado">
-                  Pagado
-                </option>
+                  <h2
+                    className="
+                      text-2xl
+                      font-black
+                    "
+                  >
+                    Pedido #{pedido.id}
+                  </h2>
 
-                <option value="preparando">
-                  Preparando
-                </option>
+                  <p className="text-gray-500">
+                    Usuario:
+                    {' '}
+                    {pedido.usuario_id}
+                  </p>
 
-                <option value="enviado">
-                  Enviado
-                </option>
+                  <p className="text-gray-500">
+                    Método:
+                    {' '}
+                    {pedido.metodo_pago}
+                  </p>
 
-                <option value="entregado">
-                  Entregado
-                </option>
+                  <p className="text-gray-500">
+                    Pagado:
+                    {' '}
+                    {pedido.pagado
+                      ? 'Sí'
+                      : 'No'}
+                  </p>
 
-              </select>
+                </div>
 
-<a
+                <div className="text-right">
 
-  href={`/admin/pedidos/${pedido.id}`}
+                  <p
+                    className="
+                      text-3xl
+                      font-black
+                      text-green-700
+                    "
+                  >
+                    {pedido.total} €
+                  </p>
 
-  className="
-    block
-    mt-4
-    bg-black
-    text-white
-    text-center
-    py-3
-    rounded-2xl
-    font-bold
-  "
->
+                </div>
 
-  Ver detalle
+              </div>
 
-</a>
+              <div className="mt-6">
+
+                <select
+
+                  value={pedido.estado}
+
+                  onChange={(e) =>
+                    cambiarEstado(
+
+                      pedido.id,
+
+                      e.target.value
+
+                    )
+                  }
+
+                  className="
+                    w-full
+                    p-4
+                    rounded-2xl
+                    bg-gray-100
+                  "
+                >
+
+                  <option value="pendiente">
+                    Pendiente
+                  </option>
+
+                  <option value="pagado">
+                    Pagado
+                  </option>
+
+                  <option value="preparando">
+                    Preparando
+                  </option>
+
+                  <option value="enviado">
+                    Enviado
+                  </option>
+
+                  <option value="entregado">
+                    Entregado
+                  </option>
+
+                </select>
+
+                <a
+
+                  href={`/admin/pedidos/${pedido.id}`}
+
+                  className="
+                    block
+                    mt-4
+                    bg-black
+                    text-white
+                    text-center
+                    py-3
+                    rounded-2xl
+                    font-bold
+                  "
+                >
+
+                  Ver detalle
+
+                </a>
+
+              </div>
 
             </div>
 
-          </div>
+          ))}
 
-        ))}
+        </div>
 
-      </div>
+      </main>
 
-    </main>
+    </AdminGuard>
 
   )
 
