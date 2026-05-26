@@ -389,13 +389,16 @@ export async function GET(
     // ===== PDF FINAL =====
 
     const pdfBytes =
-      await pdfDoc.save()
+  await pdfDoc.save()
 
-    return new NextResponse(
+const pdfBuffer =
+  Buffer.from(pdfBytes)
 
-      pdfBytes,
+return new NextResponse(
 
-      {
+  pdfBuffer,
+
+  {
 
         headers: {
 
