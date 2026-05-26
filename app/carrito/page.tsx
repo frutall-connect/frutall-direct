@@ -137,7 +137,35 @@ export default function CarritoPage() {
 
     }
 
-await sendWhatsApp({
+await fetch(
+
+  '/api/send-whatsapp',
+
+  {
+
+    method: 'POST',
+
+    headers: {
+
+      'Content-Type':
+        'application/json'
+
+    },
+
+    body: JSON.stringify({
+
+      pedidoId:
+        pedidoData.id,
+
+      total,
+
+      metodoPago
+
+    })
+
+  }
+
+)
 
   pedidoId:
     pedidoData.id,
