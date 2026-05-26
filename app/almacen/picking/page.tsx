@@ -150,15 +150,16 @@ Record<
 
         .sort(
 
-          (
-            a,
-            b
-          ) =>
+  (
+    a,
+    b
+  ) =>
 
-            b.cantidad
-            - a.cantidad
+    a.ubicacion.localeCompare(
+      b.ubicacion
+    )
 
-        )
+)
 
     setProductos(resultado)
 
