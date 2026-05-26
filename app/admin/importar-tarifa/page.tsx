@@ -81,16 +81,19 @@ const { data: aliases } =
       lineas[i - 1] || ''
 
     let match =
-  variedades?.find((v) =>
+  variedades?.find((v) => {
 
-    posibleProducto
-      .toLowerCase()
+    const palabras =
 
-      .includes(
-        v.nombre.toLowerCase()
-      )
+      posibleProducto
+        .toLowerCase()
+        .split(' ')
 
-  )
+    return palabras.includes(
+      v.nombre.toLowerCase()
+    )
+
+  })
 
 if (!match) {
 
@@ -101,9 +104,10 @@ if (!match) {
       posibleProducto
         .toLowerCase()
 
-        .includes(
-          a.alias.toLowerCase()
-        )
+        .split(' ')
+.includes(
+  a.alias.toLowerCase()
+)
 
     )
 
