@@ -26,8 +26,6 @@ export default function PickingPage() {
 
   }, [])
 
-  async function cargarPicking() {
-
 function togglePreparado(
   nombre: string
 ) {
@@ -42,6 +40,8 @@ function togglePreparado(
   })
 
 }
+
+  async function cargarPicking() {
 
     const { data, error } =
       await supabase
