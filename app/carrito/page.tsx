@@ -167,7 +167,7 @@ await fetch(
 
 )
 
-})
+}
 
     // ===== PEDIDO SIN PAGO =====
 
