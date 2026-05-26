@@ -46,6 +46,30 @@ export default function AdminVariedadesPage() {
 
   }
 
+function generarPrompt(
+  variedad: any
+) {
+
+  return `
+
+Ultra realistic studio product photo of ${variedad.nombre} ${variedad.productos_base?.nombre},
+
+white seamless background,
+
+premium grocery ecommerce style,
+
+soft shadow,
+
+centered composition,
+
+high detail,
+
+fresh organic appearance
+
+  `
+
+}
+
   return (
 
     <main
@@ -137,15 +161,32 @@ export default function AdminVariedadesPage() {
               </div>
 
               <button
-                className="
-                  bg-black
-                  text-white
-                  px-5
-                  py-3
-                  rounded-2xl
-                  font-bold
-                "
-              >
+
+  onClick={() => {
+
+    navigator.clipboard.writeText(
+
+      generarPrompt(
+        variedad
+      )
+
+    )
+
+    alert(
+      'Prompt copiado'
+    )
+
+  }}
+
+  className="
+    bg-black
+    text-white
+    px-5
+    py-3
+    rounded-2xl
+    font-bold
+  "
+>
 
                 Generar IA
 
