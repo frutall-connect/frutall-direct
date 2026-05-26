@@ -12,10 +12,6 @@ import { useCartStore }
 import { supabase }
   from '@/lib/supabaseClient'
 
-import {
-  sendWhatsApp
-} from '@/lib/sendWhatsApp'
-
 export default function CarritoPage() {
 
   const items = useCartStore(
