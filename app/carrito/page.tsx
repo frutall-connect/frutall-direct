@@ -12,6 +12,10 @@ import { useCartStore }
 import { supabase }
   from '@/lib/supabaseClient'
 
+import {
+  sendWhatsApp
+} from '@/lib/sendWhatsApp'
+
 export default function CarritoPage() {
 
   const items = useCartStore(
@@ -136,6 +140,17 @@ export default function CarritoPage() {
       return
 
     }
+
+await sendWhatsApp({
+
+  pedidoId:
+    pedidoData.id,
+
+  total,
+
+  metodoPago
+
+})
 
     // ===== PEDIDO SIN PAGO =====
 
