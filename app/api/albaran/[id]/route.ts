@@ -28,16 +28,16 @@ export async function GET(
 
   request: Request,
 
-  {
-    params
-  }: {
-    params: {
+  context: {
+    params: Promise<{
       id: string
-    }
+    }>
   }
 
 ) {
 
+  const params =
+    await context.params
   try {
 
     const pedidoId =
