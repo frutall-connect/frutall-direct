@@ -137,25 +137,29 @@ if (!match) {
 
       .trim()
 
-  const aliasEncontrado =
+  const palabras =
 
-    aliases?.find((a) => {
+  textoNormalizado.split(' ')
 
-      const aliasNormalizado =
+const aliasEncontrado =
 
-        a.alias
+  aliases?.find((a) => {
 
-          .toLowerCase()
+    const aliasNormalizado =
 
-          .replace(/\s+/g, ' ')
+      a.alias
 
-          .trim()
+        .toLowerCase()
 
-      return textoNormalizado.includes(
-        aliasNormalizado
-      )
+        .replace(/\s+/g, ' ')
 
-    })
+        .trim()
+
+    return palabras.includes(
+      aliasNormalizado
+    )
+
+  })
 
   if (aliasEncontrado) {
 
