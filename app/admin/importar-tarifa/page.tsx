@@ -78,7 +78,12 @@ const { data: aliases } =
 
     const posibleProducto =
 
-      lineas[i - 1] || ''
+  linea
+    .replace(
+      /(\d+[.,]\d{1,2})/,
+      ''
+    )
+    .trim()
 
     let match =
   variedades?.find((v) => {
