@@ -45,6 +45,18 @@ export default function ImportarTarifaPage() {
 
       .select('*')
 
+const { data: aliases } =
+  await supabase
+
+    .from(
+      'aliases_producto'
+    )
+
+    .select(`
+      alias,
+      variedad_id
+    `)
+
   for (let i = 0; i < lineas.length; i++) {
 
     const linea =
@@ -68,17 +80,48 @@ export default function ImportarTarifaPage() {
 
       lineas[i - 1] || ''
 
-    const match =
-      variedades?.find((v) =>
+    let match =
+  variedades?.find((v) =>
 
-        posibleProducto
-          .toLowerCase()
+    posibleProducto
+      .toLowerCase()
 
-          .includes(
-            v.nombre.toLowerCase()
-          )
+      .includes(
+        v.nombre.toLowerCase()
+      )
+
+  )
+
+if (!match) {
+
+  const aliasEncontrado =
+
+    aliases?.find((a) =>
+
+      posibleProducto
+        .toLowerCase()
+
+        .includes(
+          a.alias.toLowerCase()
+        )
+
+    )
+
+  if (aliasEncontrado) {
+
+    match =
+      variedades?.find(
+
+        (v) =>
+
+          v.id ===
+          aliasEncontrado.variedad_id
 
       )
+
+  }
+
+}
 
     encontrados.push({
 

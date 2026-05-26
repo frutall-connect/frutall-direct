@@ -26,25 +26,29 @@ export default function AdminVariedadesPage() {
 
   async function cargar() {
 
-    const { data } =
-      await supabase
+  const { data, error } =
+    await supabase
 
-        .from(
-          'variedades_producto'
+      .from(
+        'variedades_producto'
+      )
+
+      .select(`
+        *,
+        productos_base (
+          nombre
         )
+      `)
 
-        .select(`
-          *,
-          productos_base (
-            nombre
-          )
-        `)
+      .order('nombre')
 
-        .order('nombre')
+  console.log(data)
 
-    setVariedades(data || [])
+  console.log(error)
 
-  }
+  setVariedades(data || [])
+
+}
 
 function generarPrompt(
   variedad: any
