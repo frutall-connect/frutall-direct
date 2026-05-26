@@ -15,6 +15,12 @@ export default function AdminProductosPage() {
 
   const [categorias, setCategorias] = useState<any[]>([])
 
+  const [ubicaciones, setUbicaciones] =
+  useState<any[]>([])
+
+const [ubicacionId, setUbicacionId] =
+  useState('')
+
   const [subiendo, setSubiendo] = useState(false)
 
   const [nuevoProducto, setNuevoProducto] =
@@ -39,6 +45,8 @@ export default function AdminProductosPage() {
     cargarProductos()
 
     cargarCategorias()
+
+    cargarUbicaciones()
 
   }, [])
 
@@ -102,6 +110,8 @@ export default function AdminProductosPage() {
 
         nombre: nuevoProducto.nombre,
 
+        ubicacion_id: ubicacionId || null,
+
         precio: Number(nuevoProducto.precio),
 
         stock: Number(nuevoProducto.stock),
@@ -139,6 +149,21 @@ export default function AdminProductosPage() {
     }
 
   }
+
+async function cargarUbicaciones() {
+
+  const { data } =
+    await supabase
+
+      .from('ubicaciones')
+
+      .select('*')
+
+      .order('codigo')
+
+  setUbicaciones(data || [])
+
+}
 
   async function actualizarProducto(
     id: string,
@@ -433,6 +458,49 @@ export default function AdminProductosPage() {
                 ))}
 
               </select>
+
+<select
+
+  value={ubicacionId}
+
+  onChange={(e) =>
+
+    setUbicacionId(
+      e.target.value
+    )
+
+  }
+
+  className="
+    w-full
+    p-4
+    rounded-2xl
+    bg-gray-100
+  "
+>
+
+  <option value="">
+    Seleccionar ubicación
+  </option>
+
+  {ubicaciones.map(
+    (ubicacion) => (
+
+      <option
+        key={ubicacion.id}
+        value={ubicacion.id}
+      >
+
+        {ubicacion.codigo}
+        {' · '}
+        {ubicacion.tipo}
+
+      </option>
+
+    )
+  )}
+
+</select>
 
               <button
                 onClick={crearProducto}
