@@ -166,9 +166,6 @@ await fetch(
   }
 
 )
-
-}
-
     // ===== PEDIDO SIN PAGO =====
 
     if (metodoPago === 'pendiente') {
