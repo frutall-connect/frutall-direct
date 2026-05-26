@@ -22,58 +22,83 @@ export default function ImportarTarifaPage() {
 
   async function procesar() {
 
-    const lineas =
-      texto.split('\n')
+  const lineas =
 
-    const encontrados: any[] = []
+    texto
 
-    for (const linea of lineas) {
+      .split('\n')
 
-      const limpia =
-        linea.toLowerCase()
+      .map(
+        (l) => l.trim()
+      )
 
-      const { data } =
-        await supabase
+      .filter(Boolean)
 
-          .from(
-            'variedades_producto'
-          )
+  const encontrados: any[] = []
 
-          .select('*')
+  const { data: variedades } =
+    await supabase
 
-      const match =
-        data?.find((v) =>
+      .from(
+        'variedades_producto'
+      )
 
-          limpia.includes(
+      .select('*')
+
+  for (let i = 0; i < lineas.length; i++) {
+
+    const linea =
+      lineas[i]
+
+    const limpia =
+      linea.toLowerCase()
+
+    const precioMatch =
+
+      linea.match(
+        /(\d+[.,]\d{1,2})/
+      )
+
+    if (!precioMatch) continue
+
+    const precio =
+      precioMatch[1]
+
+    const posibleProducto =
+
+      lineas[i - 1] || ''
+
+    const match =
+      variedades?.find((v) =>
+
+        posibleProducto
+          .toLowerCase()
+
+          .includes(
             v.nombre.toLowerCase()
           )
 
-        )
+      )
 
-      const precioMatch =
-        linea.match(
-          /(\d+[.,]\d{1,2})/
-        )
+    encontrados.push({
 
-      encontrados.push({
+      producto:
+        posibleProducto,
 
-        linea,
+      variedad:
+        match?.nombre || null,
 
-        variedad:
-          match?.nombre || null,
+      precio
 
-        precio:
-          precioMatch?.[1] || null
-
-      })
-
-    }
-
-    setResultado(
-      encontrados
-    )
+    })
 
   }
+
+  setResultado(
+    encontrados
+  )
+
+}
 
   return (
 
