@@ -104,17 +104,16 @@ if (!match) {
 
   const aliasEncontrado =
 
-    aliases?.find((a) =>
+  aliases?.find((a) =>
 
-      posibleProducto
-        .toLowerCase()
+    posibleProducto
+      .toLowerCase()
 
-        .split(' ')
-.includes(
-  a.alias.toLowerCase()
-)
+      .includes(
+        a.alias.toLowerCase()
+      )
 
-    )
+  )
 
   if (aliasEncontrado) {
 
