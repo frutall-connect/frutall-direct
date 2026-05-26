@@ -160,14 +160,17 @@ if (!match) {
   if (aliasEncontrado) {
 
     match =
-      variedadesOrdenadas?.find(
+  variedadesOrdenadas?.find(
+console.log('MATCH FINAL')
+console.log(match)
+    (v) =>
 
-        (v) =>
+      String(v.id).trim() ===
+      String(
+        aliasEncontrado.variedad_id
+      ).trim()
 
-          v.id ===
-          aliasEncontrado.variedad_id
-
-      )
+  )
 
   }
 
