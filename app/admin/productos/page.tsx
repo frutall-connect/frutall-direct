@@ -15,6 +15,24 @@ export default function AdminProductosPage() {
 
   const [categorias, setCategorias] = useState<any[]>([])
 
+  const [catalogoCategorias, setCatalogoCategorias] =
+  useState<any[]>([])
+
+const [productosBase, setProductosBase] =
+  useState<any[]>([])
+
+const [variedades, setVariedades] =
+  useState<any[]>([])
+
+const [categoriaCatalogoId, setCategoriaCatalogoId] =
+  useState('')
+
+const [productoBaseId, setProductoBaseId] =
+  useState('')
+
+const [variedadId, setVariedadId] =
+  useState('')
+
   const [ubicaciones, setUbicaciones] =
   useState<any[]>([])
 
@@ -47,6 +65,8 @@ const [ubicacionId, setUbicacionId] =
     cargarCategorias()
 
     cargarUbicaciones()
+
+    cargarCatalogoCategorias()
 
   }, [])
 
@@ -87,6 +107,67 @@ const [ubicacionId, setUbicacionId] =
 
   }
 
+async function cargarCatalogoCategorias() {
+
+  const { data } =
+    await supabase
+
+      .from('categorias_producto')
+
+      .select('*')
+
+      .order('nombre')
+
+  setCatalogoCategorias(data || [])
+
+}
+
+async function cargarProductosBase(
+  categoriaId: string
+) {
+
+  const { data } =
+    await supabase
+
+      .from('productos_base')
+
+      .select('*')
+
+      .eq(
+        'categoria_id',
+        categoriaId
+      )
+
+      .order('nombre')
+
+  setProductosBase(data || [])
+
+}
+
+async function cargarVariedades(
+  productoBaseId: string
+) {
+
+  const { data } =
+    await supabase
+
+      .from('variedades_producto')
+
+      .select('*')
+
+      .eq(
+        'producto_base_id',
+        productoBaseId
+      )
+
+      .order('nombre')
+
+  setVariedades(data || [])
+
+}
+
+
+
   async function crearProducto() {
 
     if (
@@ -108,7 +189,13 @@ const [ubicacionId, setUbicacionId] =
 
       .insert([{
 
-        nombre: nuevoProducto.nombre,
+        nombre:
+
+  variedades.find(
+
+    (v) => v.id === variedadId
+
+  )?.nombre || '',
 
         ubicacion_id: ubicacionId || null,
 
@@ -322,27 +409,133 @@ async function cargarUbicaciones() {
 
             <div className="space-y-3">
 
-              <input
-                type="text"
-                placeholder="Nombre"
-                value={nuevoProducto.nombre}
-                onChange={(e) =>
-                  setNuevoProducto({
+              <select
 
-                    ...nuevoProducto,
+  value={categoriaCatalogoId}
 
-                    nombre: e.target.value
+  onChange={(e) => {
 
-                  })
-                }
-                className="
-                  w-full
-                  bg-[#f5f3eb]
-                  rounded-2xl
-                  px-4
-                  py-3
-                "
-              />
+    setCategoriaCatalogoId(
+      e.target.value
+    )
+
+    cargarProductosBase(
+      e.target.value
+    )
+
+  }}
+
+  className="
+    w-full
+    bg-[#f5f3eb]
+    rounded-2xl
+    px-4
+    py-3
+  "
+>
+
+  <option value="">
+    Categoría catálogo
+  </option>
+
+  {catalogoCategorias.map((cat) => (
+
+    <option
+      key={cat.id}
+      value={cat.id}
+    >
+
+      {cat.nombre}
+
+    </option>
+
+  ))}
+
+</select>
+
+<select
+
+  value={productoBaseId}
+
+  onChange={(e) => {
+
+    setProductoBaseId(
+      e.target.value
+    )
+
+    cargarVariedades(
+      e.target.value
+    )
+
+  }}
+
+  className="
+    w-full
+    bg-[#f5f3eb]
+    rounded-2xl
+    px-4
+    py-3
+  "
+>
+
+  <option value="">
+    Producto base
+  </option>
+
+  {productosBase.map((prod) => (
+
+    <option
+      key={prod.id}
+      value={prod.id}
+    >
+
+      {prod.nombre}
+
+    </option>
+
+  ))}
+
+</select>
+
+<select
+
+  value={variedadId}
+
+  onChange={(e) =>
+
+    setVariedadId(
+      e.target.value
+    )
+
+  }
+
+  className="
+    w-full
+    bg-[#f5f3eb]
+    rounded-2xl
+    px-4
+    py-3
+  "
+>
+
+  <option value="">
+    Variedad
+  </option>
+
+  {variedades.map((v) => (
+
+    <option
+      key={v.id}
+      value={v.id}
+    >
+
+      {v.nombre}
+
+    </option>
+
+  ))}
+
+</select>
 
               <input
                 type="number"
