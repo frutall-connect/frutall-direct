@@ -594,34 +594,34 @@ const [previewImagen, setPreviewImagen] =
 
                 <select
 
-                  value={variedadId}
+  value={variedadId}
 
-                  onChange={(e) => {
+  onChange={(e) => {
 
-  setVariedadId(
-    e.target.value
-  )
-
-  const variedad =
-
-    variedades.find(
-      (v) => v.id === e.target.value
+    setVariedadId(
+      e.target.value
     )
 
-  setPreviewImagen(
-    variedad?.imagen_url || ''
-  )
+    const variedad =
 
-}}
+      variedades.find(
+        (v) => v.id === e.target.value
+      )
 
-                  className="
-                    w-full
-                    bg-[#f5f3eb]
-                    rounded-2xl
-                    px-4
-                    py-3
-                  "
-                >
+    setPreviewImagen(
+      variedad?.imagen_url || ''
+    )
+
+  }}
+
+  className="
+    w-full
+    bg-[#f5f3eb]
+    rounded-2xl
+    px-4
+    py-3
+  "
+>
 
                   <option value="">
                     Variedad
@@ -643,6 +643,36 @@ const [previewImagen, setPreviewImagen] =
                   )}
 
                 </select>
+
+{previewImagen && (
+
+  <div
+    className="
+      w-full
+      flex
+      justify-center
+      mt-3
+    "
+  >
+
+    <img
+
+      src={previewImagen}
+
+      className="
+        w-48
+        h-48
+        object-cover
+        rounded-3xl
+        shadow-lg
+        bg-white
+      "
+
+    />
+
+  </div>
+
+)}
 
                 <input
                   type="number"
