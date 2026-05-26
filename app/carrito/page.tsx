@@ -167,15 +167,6 @@ await fetch(
 
 )
 
-  pedidoId:
-    pedidoData.id,
-
-  total,
-
-  metodoPago
-
-})
-
     // ===== PEDIDO SIN PAGO =====
 
     if (metodoPago === 'pendiente') {
