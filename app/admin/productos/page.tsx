@@ -614,8 +614,6 @@ const [previewImagen, setPreviewImagen] =
 
 }}
 
-                  }
-
                   className="
                     w-full
                     bg-[#f5f3eb]
