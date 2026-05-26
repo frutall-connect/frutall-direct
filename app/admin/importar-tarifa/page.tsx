@@ -88,14 +88,28 @@ const { data: aliases } =
     let match =
   variedades?.find((v) => {
 
-    const palabras =
+    const textoNormalizado =
 
       posibleProducto
-        .toLowerCase()
-        .split(' ')
 
-    return palabras.includes(
-      v.nombre.toLowerCase()
+        .toLowerCase()
+
+        .replace(/\s+/g, ' ')
+
+        .trim()
+
+    const variedadNormalizada =
+
+      v.nombre
+
+        .toLowerCase()
+
+        .replace(/\s+/g, ' ')
+
+        .trim()
+
+    return textoNormalizado.includes(
+      variedadNormalizada
     )
 
   })
@@ -104,23 +118,33 @@ if (!match) {
 
   const textoNormalizado =
 
-  posibleProducto
-    .toLowerCase()
-    .trim()
+    posibleProducto
 
-const aliasEncontrado =
+      .toLowerCase()
 
-  aliases?.find((a) =>
+      .replace(/\s+/g, ' ')
 
-    textoNormalizado.includes(
+      .trim()
 
-      a.alias
-        .toLowerCase()
-        .trim()
+  const aliasEncontrado =
 
-    )
+    aliases?.find((a) => {
 
-  )
+      const aliasNormalizado =
+
+        a.alias
+
+          .toLowerCase()
+
+          .replace(/\s+/g, ' ')
+
+          .trim()
+
+      return textoNormalizado.includes(
+        aliasNormalizado
+      )
+
+    })
 
   if (aliasEncontrado) {
 
