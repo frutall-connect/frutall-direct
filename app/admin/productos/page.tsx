@@ -26,6 +26,9 @@ export default function AdminProductosPage() {
   const [variedades, setVariedades] =
     useState<any[]>([])
 
+const [previewImagen, setPreviewImagen] =
+  useState('')
+
   const [categoriaCatalogoId, setCategoriaCatalogoId] =
     useState('')
 
@@ -593,11 +596,23 @@ export default function AdminProductosPage() {
 
                   value={variedadId}
 
-                  onChange={(e) =>
+                  onChange={(e) => {
 
-                    setVariedadId(
-                      e.target.value
-                    )
+  setVariedadId(
+    e.target.value
+  )
+
+  const variedad =
+
+    variedades.find(
+      (v) => v.id === e.target.value
+    )
+
+  setPreviewImagen(
+    variedad?.imagen_url || ''
+  )
+
+}}
 
                   }
 
