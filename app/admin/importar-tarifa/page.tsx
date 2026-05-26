@@ -45,6 +45,17 @@ export default function ImportarTarifaPage() {
 
       .select('*')
 
+const variedadesOrdenadas =
+
+  variedades?.sort(
+
+    (a, b) =>
+
+      b.nombre.length -
+      a.nombre.length
+
+  )
+
 const { data: aliases } =
   await supabase
 
@@ -149,7 +160,7 @@ if (!match) {
   if (aliasEncontrado) {
 
     match =
-      variedades?.find(
+      variedadesOrdenadas?.find(
 
         (v) =>
 
