@@ -17,6 +17,9 @@ export default function PickingPage() {
   const [productos, setProductos] =
     useState<any[]>([])
 
+  const [preparados, setPreparados] =
+  useState<Record<string, boolean>>({})
+
   useEffect(() => {
 
     cargarPicking()
@@ -24,6 +27,21 @@ export default function PickingPage() {
   }, [])
 
   async function cargarPicking() {
+
+function togglePreparado(
+  nombre: string
+) {
+
+  setPreparados({
+
+    ...preparados,
+
+    [nombre]:
+      !preparados[nombre]
+
+  })
+
+}
 
     const { data, error } =
       await supabase
@@ -231,37 +249,85 @@ Record<
                 "
               >
 
-                <div>
-
-                  <h2
-                    className="
-                      text-2xl
-                      font-black
-                    "
-                  >
-                    {
-                      producto.nombre
-                    }
-                  </h2>
-
-<p
+               <div
   className="
-    text-gray-500
-    mt-2
-    font-bold
+    flex
+    items-start
+    gap-4
   "
 >
 
-  📍
-  {producto.ubicacion}
+  <input
 
-  {' · '}
+    type="checkbox"
 
-  {producto.tipo}
+    checked={
+      preparados[
+        producto.nombre
+      ] || false
+    }
 
-</p>
+    onChange={() =>
 
-                </div>
+      togglePreparado(
+        producto.nombre
+      )
+
+    }
+
+    className="
+      w-6
+      h-6
+      mt-2
+    "
+
+  />
+
+  <div>
+
+    <h2
+      className={`
+        text-2xl
+        font-black
+
+        ${
+
+          preparados[
+            producto.nombre
+          ]
+
+            ? 'line-through opacity-40'
+
+            : ''
+
+        }
+      `}
+    >
+
+      {producto.nombre}
+
+    </h2>
+
+    <p
+      className="
+        text-gray-500
+        mt-2
+        font-bold
+      "
+    >
+
+      📍
+      {producto.ubicacion}
+
+      {' · '}
+
+      {producto.tipo}
+
+    </p>
+
+  </div>
+
+</div>
 
                 <div
                   className="
