@@ -102,16 +102,23 @@ const { data: aliases } =
 
 if (!match) {
 
-  const aliasEncontrado =
+  const textoNormalizado =
+
+  posibleProducto
+    .toLowerCase()
+    .trim()
+
+const aliasEncontrado =
 
   aliases?.find((a) =>
 
-    posibleProducto
-      .toLowerCase()
+    textoNormalizado.includes(
 
-      .includes(
-        a.alias.toLowerCase()
-      )
+      a.alias
+        .toLowerCase()
+        .trim()
+
+    )
 
   )
 
