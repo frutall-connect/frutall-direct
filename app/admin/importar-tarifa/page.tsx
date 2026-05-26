@@ -161,8 +161,7 @@ if (!match) {
 
     match =
   variedadesOrdenadas?.find(
-console.log('MATCH FINAL')
-console.log(match)
+
     (v) =>
 
       String(v.id).trim() ===
@@ -171,6 +170,9 @@ console.log(match)
       ).trim()
 
   )
+
+console.log('MATCH FINAL')
+console.log(match)
 
   }
 
