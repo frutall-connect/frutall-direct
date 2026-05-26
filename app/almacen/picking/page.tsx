@@ -32,7 +32,27 @@ export default function PickingPage() {
 
         .select(`
           *,
-          lineas_pedido (*)
+          lineas_pedido (
+
+  *,
+
+  productos (
+
+    id,
+
+    ubicacion_id,
+
+    ubicaciones (
+
+      codigo,
+
+      tipo
+
+    )
+
+  )
+
+)
         `)
 
         .in(
@@ -52,33 +72,56 @@ export default function PickingPage() {
     }
 
     const agrupado:
-      Record<string, number> = {}
+Record<
+  string,
+  {
+    cantidad: number
+    ubicacion: string
+    tipo: string
+  }
+> = {}
 
     data.forEach((pedido) => {
 
       pedido.lineas_pedido?.forEach(
 
-        (linea: any) => {
+  (linea: any) => {
 
-          if (
-            !agrupado[
-              linea.nombre_producto
-            ]
-          ) {
+    const nombre =
+      linea.nombre_producto
 
-            agrupado[
-              linea.nombre_producto
-            ] = 0
+    const ubicacion =
 
-          }
+      linea.productos
+        ?.ubicaciones
+        ?.codigo || 'SIN UBICACIÓN'
 
-          agrupado[
-            linea.nombre_producto
-          ] += linea.cantidad
+    const tipo =
 
-        }
+      linea.productos
+        ?.ubicaciones
+        ?.tipo || ''
 
-      )
+    if (!agrupado[nombre]) {
+
+      agrupado[nombre] = {
+
+        cantidad: 0,
+
+        ubicacion,
+
+        tipo
+
+      }
+
+    }
+
+    agrupado[nombre]
+      .cantidad += linea.cantidad
+
+  }
+
+)
 
     })
 
@@ -88,13 +131,20 @@ export default function PickingPage() {
 
         .map(
 
-          ([nombre, cantidad]) => ({
+          ([nombre, datos]) => ({
 
-            nombre,
+  nombre,
 
-            cantidad
+  cantidad:
+    datos.cantidad,
 
-          })
+  ubicacion:
+    datos.ubicacion,
+
+  tipo:
+    datos.tipo
+
+})
 
         )
 
@@ -192,6 +242,23 @@ export default function PickingPage() {
                       producto.nombre
                     }
                   </h2>
+
+<p
+  className="
+    text-gray-500
+    mt-2
+    font-bold
+  "
+>
+
+  📍
+  {producto.ubicacion}
+
+  {' · '}
+
+  {producto.tipo}
+
+</p>
 
                 </div>
 
