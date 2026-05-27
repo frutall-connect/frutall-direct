@@ -67,6 +67,9 @@ const [busqueda, setBusqueda] =
 
   return productos.filter((producto) => {
 
+  console.log(producto)
+
+
     const coincideBusqueda =
 
       producto.nombre
