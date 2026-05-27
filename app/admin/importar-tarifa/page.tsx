@@ -55,6 +55,33 @@ async function guardarTarifa() {
 
       })
 
+await supabase
+
+  .from(
+    'productos'
+  )
+
+  .insert({
+
+    nombre:
+      item.variedad,
+
+    precio:
+      Number(
+        item.precio.replace(',', '.')
+      ),
+
+    formato:
+      item.formato,
+
+    calibre:
+      item.calibre,
+
+    stock:
+      true
+
+  })
+
   }
 
   alert(
