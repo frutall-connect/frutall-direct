@@ -66,6 +66,15 @@ export default function ImportarTarifaPage() {
 
       .select('*')
 
+const { data: calibres } =
+  await supabase
+
+    .from(
+      'calibres_producto'
+    )
+
+    .select('*')
+
   const variedadesOrdenadas =
 
     variedades?.sort(
@@ -209,6 +218,26 @@ const formatoEncontrado =
 
   })
 
+const calibreEncontrado =
+
+  calibres?.find((c) => {
+
+    const calibreNormalizado =
+
+      c.nombre
+
+        .toLowerCase()
+
+        .replace(/\s+/g, ' ')
+
+        .trim()
+
+    return textoNormalizado.includes(
+      calibreNormalizado
+    )
+
+  })
+
     encontrados.push({
 
       producto:
@@ -221,6 +250,9 @@ const formatoEncontrado =
 
       formato:
         formatoEncontrado?.nombre || null,
+
+calibre:
+  calibreEncontrado?.nombre || null,
 
     })
 
@@ -361,6 +393,18 @@ KUMATO 6KG 18,40
 
   {
     item.formato ||
+    'No detectado'
+  }
+
+</p>
+
+<p>
+
+  📏 Calibre:
+  {' '}
+
+  {
+    item.calibre ||
     'No detectado'
   }
 
