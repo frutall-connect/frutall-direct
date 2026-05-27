@@ -1,12 +1,15 @@
 'use client'
 
 import {
+  Suspense,
   useEffect,
   useMemo,
   useState
 } from 'react'
 
 import Link from 'next/link'
+
+import { useSearchParams } from 'next/navigation'
 
 import MobileLayout from '@/components/layout/MobileLayout'
 import BottomNav from '@/components/layout/BottomNav'
@@ -19,11 +22,27 @@ import ProductHorizontalCard from '@/components/productos/ProductHorizontalCard'
 
 export default function ProductosPage() {
 
+  return (
+    <Suspense>
+      <ProductosContenido />
+    </Suspense>
+  )
+
+}
+
+function ProductosContenido() {
+
   const [productos, setProductos] =
     useState<any[]>([])
 
   const [busqueda, setBusqueda] =
     useState('')
+
+  const searchParams =
+    useSearchParams()
+
+  const categoriaActual =
+    searchParams.get('categoria')
 
   const items = useCartStore(
     (state) => state.items
@@ -59,17 +78,6 @@ export default function ProductosPage() {
 
   const productosFiltrados = useMemo(() => {
 
-    let categoriaActual: string | null = null
-
-    if (typeof window !== 'undefined') {
-
-      categoriaActual =
-        new URLSearchParams(
-          window.location.search
-        ).get('categoria')
-
-    }
-
     return productos.filter((producto) => {
 
       const coincideBusqueda =
@@ -100,9 +108,7 @@ export default function ProductosPage() {
   }, [
     productos,
     busqueda,
-    typeof window !== 'undefined'
-      ? window.location.search
-      : ''
+    categoriaActual
   ])
 
   const totalProductos = items.reduce(
