@@ -17,8 +17,6 @@ import { useSearchParams } from 'next/navigation'
 
 export default function ProductosPage() {
 
-{
-
 const searchParams =
   useSearchParams()
 
@@ -48,7 +46,7 @@ const categoria =
     )
   `)
 
-if (searchParams?.categoria) {
+if (categoria) {
 
   query = await supabase
 
@@ -65,7 +63,7 @@ if (searchParams?.categoria) {
 
     .eq(
       'categoria',
-      searchParams.categoria
+      categoria
     )
 
 }
