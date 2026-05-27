@@ -1,5 +1,7 @@
 'use client'
 
+import { useSearchParams } from 'next/navigation'
+
 import { useEffect, useMemo, useState } from 'react'
 
 import Link from 'next/link'
@@ -53,17 +55,7 @@ const [busqueda, setBusqueda] =
 
 }
 
-  const productosFiltrados = useMemo(() => {
-
-  const categoriaActual =
-
-    typeof window !== 'undefined'
-
-      ? new URLSearchParams(
-          window.location.search
-        ).get('categoria')
-
-      : null
+  const searchParams = useSearchParams()
 
   return productos.filter((producto) => {
 
