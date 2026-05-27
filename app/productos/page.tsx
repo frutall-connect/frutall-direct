@@ -8,8 +8,6 @@ import {
 
 import Link from 'next/link'
 
-import { useSearchParams } from 'next/navigation'
-
 import MobileLayout from '@/components/layout/MobileLayout'
 import BottomNav from '@/components/layout/BottomNav'
 
@@ -26,12 +24,6 @@ export default function ProductosPage() {
 
   const [busqueda, setBusqueda] =
     useState('')
-
-  const searchParams =
-    useSearchParams()
-
-  const categoriaActual =
-    searchParams.get('categoria')
 
   const items = useCartStore(
     (state) => state.items
@@ -67,6 +59,17 @@ export default function ProductosPage() {
 
   const productosFiltrados = useMemo(() => {
 
+    let categoriaActual: string | null = null
+
+    if (typeof window !== 'undefined') {
+
+      categoriaActual =
+        new URLSearchParams(
+          window.location.search
+        ).get('categoria')
+
+    }
+
     return productos.filter((producto) => {
 
       const coincideBusqueda =
@@ -97,7 +100,9 @@ export default function ProductosPage() {
   }, [
     productos,
     busqueda,
-    categoriaActual
+    typeof window !== 'undefined'
+      ? window.location.search
+      : ''
   ])
 
   const totalProductos = items.reduce(
