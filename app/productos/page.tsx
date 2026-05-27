@@ -17,21 +17,7 @@ import { useSearchParams } from 'next/navigation'
 
 export default function ProductosPage({
 
-  searchParams
-
-}: {
-
-  searchParams: {
-
-    categoria?: string
-
-  }
-
-}) {
-
-  const [productos, setProductos] = useState<any[]>([])
-
-  const [busqueda, setBusqueda] = useState('')
+{
 
 const searchParams =
   useSearchParams()
