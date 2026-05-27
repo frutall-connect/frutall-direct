@@ -254,7 +254,7 @@ const {
               🍎 Frutas
             </button>
 
-</link>
+</Link>
 <Link href="/productos?categoria=Verduras">
 
             <button
@@ -270,7 +270,7 @@ const {
             >
               🥦 Verduras
             </button>
-</link>
+</Link>
 <Link href="/productos?categoria=Tubérculos">
 
             <button
@@ -286,7 +286,7 @@ const {
             >
               ⭐ Premium
             </button>
-</link>
+</Link>
 <Link href="/productos?categoria=Temporada">
 
             <button
@@ -302,7 +302,7 @@ const {
             >
               🔥 Oferta
             </button>
-</link>
+</Link>
 
           </div>
 
