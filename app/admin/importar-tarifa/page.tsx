@@ -220,8 +220,9 @@ console.log(match)
       variedad:
         match?.nombre || null,
 
-      precio
-formato:
+      precio,
+
+      formato:
   formatoEncontrado?.nombre || null,
 
     })
