@@ -234,70 +234,69 @@ const totalImporte = items.reduce(
               Todos
             </button>
 
-<Link href="/productos?categoria=Frutas">
-
-            <button
-              className="
-                bg-white
-                rounded-full
-                px-4
-                py-2
-                text-sm
-                font-semibold
-                whitespace-nowrap
-              "
-            >
-              🍎 Frutas
-            </button>
-
+<Link
+  href="/productos?categoria=Frutas"
+  className="
+    bg-white
+    rounded-full
+    px-4
+    py-2
+    text-sm
+    font-semibold
+    whitespace-nowrap
+    inline-flex
+    items-center
+  "
+>
+  🍎 Frutas
 </Link>
-<Link href="/productos?categoria=Verduras">
-
-            <button
-              className="
-                bg-white
-                rounded-full
-                px-4
-                py-2
-                text-sm
-                font-semibold
-                whitespace-nowrap
-              "
-            >
-              🥦 Verduras
-            </button>
+<Link
+  href="/productos?categoria=Verduras"
+  className="
+    bg-white
+    rounded-full
+    px-4
+    py-2
+    text-sm
+    font-semibold
+    whitespace-nowrap
+    inline-flex
+    items-center
+  "
+>
+  🥦 Verduras
 </Link>
-<Link href="/productos?categoria=Tubérculos">
-
-            <button
-              className="
-                bg-white
-                rounded-full
-                px-4
-                py-2
-                text-sm
-                font-semibold
-                whitespace-nowrap
-              "
-            >
-              ⭐ Premium
-            </button>
+<Link
+  href="/productos?categoria=Tubérculos"
+  className="
+    bg-white
+    rounded-full
+    px-4
+    py-2
+    text-sm
+    font-semibold
+    whitespace-nowrap
+    inline-flex
+    items-center
+  "
+>
+  ⭐ Premium
 </Link>
-<Link href="/productos?categoria=Temporada">
-
-            <button
-              className="
-                bg-white
-                rounded-full
-                px-4
-                py-2
-                text-sm
-                font-semibold
-                whitespace-nowrap
-              "
-            >
-              🔥 Oferta
-            </button>
+<Link
+  href="/productos?categoria=Temporada"
+  className="
+    bg-white
+    rounded-full
+    px-4
+    py-2
+    text-sm
+    font-semibold
+    whitespace-nowrap
+    inline-flex
+    items-center
+  "
+>
+  🔥 Oferta
 </Link>
 
           </div>
