@@ -327,9 +327,6 @@ const calibreEncontrado =
       producto:
         posibleProducto,
 
-producto_base:
-  productoBase?.nombre || null,
-
       variedad:
         match?.nombre || null,
 
