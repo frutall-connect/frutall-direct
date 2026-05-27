@@ -158,10 +158,10 @@ export default function InicioPage() {
             <Image
               src="/logo-frutall-direct.png"
               alt="FrutALL Direct"
-              width={240}
+              width={180}
               height={70}
               priority
-              className="h-auto"
+              className="h-14"
             />
 
           </div>
@@ -337,13 +337,22 @@ export default function InicioPage() {
               >
 
                 <img
-                  src="https://images.unsplash.com/photo-1515778767554-1951c1d0b119?q=80&w=1200"
-                  className="
-                    w-full
-                    h-full
-                    object-cover
-                  "
-                />
+
+  src={
+    producto.imagen ||
+    'https://images.unsplash.com/photo-1519183071298-a2962be96f83?q=80&w=800&auto=format&fit=crop'
+  }
+
+  alt={producto.nombre}
+
+  className="
+    w-24
+    h-24
+    object-cover
+    rounded-xl
+  "
+
+/>
 
               </div>
 
