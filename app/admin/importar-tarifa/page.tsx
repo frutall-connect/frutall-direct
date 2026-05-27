@@ -189,6 +189,19 @@ const formatoEncontrado =
 
   })
 
+encontrados.push({
+
+  producto:
+    posibleProducto,
+
+  variedad:
+    match?.nombre || null,
+
+  precio,
+
+  formato:
+    formatoEncontrado?.nombre || null,
+
   })
 
   if (aliasEncontrado) {
@@ -205,27 +218,9 @@ const formatoEncontrado =
 
   )
 
-console.log('MATCH FINAL')
-console.log(match)
-
   }
 
 }
-
-    encontrados.push({
-
-  producto:
-    posibleProducto,
-
-  variedad:
-    match?.nombre || null,
-
-  precio,
-
-  formato:
-    formatoEncontrado?.nombre || null,
-
-})
 
   }
 
