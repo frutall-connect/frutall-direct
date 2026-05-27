@@ -1,10 +1,14 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
-
-import { useEffect, useMemo, useState } from 'react'
+import {
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 
 import Link from 'next/link'
+
+import { useSearchParams } from 'next/navigation'
 
 import MobileLayout from '@/components/layout/MobileLayout'
 import BottomNav from '@/components/layout/BottomNav'
@@ -17,11 +21,17 @@ import ProductHorizontalCard from '@/components/productos/ProductHorizontalCard'
 
 export default function ProductosPage() {
 
-const [productos, setProductos] =
-  useState<any[]>([])
+  const [productos, setProductos] =
+    useState<any[]>([])
 
-const [busqueda, setBusqueda] =
-  useState('')
+  const [busqueda, setBusqueda] =
+    useState('')
+
+  const searchParams =
+    useSearchParams()
+
+  const categoriaActual =
+    searchParams.get('categoria')
 
   const items = useCartStore(
     (state) => state.items
@@ -33,81 +43,82 @@ const [busqueda, setBusqueda] =
 
   async function cargarProductos() {
 
-  const { data, error } =
-    await supabase
+    const { data, error } =
+      await supabase
 
-      .from('productos')
+        .from('productos')
 
-      .select(`
-        *,
-        categorias (
-          nombre,
-          color,
-          icono
-        )
-      `)
+        .select(`
+          *,
+          categorias (
+            nombre,
+            color,
+            icono
+          )
+        `)
 
-  if (!error && data) {
+    if (!error && data) {
 
-    setProductos(data)
+      setProductos(data)
+
+    }
 
   }
 
-}
+  const productosFiltrados = useMemo(() => {
 
-  const searchParams = useSearchParams()
+    return productos.filter((producto) => {
 
-  return productos.filter((producto) => {
+      const coincideBusqueda =
 
-  console.log(producto)
+        producto.nombre
+          .toLowerCase()
+          .includes(
+            busqueda.toLowerCase()
+          )
 
+      const coincideCategoria =
 
-    const coincideBusqueda =
+        categoriaActual
 
-      producto.nombre
-        .toLowerCase()
-        .includes(
-          busqueda.toLowerCase()
-        )
+          ? producto.categorias?.nombre
+              ?.toLowerCase() ===
+            categoriaActual.toLowerCase()
 
-    const coincideCategoria =
+          : true
 
-  categoriaActual
+      return (
+        coincideBusqueda &&
+        coincideCategoria
+      )
 
-    ? producto.categorias?.nombre
-        ?.toLowerCase() === 
-      categoriaActual.toLowerCase()
+    })
 
-    : true
+  }, [
+    productos,
+    busqueda,
+    categoriaActual
+  ])
 
-    return (
-      coincideBusqueda &&
-      coincideCategoria
-    )
+  const totalProductos = items.reduce(
 
-  })
+    (acc, item) =>
 
-}, [productos, busqueda])
+      acc + item.cantidad,
 
-const totalProductos = items.reduce(
+    0
 
-  (acc, item) =>
+  )
 
-    acc + item.cantidad,
+  const totalImporte = items.reduce(
 
-  0
+    (acc, item) =>
 
-)
+      acc + item.precio * item.cantidad,
 
-const totalImporte = items.reduce(
+    0
 
-  (acc, item) =>
-
-    acc + item.precio * item.cantidad,
-
-  0
-
-)
+  )
 
   return (
 
@@ -211,7 +222,8 @@ const totalImporte = items.reduce(
             "
           >
 
-            <button
+            <Link
+              href="/productos"
               className="
                 bg-green-700
                 text-white
@@ -221,75 +233,63 @@ const totalImporte = items.reduce(
                 text-sm
                 font-semibold
                 whitespace-nowrap
+                inline-flex
+                items-center
               "
             >
               Todos
-            </button>
+            </Link>
 
-<Link
-  href="/productos?categoria=Frutas"
-  className="
-    bg-white
-    rounded-full
-    px-4
-    py-2
-    text-sm
-    font-semibold
-    whitespace-nowrap
-    inline-flex
-    items-center
-  "
->
-  🍎 Frutas
-</Link>
-<Link
-  href="/productos?categoria=Verduras"
-  className="
-    bg-white
-    rounded-full
-    px-4
-    py-2
-    text-sm
-    font-semibold
-    whitespace-nowrap
-    inline-flex
-    items-center
-  "
->
-  🥦 Verduras
-</Link>
-<Link
-  href="/productos?categoria=Tubérculos"
-  className="
-    bg-white
-    rounded-full
-    px-4
-    py-2
-    text-sm
-    font-semibold
-    whitespace-nowrap
-    inline-flex
-    items-center
-  "
->
-  ⭐ Premium
-</Link>
-<Link
-  href="/productos?categoria=Temporada"
-  className="
-    bg-white
-    rounded-full
-    px-4
-    py-2
-    text-sm
-    font-semibold
-    whitespace-nowrap
-    inline-flex
-    items-center
-  "
->
-  🔥 Oferta
-</Link>
+            <Link
+              href="/productos?categoria=Frutas"
+              className="
+                bg-white
+                rounded-full
+                px-4
+                py-2
+                text-sm
+                font-semibold
+                whitespace-nowrap
+                inline-flex
+                items-center
+              "
+            >
+              🍎 Frutas
+            </Link>
+
+            <Link
+              href="/productos?categoria=Verduras"
+              className="
+                bg-white
+                rounded-full
+                px-4
+                py-2
+                text-sm
+                font-semibold
+                whitespace-nowrap
+                inline-flex
+                items-center
+              "
+            >
+              🥦 Verduras
+            </Link>
+
+            <Link
+              href="/productos?categoria=Tubérculos"
+              className="
+                bg-white
+                rounded-full
+                px-4
+                py-2
+                text-sm
+                font-semibold
+                whitespace-nowrap
+                inline-flex
+                items-center
+              "
+            >
+              ⭐ Premium
+            </Link>
 
           </div>
 
