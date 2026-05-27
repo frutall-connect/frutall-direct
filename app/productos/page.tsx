@@ -33,22 +33,7 @@ const categoria =
 
   async function cargarProductos() {
 
-    let query = await supabase
-
-  .from('productos')
-
-  .select(`
-    *,
-    categorias (
-      nombre,
-      color,
-      icono
-    )
-  `)
-
-if (categoria) {
-
-  query = await supabase
+  let query = await supabase
 
     .from('productos')
 
@@ -61,45 +46,60 @@ if (categoria) {
       )
     `)
 
-    .eq(
-      'categoria',
-      categoria
-    )
-
-}
-
-const {
-
-  data,
-  error
-
-} = query
-
-    if (!error && data) {
-
-  let productosFiltrados =
-    data
-
   if (categoria) {
 
-    productosFiltrados =
-      data.filter(
+    query = await supabase
 
-        (p: any) =>
+      .from('productos')
 
-          p.categoria === categoria
+      .select(`
+        *,
+        categorias (
+          nombre,
+          color,
+          icono
+        )
+      `)
 
+      .eq(
+        'categoria',
+        categoria
       )
 
   }
 
-  setProductos(
-    productosFiltrados
-  )
+  const {
 
-}
+    data,
+    error
+
+  } = query
+
+  if (!error && data) {
+
+    let productosFiltrados =
+      data
+
+    if (categoria) {
+
+      productosFiltrados =
+        data.filter(
+
+          (p: any) =>
+
+            p.categoria === categoria
+
+        )
+
+    }
+
+    setProductos(
+      productosFiltrados
+    )
 
   }
+
+}
 
   const productosFiltrados = useMemo(() => {
 
