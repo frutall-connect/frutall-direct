@@ -55,6 +55,26 @@ const [busqueda, setBusqueda] =
 
   const productosFiltrados = useMemo(() => {
 
+const totalProductos = items.reduce(
+
+  (acc, item) =>
+
+    acc + item.cantidad,
+
+  0
+
+)
+
+const totalImporte = items.reduce(
+
+  (acc, item) =>
+
+    acc + item.precio * item.cantidad,
+
+  0
+
+)
+
   const categoriaActual =
 
     typeof window !== 'undefined'
