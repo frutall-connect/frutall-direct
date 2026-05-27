@@ -169,65 +169,46 @@ const aliasEncontrado =
       aliasNormalizado
     )
 
-const formatoEncontrado =
+    const formatoEncontrado =
 
-  formatos?.find((f) => {
+      formatos?.find((f) => {
 
-    const formatoNormalizado =
+        const formatoNormalizado =
 
-      f.nombre
+          f.nombre
 
-        .toLowerCase()
+            .toLowerCase()
 
-        .replace(/\s+/g, ' ')
+            .replace(/\s+/g, ' ')
 
-        .trim()
+            .trim()
 
-    return textoNormalizado.includes(
-      formatoNormalizado
-    )
+        return textoNormalizado.includes(
+          formatoNormalizado
+        )
 
-  })
+      })
 
-encontrados.push({
+    encontrados.push({
 
-  producto:
-    posibleProducto,
+      producto:
+        posibleProducto,
 
-  variedad:
-    match?.nombre || null,
+      variedad:
+        match?.nombre || null,
 
-  precio,
+      precio,
 
-  formato:
-    formatoEncontrado?.nombre || null,
+      formato:
+        formatoEncontrado?.nombre || null,
 
-})
-
-  if (aliasEncontrado) {
-
-    match =
-  variedadesOrdenadas?.find(
-
-    (v) =>
-
-      String(v.id).trim() ===
-      String(
-        aliasEncontrado.variedad_id
-      ).trim()
-
-  )
-
-  }
-
-}
+    })
 
   }
 
   setResultado(
     encontrados
   )
-
   return (
 
     <main
