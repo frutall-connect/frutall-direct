@@ -268,6 +268,11 @@ const formatoEncontrado =
 
   })
 
+const palabras =
+
+  textoNormalizado
+    .split(' ')
+
 const calibreEncontrado =
 
   calibres?.find((c) => {
@@ -282,12 +287,11 @@ const calibreEncontrado =
 
         .trim()
 
-    return textoNormalizado.includes(
+    return palabras.includes(
       calibreNormalizado
     )
 
   })
-
     encontrados.push({
 
       producto:
