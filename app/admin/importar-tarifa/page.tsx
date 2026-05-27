@@ -187,6 +187,67 @@ const { data: calibres } =
 
     }
 
+async function guardarTarifa() {
+
+  for (const item of resultado) {
+
+    if (
+      !item.variedad ||
+      !item.precio
+    ) continue
+
+    const { data: variedad } =
+      await supabase
+
+        .from(
+          'variedades_producto'
+        )
+
+        .select('id')
+
+        .eq(
+          'nombre',
+          item.variedad
+        )
+
+        .single()
+
+    if (!variedad) continue
+
+    await supabase
+
+      .from(
+        'tarifas_proveedor'
+      )
+
+      .insert({
+
+        referencia_id: null,
+
+        proveedor:
+          'IMPORTACIÓN MANUAL',
+
+        precio_compra:
+          Number(
+            item.precio.replace(',', '.')
+          ),
+
+        fecha:
+          new Date(),
+
+        observaciones:
+          JSON.stringify(item)
+
+      })
+
+  }
+
+  alert(
+    'Tarifas guardadas'
+  )
+
+}
+
     const formatosOrdenados =
 
   formatos?.sort(
@@ -337,6 +398,27 @@ KUMATO 6KG 18,40
         Procesar tarifa
 
       </button>
+
+<button
+
+  onClick={guardarTarifa}
+
+  className="
+    mt-4
+    w-full
+    bg-black
+    text-white
+    rounded-3xl
+    py-4
+    font-black
+    text-xl
+  "
+
+>
+
+  Guardar tarifas
+
+</button>
 
       <div className="mt-8 space-y-4">
 
