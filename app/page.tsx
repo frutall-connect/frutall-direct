@@ -338,12 +338,11 @@ export default function InicioPage() {
 
                 <img
 
-  src={
-    producto.imagen ||
-    'https://images.unsplash.com/photo-1519183071298-a2962be96f83?q=80&w=800&auto=format&fit=crop'
-  }
+  src="
+https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=format&fit=crop
+"
 
-  alt={producto.nombre}
+  alt="Oferta especial"
 
   className="
     w-24
