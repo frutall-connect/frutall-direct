@@ -13,6 +13,8 @@ import { useCartStore } from '@/store/cartStore'
 
 import ProductHorizontalCard from '@/components/productos/ProductHorizontalCard'
 
+import { useSearchParams } from 'next/navigation'
+
 export default function ProductosPage({
 
   searchParams
@@ -30,6 +32,12 @@ export default function ProductosPage({
   const [productos, setProductos] = useState<any[]>([])
 
   const [busqueda, setBusqueda] = useState('')
+
+const searchParams =
+  useSearchParams()
+
+const categoria =
+  searchParams.get('categoria')
 
   const items = useCartStore(
     (state) => state.items
@@ -84,8 +92,28 @@ const {
 } = query
 
     if (!error && data) {
-      setProductos(data)
-    }
+
+  let productosFiltrados =
+    data
+
+  if (categoria) {
+
+    productosFiltrados =
+      data.filter(
+
+        (p: any) =>
+
+          p.categoria === categoria
+
+      )
+
+  }
+
+  setProductos(
+    productosFiltrados
+  )
+
+}
 
   }
 
