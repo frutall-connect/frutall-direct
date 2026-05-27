@@ -83,10 +83,8 @@ const [busqueda, setBusqueda] =
   categoriaActual
 
     ? producto.categorias?.nombre
-        ?.toLowerCase()
-        .includes(
-          categoriaActual.toLowerCase()
-        )
+        ?.toLowerCase() === 
+      categoriaActual.toLowerCase()
 
     : true
 
