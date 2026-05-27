@@ -214,18 +214,18 @@ console.log(match)
 
     encontrados.push({
 
-      producto:
-        posibleProducto,
+  producto:
+    posibleProducto,
 
-      variedad:
-        match?.nombre || null,
+  variedad:
+    match?.nombre || null,
 
-      precio,
+  precio,
 
-      formato:
-  formatoEncontrado?.nombre || null,
+  formato:
+    formatoEncontrado?.nombre || null,
 
-    })
+})
 
   }
 
