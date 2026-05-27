@@ -66,22 +66,24 @@ await supabase
     nombre:
       item.variedad,
 
+    descripcion:
+      JSON.stringify(item),
+
     precio:
       Number(
         item.precio.replace(',', '.')
       ),
 
-    formato:
-      item.formato,
+    categoria:
+      'Frutas y Verduras',
 
-    calibre:
-      item.calibre,
+    imagen:
+      'https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=format&fit=crop',
 
-    stock:
+    disponible:
       true
 
   })
-
   }
 
   alert(
