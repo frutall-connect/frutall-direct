@@ -208,9 +208,12 @@ export default function InicioPage() {
             {categorias.map((categoria) => (
 
               <Link
-                href="/productos"
-                key={categoria.id}
-              >
+
+  href={`/productos?categoria=${categoria.nombre}`}
+
+  key={categoria.id}
+
+>
 
                 <div
                   className="
