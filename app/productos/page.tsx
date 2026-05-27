@@ -13,15 +13,7 @@ import { useCartStore } from '@/store/cartStore'
 
 import ProductHorizontalCard from '@/components/productos/ProductHorizontalCard'
 
-import { useSearchParams } from 'next/navigation'
-
 export default function ProductosPage() {
-
-const searchParams =
-  useSearchParams()
-
-const categoria =
-  searchParams.get('categoria')
 
 const [productos, setProductos] =
   useState<any[]>([])
@@ -39,22 +31,8 @@ const [busqueda, setBusqueda] =
 
   async function cargarProductos() {
 
-  let query = await supabase
-
-    .from('productos')
-
-    .select(`
-      *,
-      categorias (
-        nombre,
-        color,
-        icono
-      )
-    `)
-
-  if (categoria) {
-
-    query = await supabase
+  const { data, error } =
+    await supabase
 
       .from('productos')
 
@@ -67,41 +45,9 @@ const [busqueda, setBusqueda] =
         )
       `)
 
-      .eq(
-        'categoria',
-        categoria
-      )
-
-  }
-
-  const {
-
-    data,
-    error
-
-  } = query
-
   if (!error && data) {
 
-    let productosFiltrados =
-      data
-
-    if (categoria) {
-
-      productosFiltrados =
-        data.filter(
-
-          (p: any) =>
-
-            p.categoria === categoria
-
-        )
-
-    }
-
-    setProductos(
-      productosFiltrados
-    )
+    setProductos(data)
 
   }
 
@@ -109,25 +55,43 @@ const [busqueda, setBusqueda] =
 
   const productosFiltrados = useMemo(() => {
 
-    return productos.filter((producto) =>
+  const categoriaActual =
+
+    typeof window !== 'undefined'
+
+      ? new URLSearchParams(
+          window.location.search
+        ).get('categoria')
+
+      : null
+
+  return productos.filter((producto) => {
+
+    const coincideBusqueda =
 
       producto.nombre
         .toLowerCase()
-        .includes(busqueda.toLowerCase())
+        .includes(
+          busqueda.toLowerCase()
+        )
 
+    const coincideCategoria =
+
+      categoriaActual
+
+        ? producto.categoria ===
+          categoriaActual
+
+        : true
+
+    return (
+      coincideBusqueda &&
+      coincideCategoria
     )
 
-  }, [productos, busqueda])
+  })
 
-  const totalProductos = items.reduce(
-
-    (acc, item) =>
-
-      acc + item.cantidad,
-
-    0
-
-  )
+}, [productos, busqueda])
 
   const totalImporte = items.reduce(
 
