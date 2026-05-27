@@ -75,7 +75,17 @@ const [busqueda, setBusqueda] =
           busqueda.toLowerCase()
         )
 
-    const coincideCategoria = true
+    const coincideCategoria =
+
+  categoriaActual
+
+    ? producto.categorias?.nombre
+        ?.toLowerCase()
+        .includes(
+          categoriaActual.toLowerCase()
+        )
+
+    : true
 
     return (
       coincideBusqueda &&
