@@ -145,16 +145,23 @@ const { data: calibres } =
     const precio =
       precioMatch[1]
 
-    const posibleProducto =
+    let posibleProducto =
 
-      linea
+  linea
 
-        .replace(
-          /(\d+[.,]\d{1,2})/,
-          ''
-        )
+    .replace(
+      /(\d+[.,]\d{1,2})/,
+      ''
+    )
 
-        .trim()
+    .trim()
+
+if (!posibleProducto) {
+
+  posibleProducto =
+    lineas[i - 1] || ''
+
+}
 
     const textoNormalizado =
 
