@@ -63,13 +63,9 @@ await supabase
 
   .insert({
 
-    nombre:
-
-  item.producto_base
-
-    ? `${item.producto_base} ${item.variedad}`
-
-    : item.variedad,
+nombre:
+  item.producto ||
+  item.variedad,
 
     descripcion:
       JSON.stringify(item),
