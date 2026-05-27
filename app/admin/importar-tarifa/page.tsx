@@ -178,25 +178,36 @@ export default function ImportarTarifaPage() {
 
     }
 
-    const formatoEncontrado =
+    const formatosOrdenados =
 
-      formatos?.find((f) => {
+  formatos?.sort(
 
-        const formatoNormalizado =
+    (a, b) =>
 
-          f.nombre
+      b.nombre.length -
+      a.nombre.length
 
-            .toLowerCase()
+  )
 
-            .replace(/\s+/g, ' ')
+const formatoEncontrado =
 
-            .trim()
+  formatosOrdenados?.find((f) => {
 
-        return textoNormalizado.includes(
-          formatoNormalizado
-        )
+    const formatoNormalizado =
 
-      })
+      f.nombre
+
+        .toLowerCase()
+
+        .replace(/\s+/g, ' ')
+
+        .trim()
+
+    return textoNormalizado.includes(
+      formatoNormalizado
+    )
+
+  })
 
     encontrados.push({
 
