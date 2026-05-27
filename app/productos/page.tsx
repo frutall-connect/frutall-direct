@@ -13,7 +13,19 @@ import { useCartStore } from '@/store/cartStore'
 
 import ProductHorizontalCard from '@/components/productos/ProductHorizontalCard'
 
-export default function ProductosPage() {
+export default function ProductosPage({
+
+  searchParams
+
+}: {
+
+  searchParams: {
+
+    categoria?: string
+
+  }
+
+}) {
 
   const [productos, setProductos] = useState<any[]>([])
 
@@ -29,18 +41,47 @@ export default function ProductosPage() {
 
   async function cargarProductos() {
 
-    const { data, error } = await supabase
+    let query = await supabase
 
-      .from('productos')
+  .from('productos')
 
-      .select(`
-        *,
-        categorias (
-          nombre,
-          color,
-          icono
-        )
-      `)
+  .select(`
+    *,
+    categorias (
+      nombre,
+      color,
+      icono
+    )
+  `)
+
+if (searchParams?.categoria) {
+
+  query = await supabase
+
+    .from('productos')
+
+    .select(`
+      *,
+      categorias (
+        nombre,
+        color,
+        icono
+      )
+    `)
+
+    .eq(
+      'categoria',
+      searchParams.categoria
+    )
+
+}
+
+const {
+
+  data,
+  error
+
+} = query
 
     if (!error && data) {
       setProductos(data)
