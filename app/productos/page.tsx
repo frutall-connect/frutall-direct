@@ -299,7 +299,7 @@ function ProductosContenido() {
                 items-center
               "
             >
-              ⭐ Tubérculos
+              🥔 Tubérculos
             </Link>
 
           </div>
