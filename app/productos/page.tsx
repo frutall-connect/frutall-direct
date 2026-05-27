@@ -15,9 +15,7 @@ import ProductHorizontalCard from '@/components/productos/ProductHorizontalCard'
 
 import { useSearchParams } from 'next/navigation'
 
-export default function ProductosPage({
-
-{
+export default function ProductosPage() {
 
 const searchParams =
   useSearchParams()
