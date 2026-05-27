@@ -45,46 +45,42 @@ export default function ImportarTarifaPage() {
 
       .select('*')
 
-const variedadesOrdenadas =
+  const { data: aliases } =
+    await supabase
 
-  variedades?.sort(
+      .from(
+        'aliases_producto'
+      )
 
-    (a, b) =>
+      .select(`
+        alias,
+        variedad_id
+      `)
 
-      b.nombre.length -
-      a.nombre.length
+  const { data: formatos } =
+    await supabase
 
-  )
+      .from(
+        'formatos_producto'
+      )
 
-const { data: aliases } =
+      .select('*')
 
-  await supabase
+  const variedadesOrdenadas =
 
-    .from(
-      'aliases_producto'
+    variedades?.sort(
+
+      (a, b) =>
+
+        b.nombre.length -
+        a.nombre.length
+
     )
-
-    .select(`
-      alias,
-      variedad_id
-    `)
-
-const { data: formatos } =
-  await supabase
-
-    .from(
-      'formatos_producto'
-    )
-
-    .select('*')
 
   for (let i = 0; i < lineas.length; i++) {
 
     const linea =
       lineas[i]
-
-    const limpia =
-      linea.toLowerCase()
 
     const precioMatch =
 
@@ -99,15 +95,14 @@ const { data: formatos } =
 
     const posibleProducto =
 
-  linea
-    .replace(
-      /(\d+[.,]\d{1,2})/,
-      ''
-    )
-    .trim()
+      linea
 
-    let match =
-  variedades?.find((v) => {
+        .replace(
+          /(\d+[.,]\d{1,2})/,
+          ''
+        )
+
+        .trim()
 
     const textoNormalizado =
 
@@ -119,55 +114,69 @@ const { data: formatos } =
 
         .trim()
 
-    const variedadNormalizada =
+    let match =
 
-      v.nombre
+      variedadesOrdenadas?.find((v) => {
 
-        .toLowerCase()
+        const variedadNormalizada =
 
-        .replace(/\s+/g, ' ')
+          v.nombre
 
-        .trim()
+            .toLowerCase()
 
-    return textoNormalizado.includes(
-      variedadNormalizada
-    )
+            .replace(/\s+/g, ' ')
 
-  })
+            .trim()
 
-if (!match) {
+        return textoNormalizado.includes(
+          variedadNormalizada
+        )
 
-  const textoNormalizado =
+      })
 
-    posibleProducto
+    if (!match) {
 
-      .toLowerCase()
+      const palabras =
 
-      .replace(/\s+/g, ' ')
+        textoNormalizado.split(' ')
 
-      .trim()
+      const aliasEncontrado =
 
-  const palabras =
+        aliases?.find((a) => {
 
-  textoNormalizado.split(' ')
+          const aliasNormalizado =
 
-const aliasEncontrado =
+            a.alias
 
-  aliases?.find((a) => {
+              .toLowerCase()
 
-    const aliasNormalizado =
+              .replace(/\s+/g, ' ')
 
-      a.alias
+              .trim()
 
-        .toLowerCase()
+          return palabras.includes(
+            aliasNormalizado
+          )
 
-        .replace(/\s+/g, ' ')
+        })
 
-        .trim()
+      if (aliasEncontrado) {
 
-    return palabras.includes(
-      aliasNormalizado
-    )
+        match =
+          variedadesOrdenadas?.find(
+
+            (v) =>
+
+              String(v.id).trim() ===
+              String(
+                aliasEncontrado.variedad_id
+              ).trim()
+
+          )
+
+      }
+
+    }
 
     const formatoEncontrado =
 
@@ -209,6 +218,8 @@ const aliasEncontrado =
   setResultado(
     encontrados
   )
+
+}
   return (
 
     <main
