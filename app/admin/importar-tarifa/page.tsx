@@ -64,7 +64,12 @@ await supabase
   .insert({
 
     nombre:
-      item.variedad,
+
+  item.producto_base
+
+    ? `${item.producto_base} ${item.variedad}`
+
+    : item.variedad,
 
     descripcion:
       JSON.stringify(item),
@@ -325,6 +330,9 @@ const calibreEncontrado =
 
       producto:
         posibleProducto,
+
+producto_base:
+  productoBase?.nombre || null,
 
       variedad:
         match?.nombre || null,
