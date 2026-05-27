@@ -57,6 +57,7 @@ const variedadesOrdenadas =
   )
 
 const { data: aliases } =
+
   await supabase
 
     .from(
@@ -67,6 +68,15 @@ const { data: aliases } =
       alias,
       variedad_id
     `)
+
+const { data: formatos } =
+  await supabase
+
+    .from(
+      'formatos_producto'
+    )
+
+    .select('*')
 
   for (let i = 0; i < lineas.length; i++) {
 
@@ -159,6 +169,26 @@ const aliasEncontrado =
       aliasNormalizado
     )
 
+const formatoEncontrado =
+
+  formatos?.find((f) => {
+
+    const formatoNormalizado =
+
+      f.nombre
+
+        .toLowerCase()
+
+        .replace(/\s+/g, ' ')
+
+        .trim()
+
+    return textoNormalizado.includes(
+      formatoNormalizado
+    )
+
+  })
+
   })
 
   if (aliasEncontrado) {
@@ -191,6 +221,8 @@ console.log(match)
         match?.nombre || null,
 
       precio
+formato:
+  formatoEncontrado?.nombre || null,
 
     })
 
@@ -325,6 +357,17 @@ KUMATO 6KG 18,40
                 }
 
               </p>
+<p>
+
+  📦 Formato:
+  {' '}
+
+  {
+    item.formato ||
+    'No detectado'
+  }
+
+</p>
 
             </div>
 
