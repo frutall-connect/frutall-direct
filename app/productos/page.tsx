@@ -238,6 +238,8 @@ const {
               Todos
             </button>
 
+<Link href="/productos?categoria=Frutas">
+
             <button
               className="
                 bg-white
@@ -252,6 +254,9 @@ const {
               🍎 Frutas
             </button>
 
+</link>
+<Link href="/productos?categoria=Verduras">
+
             <button
               className="
                 bg-white
@@ -265,6 +270,8 @@ const {
             >
               🥦 Verduras
             </button>
+</link>
+<Link href="/productos?categoria=Tubérculos">
 
             <button
               className="
@@ -279,6 +286,8 @@ const {
             >
               ⭐ Premium
             </button>
+</link>
+<Link href="/productos?categoria=Temporada">
 
             <button
               className="
@@ -293,6 +302,7 @@ const {
             >
               🔥 Oferta
             </button>
+</link>
 
           </div>
 
