@@ -202,7 +202,7 @@ encontrados.push({
   formato:
     formatoEncontrado?.nombre || null,
 
-  })
+})
 
   if (aliasEncontrado) {
 
@@ -227,8 +227,6 @@ encontrados.push({
   setResultado(
     encontrados
   )
-
-}
 
   return (
 
