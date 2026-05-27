@@ -23,6 +23,12 @@ const searchParams =
 const categoria =
   searchParams.get('categoria')
 
+const [productos, setProductos] =
+  useState<any[]>([])
+
+const [busqueda, setBusqueda] =
+  useState('')
+
   const items = useCartStore(
     (state) => state.items
   )
