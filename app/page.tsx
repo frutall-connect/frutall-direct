@@ -307,7 +307,6 @@ export default function InicioPage() {
       text-2xl
       z-10
     " 
-    align="center"
   >
     {categoria.icono}
   </div>
