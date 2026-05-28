@@ -191,14 +191,14 @@ export default function InicioPage() {
   className="
     relative
     overflow-hidden
-    rounded-b-[3rem]
+    rounded-b-[2rem]
     bg-gradient-to-br
     from-green-800
     via-green-700
     to-emerald-500
     px-6
-    pt-10
-    pb-12
+    pt-8
+    pb-10
     shadow-xl
   "
 >
@@ -212,7 +212,6 @@ export default function InicioPage() {
         mt-8
       "
     >
-
       <Link href="/productos">
 
         <button
