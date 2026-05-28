@@ -161,7 +161,7 @@ col4: {
   totalFinal: {
   backgroundColor: '#064e3b',
   color: 'white'
-}
+},
 
 })
 
