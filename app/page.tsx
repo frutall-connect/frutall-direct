@@ -355,181 +355,185 @@ export default function InicioPage() {
 
           {/* OFERTAS */}
 
-          <div className="mt-5">
+          {/* OFERTAS */}
 
-            <div
-              className="
-                flex
-                items-center
-                justify-between
-                mb-3
-              "
-            >
-
-              <h3
-                className="
-                  text-2xl
-                  font-black
-                  text-black
-                "
-              >
-                Ofertas Especiales
-              </h3>
-
-              <span
-                className="
-                  text-green-700
-                  text-4xl
-                  font-light
-                "
-              >
-                »
-              </span>
-
-            </div>
-
-            <div
-  className="
-    relative
-    overflow-hidden
-    rounded-[2rem]
-    bg-gradient-to-br
-    from-white
-    to-green-50
-    p-4
-    shadow-xl
-    border
-    border-green-100
-  "
->
-
-  {/* BADGE */}
-
-  <div
-    className="
-      absolute
-      top-3
-      right-3
-      bg-red-500
-      text-white
-      text-xs
-      font-black
-      px-3
-      py-1
-      rounded-full
-      shadow
-    "
-  >
-    -20%
-  </div>
+<div className="mt-5">
 
   <div
     className="
       flex
-      gap-4
       items-center
+      justify-between
+      mb-3
     "
   >
 
-    {/* IMAGEN */}
+    <h3
+      className="
+        text-2xl
+        font-black
+        text-black
+      "
+    >
+      Ofertas Especiales
+    </h3>
+
+    <span
+      className="
+        text-green-700
+        text-4xl
+        font-light
+      "
+    >
+      »
+    </span>
+
+  </div>
+
+  <div
+    className="
+      relative
+      overflow-hidden
+      rounded-[2rem]
+      bg-gradient-to-br
+      from-white
+      to-green-50
+      p-4
+      shadow-xl
+      border
+      border-green-100
+    "
+  >
+
+    {/* BADGE */}
 
     <div
       className="
-        w-24
-        h-24
-        rounded-[1.5rem]
-        overflow-hidden
-        shrink-0
-        shadow-md
+        absolute
+        top-3
+        right-3
+        bg-red-500
+        text-white
+        text-xs
+        font-black
+        px-3
+        py-1
+        rounded-full
+        shadow
+      "
+    >
+      -20%
+    </div>
+
+    <div
+      className="
+        flex
+        gap-4
+        items-center
       "
     >
 
-      <img
+      {/* IMAGEN */}
 
-        src="
+      <div
+        className="
+          w-24
+          h-24
+          rounded-[1.5rem]
+          overflow-hidden
+          shrink-0
+          shadow-md
+        "
+      >
+
+        <img
+
+          src="
 https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=format&fit=crop
 "
 
-        alt="Oferta especial"
+          alt="Oferta especial"
 
-        className="
-          w-full
-          h-full
-          object-cover
-        "
-
-      />
-
-    </div>
-
-    {/* INFO */}
-
-    <div className="flex-1">
-
-      <p
-        className="
-          text-xs
-          uppercase
-          tracking-wider
-          text-green-700
-          font-bold
-        "
-      >
-        Oferta del día
-      </p>
-
-      <h4
-        className="
-          text-xl
-          font-black
-          text-black
-          leading-tight
-          mt-1
-        "
-      >
-        Uva Roja Sin Semilla
-      </h4>
-
-      <div
-        className="
-          flex
-          items-center
-          gap-2
-          mt-3
-        "
-      >
-
-        <span
           className="
-            text-3xl
-            font-black
-            text-green-800
+            w-full
+            h-full
+            object-cover
           "
-        >
-          1,80€
-        </span>
 
-        <span
-          className="
-            text-sm
-            text-gray-400
-            line-through
-          "
-        >
-          2,30€
-        </span>
+        />
 
       </div>
 
-      <div
-        className="
-          mt-2
-          text-sm
-          text-green-700
-          font-semibold
-        "
-      >
-        ✓ Disponible hoy
+      {/* INFO */}
+
+      <div className="flex-1">
+
+        <p
+          className="
+            text-xs
+            uppercase
+            tracking-wider
+            text-green-700
+            font-bold
+          "
+        >
+          Oferta del día
+        </p>
+
+        <h4
+          className="
+            text-xl
+            font-black
+            text-black
+            leading-tight
+            mt-1
+          "
+        >
+          Uva Roja Sin Semilla
+        </h4>
+
+        <div
+          className="
+            flex
+            items-center
+            gap-2
+            mt-3
+          "
+        >
+
+          <span
+            className="
+              text-3xl
+              font-black
+              text-green-800
+            "
+          >
+            1,80€
+          </span>
+
+          <span
+            className="
+              text-sm
+              text-gray-400
+              line-through
+            "
+          >
+            2,30€
+          </span>
+
+        </div>
+
+        <div
+          className="
+            mt-2
+            text-sm
+            text-green-700
+            font-semibold
+          "
+        >
+          ✓ Disponible hoy
+        </div>
+
       </div>
 
     </div>
