@@ -2,51 +2,63 @@
 
 import Link from 'next/link'
 
-type Props = {
-  categorias: any[]
-}
+const categoriasMock = [
 
-const iconos: Record<string, string> = {
+  {
+    nombre: 'Frutas',
+    icono: '🍎'
+  },
 
-  Frutas: '🍎',
-  Verduras: '🥬',
-  Tubérculos: '🥔',
-  Temporada: '🍅'
+  {
+    nombre: 'Verduras',
+    icono: '🥬'
+  },
 
-}
+  {
+    nombre: 'Tubérculos',
+    icono: '🥔'
+  },
 
-export default function AppleCategories({
-  categorias
-}: Props) {
+  {
+    nombre: 'Temporada',
+    icono: '🍅'
+  }
+
+]
+
+export default function AppleCategories() {
 
   return (
 
     <div
       className="
-        grid
-        grid-cols-2
+        flex
         gap-3
+        overflow-x-auto
         mt-5
+        pb-1
+        no-scrollbar
       "
     >
 
-      {categorias.map((categoria) => (
+      {categoriasMock.map((categoria) => (
 
         <Link
-          key={categoria.id}
+          key={categoria.nombre}
           href={`/productos?categoria=${categoria.nombre}`}
         >
 
           <div
             className="
+              min-w-[88px]
+              h-[118px]
               bg-white
-              rounded-[1.8rem]
-              px-4
-              py-4
-              h-[108px]
+              rounded-[1.5rem]
               border
-              border-[#ececec]
-              shadow-[0_4px_12px_rgba(0,0,0,0.05)]
+              border-[#ededed]
+              shadow-[0_4px_10px_rgba(0,0,0,0.05)]
+              px-3
+              py-3
               flex
               flex-col
               justify-between
@@ -57,44 +69,42 @@ export default function AppleCategories({
 
             <div
               className="
-                text-[2rem]
+                text-[2.5rem]
                 leading-none
+                text-center
+                mt-1
               "
             >
-              {iconos[categoria.nombre] || '📦'}
+              {categoria.icono}
             </div>
 
-            {/* FOOTER */}
+            {/* TEXTO */}
 
-            <div
-              className="
-                flex
-                items-center
-                justify-between
-              "
-            >
+            <div>
 
-              <span
+              <div
                 className="
-                  text-[1rem]
-                  font-bold
+                  text-[0.95rem]
+                  font-semibold
                   text-black
                   tracking-[-0.02em]
+                  text-center
                 "
               >
                 {categoria.nombre}
-              </span>
+              </div>
 
-              <span
+              <div
                 className="
                   text-gray-400
-                  text-[1.5rem]
+                  text-[1.3rem]
                   leading-none
-                  font-light
+                  text-right
+                  mt-1
                 "
               >
                 →
-              </span>
+              </div>
 
             </div>
 
