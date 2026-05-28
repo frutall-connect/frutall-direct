@@ -2,13 +2,11 @@
 
 import Link from 'next/link'
 
-type Props = {
-  usuario: string
-}
-
 export default function AppleHero({
   usuario
-}: Props) {
+}: {
+  usuario: string
+}) {
 
   return (
 
@@ -16,41 +14,52 @@ export default function AppleHero({
       className="
         relative
         overflow-hidden
-        rounded-[2rem]
-        h-[255px]
-        shadow-xl
+        rounded-[2.2rem]
+        h-[330px]
+        shadow-[0_10px_35px_rgba(0,0,0,0.10)]
       "
     >
 
-      {/* IMAGEN */}
+      {/* BACKGROUND */}
 
-      <div
+      <img
+
+        src="/hero-bg-premium.png"
+
+        alt="Hero"
+
         className="
           absolute
           inset-0
+          w-full
+          h-full
+          object-cover
         "
-        style={{
 
-          backgroundImage:
-            'url(https://images.unsplash.com/photo-1490818387583-1baba5e638af?q=80&w=1400&auto=format&fit=crop)',
-
-          backgroundSize:
-            'cover',
-
-          backgroundPosition:
-            'center'
-
-        }}
       />
 
-      {/* OVERLAY */}
+      {/* OVERLAY OSCURO SUPERIOR */}
 
       <div
         className="
           absolute
           inset-0
-          bg-black/28
         "
+
+        style={{
+
+          background:
+            `
+            linear-gradient(
+              to bottom,
+              rgba(0,0,0,0.28) 0%,
+              rgba(0,0,0,0.10) 35%,
+              rgba(255,255,255,0) 60%
+            )
+            `
+
+        }}
+
       />
 
       {/* CONTENIDO */}
@@ -59,84 +68,76 @@ export default function AppleHero({
         className="
           relative
           z-10
-          h-full
-          flex
-          flex-col
-          px-5
-          pt-5
+          p-5
         "
       >
 
-        {/* TEXTOS */}
+        {/* TITULO */}
 
-        <div>
+        <h1
+          className="
+            text-white
+            font-black
+            tracking-[-0.05em]
+            text-[3rem]
+            leading-[2.8rem]
+            drop-shadow-xl
+            mt-1
+          "
+        >
+          ¡Hola,
+          {usuario}!
+        </h1>
 
-          <h1
+        {/* SUB */}
+
+        <p
+          className="
+            text-white
+            text-[1.15rem]
+            font-semibold
+            mt-2
+            drop-shadow-lg
+          "
+        >
+          Fruta fresca,
+          calidad garantizada
+        </p>
+
+        {/* SEARCH */}
+
+        <div
+          className="
+            mt-7
+            h-[64px]
+            rounded-full
+            bg-white/92
+            backdrop-blur-md
+            flex
+            items-center
+            justify-between
+            px-6
+            shadow-xl
+          "
+        >
+
+          <span
             className="
-              text-white
-              text-[1.55rem]
-              leading-[1.7rem]
-              font-black
-              tracking-tight
+              text-gray-500
+              text-[1.1rem]
             "
           >
-            ¡Hola,
-            {usuario}!
-          </h1>
+            Buscar productos...
+          </span>
 
-          <p
+          <span
             className="
-              text-white/95
-              text-[0.98rem]
-              leading-[1.15rem]
-              mt-2
-              font-medium
+              text-green-700
+              text-[2rem]
             "
           >
-            Fruta fresca,
-            calidad garantizada
-          </p>
-
-        </div>
-
-        {/* BUSCADOR */}
-
-        <div className="mt-5">
-
-          <div
-            className="
-              h-[56px]
-              rounded-[1.5rem]
-              bg-white/92
-              backdrop-blur-xl
-              shadow-xl
-              px-5
-              flex
-              items-center
-              justify-between
-            "
-          >
-
-            <span
-              className="
-                text-gray-500
-                text-[1rem]
-                font-medium
-              "
-            >
-              Buscar productos...
-            </span>
-
-            <span
-              className="
-                text-[1.8rem]
-                text-green-700
-              "
-            >
-              ⌕
-            </span>
-
-          </div>
+            ⌕
+          </span>
 
         </div>
 
@@ -146,8 +147,8 @@ export default function AppleHero({
           className="
             grid
             grid-cols-2
-            gap-3
-            mt-4
+            gap-4
+            mt-5
           "
         >
 
@@ -157,18 +158,15 @@ export default function AppleHero({
 
             <button
               className="
-                h-[54px]
                 w-full
-                rounded-[1.5rem]
-                bg-white/90
-                backdrop-blur-xl
-                shadow-xl
-                text-green-800
+                h-[74px]
+                rounded-[1.8rem]
+                bg-white/88
+                backdrop-blur-md
+                text-green-700
+                text-[1.25rem]
                 font-black
-                text-[0.98rem]
-                flex
-                items-center
-                justify-center
+                shadow-xl
               "
             >
               Ver catálogo
@@ -180,16 +178,16 @@ export default function AppleHero({
 
           <button
             className="
-              h-[54px]
-              rounded-[1.5rem]
+              h-[74px]
+              rounded-[1.8rem]
               bg-white/12
               border
-              border-white/20
-              backdrop-blur-xl
-              shadow-xl
+              border-white/30
+              backdrop-blur-md
               text-white
+              text-[1.25rem]
               font-black
-              text-[0.98rem]
+              shadow-xl
             "
           >
             Ofertas
