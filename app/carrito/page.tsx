@@ -139,8 +139,6 @@ export default function CarritoPage() {
 
 try {
 
-alert('ENTRANDO WHATSAPP')
-
   const waResponse = await fetch(
 
     '/api/send-whatsapp',
