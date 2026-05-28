@@ -191,14 +191,14 @@ export default function InicioPage() {
   className="
     relative
     overflow-hidden
-    rounded-b-[2rem]
+    rounded-3xl
     bg-gradient-to-br
     from-green-800
     via-green-700
     to-emerald-500
     px-6
-    pt-8
-    pb-7
+    pt-4
+    pb-4
     shadow-xl
   "
 >
@@ -209,7 +209,7 @@ export default function InicioPage() {
       className="
         flex
         gap-3
-        mt-8
+        mt-2
       "
     >
       <Link href="/productos">
@@ -218,8 +218,8 @@ export default function InicioPage() {
           className="
             bg-white
             text-green-800
-            px-6
-            py-4
+            px-5
+            py-3
             rounded-2xl
             font-black
             shadow-lg
@@ -274,10 +274,10 @@ export default function InicioPage() {
                     rounded-3xl
                     overflow-hidden
                     shadow-lg
-                    h-28
+                    h-24
                     flex
                     items-end
-                    p-3
+                    p-2
                   "
                   style={{
                     background: categoria.color
@@ -289,7 +289,7 @@ export default function InicioPage() {
                       absolute
                       top-3
                       left-3
-                      text-3xl
+                      text-2xl
                     "
                   >
                     {categoria.icono}
@@ -307,7 +307,7 @@ export default function InicioPage() {
                     <span
                       className="
                         text-white
-                        text-lg
+                        text-base
                         font-black
                         leading-tight
                       "
@@ -337,7 +337,7 @@ export default function InicioPage() {
 
           {/* OFERTAS */}
 
-          <div className="mt-8">
+          <div className="mt-5">
 
             <div
               className="
@@ -374,7 +374,7 @@ export default function InicioPage() {
               className="
                 bg-white
                 rounded-3xl
-                p-4
+                p-3
                 shadow-lg
                 flex
                 gap-4
@@ -384,8 +384,8 @@ export default function InicioPage() {
 
               <div
                 className="
-                  w-24
-                  h-24
+                  w-20
+                  h-20
                   rounded-2xl
                   overflow-hidden
                   shrink-0
@@ -401,8 +401,8 @@ https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=fo
   alt="Oferta especial"
 
   className="
-    w-24
-    h-24
+    w-20
+    h-20
     object-cover
     rounded-xl
   "
@@ -415,7 +415,7 @@ https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=fo
 
                 <h4
                   className="
-                    text-xl
+                    text-lg
                     font-black
                     text-green-800
                   "
@@ -462,7 +462,7 @@ https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=fo
 
           {/* BOTONES */}
 
-          <div className="grid grid-cols-2 gap-4 mt-6">
+          <div className="grid grid-cols-2 gap-4 mt-4">
 
             <button
               onClick={repetirUltimoPedido}
