@@ -67,19 +67,21 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    flex: 1,
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 18,
-    border: '1 solid #d1d5db'
-  },
+  flex: 1,
+  backgroundColor: '#ffffff',
+  borderRadius: 16,
+  padding: 22,
+  border: '1 solid #d1d5db'
+},
 
   cardTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#065f46',
-    marginBottom: 10
-  },
+  fontSize: 11,
+  fontWeight: 'bold',
+  color: '#6b7280',
+  marginBottom: 10,
+  textTransform: 'uppercase',
+  letterSpacing: 1
+},
 
   table: {
     marginTop: 20,
@@ -225,9 +227,26 @@ export default function AlbaranPDF({
               CLIENTE
             </Text>
 
-            <Text>
-              {pedido.usuario_id}
-            </Text>
+            <Text
+  style={{
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 6
+  }}
+>
+  Cliente FrutALL
+</Text>
+
+<Text
+  style={{
+    fontSize: 11,
+    color: '#6b7280',
+    lineHeight: 1.6
+  }}
+>
+  Pedido asociado:{'\n'}
+  {pedido.usuario_id}
+</Text>
 
           </View>
 
@@ -237,9 +256,25 @@ export default function AlbaranPDF({
               ESTADO
             </Text>
 
-            <Text>
-              {pedido.estado}
-            </Text>
+            <Text
+  style={{
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#065f46'
+  }}
+>
+  {pedido.estado?.toUpperCase()}
+</Text>
+
+<Text
+  style={{
+    marginTop: 8,
+    fontSize: 11,
+    color: '#6b7280'
+  }}
+>
+  Actualizado automáticamente
+</Text>
 
           </View>
 
