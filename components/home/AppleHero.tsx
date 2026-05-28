@@ -74,8 +74,8 @@ export default function AppleHero({
           <h1
             className="
               text-white
-              text-[2rem]
-              leading-[2.1rem]
+              text-[1.55rem]
+              leading-[1.7rem]
               font-black
               tracking-tight
             "
