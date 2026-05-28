@@ -305,6 +305,7 @@ export default function InicioPage() {
   <div
     className="
       text-2xl
+      items-center
       z-10
     "
   >
@@ -317,7 +318,7 @@ export default function InicioPage() {
     className="
       flex
       items-center
-      
+      justify-between
       z-10
     "
   >
