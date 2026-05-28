@@ -504,6 +504,8 @@ https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=fo
 
       </div>
 
+    </div>
+
       <BottomNav />
 
     </MobileLayout>
