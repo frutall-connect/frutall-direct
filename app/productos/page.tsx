@@ -135,6 +135,8 @@ function ProductosContenido() {
 
     <MobileLayout>
 
+     <BackButton />
+
       <div className="min-h-screen bg-[#f5f3eb] pb-44">
 
         {/* HEADER */}
