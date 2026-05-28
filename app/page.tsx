@@ -205,30 +205,6 @@ export default function InicioPage() {
 
   <div className="max-w-md">
 
-    <p
-      className="
-        text-green-100
-        font-semibold
-        tracking-wide
-        uppercase
-        text-sm
-      "
-    >
-      FrutALL Direct
-    </p>
-
-    <p
-      className="
-        text-green-50/90
-        text-lg
-        mt-5
-        leading-relaxed
-      "
-    >
-      Distribución rápida para
-      hostelería, retail y restauración.
-    </p>
-
     <div
       className="
         flex
