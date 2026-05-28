@@ -460,6 +460,8 @@ https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=fo
 
 </div>
 
+</div>
+
           {/* BOTONES */}
 
           <div className="grid grid-cols-2 gap-4 mt-4">
@@ -503,8 +505,6 @@ https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=fo
         </div>
 
       </div>
-
-    </div>
 
       <BottomNav />
 
