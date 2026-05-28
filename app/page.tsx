@@ -282,58 +282,84 @@ export default function InicioPage() {
                   style={{
                     background: categoria.color
                   }}
-                >
+                ><div
+  className="
+    relative
+    rounded-[2rem]
+    overflow-hidden
+    shadow-xl
+    h-24
+    p-3
+    flex
+    flex-col
+    justify-between
+    transition
+    active:scale-[0.98]
+  "
+  style={{
+    background: categoria.color
+  }}
+>
 
-                  <div
-                    className="
-                      absolute
-                      top-3
-                      left-3
-                      text-2xl
-                    "
-                  >
-                    {categoria.icono}
-                  </div>
+  {/* BRILLO */}
 
-                  <div
-                    className="
-                      w-full
-                      flex
-                      justify-between
-                      items-end
-                    "
-                  >
+  <div
+    className="
+      absolute
+      inset-0
+      bg-gradient-to-br
+      from-white/20
+      to-transparent
+      pointer-events-none
+    "
+  />
 
-                    <span
-                      className="
-                        text-white
-                        text-base
-                        font-black
-                        leading-tight
-                      "
-                    >
-                      {categoria.nombre}
-                    </span>
+  {/* ICONO */}
 
-                    <span
-                      className="
-                        text-white
-                        text-3xl
-                        font-light
-                      "
-                    >
-                      ›
-                    </span>
+  <div
+    className="
+      text-2xl
+      z-10
+    "
+  >
+    {categoria.icono}
+  </div>
 
-                  </div>
+  {/* TEXTO */}
 
-                </div>
+  <div
+    className="
+      flex
+      items-center
+      justify-between
+      z-10
+    "
+  >
 
-              </Link>
+    <span
+      className="
+        text-white
+        text-base
+        font-black
+        tracking-tight
+      "
+    >
+      {categoria.nombre}
+    </span>
 
-            ))}
+    <span
+      className="
+        text-white
+        text-2xl
+        font-light
+      "
+    >
+      →
+    </span>
 
-          </div>
+  </div>
+
+</div>
 
           {/* OFERTAS */}
 
