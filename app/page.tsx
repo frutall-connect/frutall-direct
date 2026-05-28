@@ -217,19 +217,6 @@ export default function InicioPage() {
       FrutALL Direct
     </p>
 
-    <h1
-      className="
-        text-5xl
-        leading-tight
-        font-black
-        text-white
-        mt-3
-      "
-    >
-      Fruta y verdura fresca
-      para profesionales
-    </h1>
-
     <p
       className="
         text-green-50/90
