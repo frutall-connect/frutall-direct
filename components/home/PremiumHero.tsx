@@ -13,7 +13,7 @@ export default function PremiumHero({
 
   return (
 
-    <div className="space-y-4">
+    <div className="space-y-3">
 
       {/* HEADER */}
 
@@ -22,62 +22,57 @@ export default function PremiumHero({
           flex
           items-center
           justify-between
+          px-1
         "
       >
 
         <Image
           src="/logo-frutall-direct.png"
           alt="FrutALL Direct"
-          width={180}
-          height={70}
+          width={220}
+          height={80}
           priority
-          className="h-14 w-auto"
+          className="
+            h-[72px]
+            w-auto
+            object-contain
+          "
         />
 
         <div
           className="
             flex
             items-center
-            gap-3
+            gap-4
+            pr-1
           "
         >
 
+          {/* WHATSAPP */}
+
           <button
             className="
-              w-12
-              h-12
-              rounded-2xl
-              bg-white
-              shadow-lg
-              flex
-              items-center
-              justify-center
-              text-3xl
+              text-[3rem]
+              leading-none
             "
           >
             💬
           </button>
 
+          {/* MENÚ */}
+
           <button
             className="
-              w-12
-              h-12
-              rounded-2xl
-              bg-white
-              shadow-lg
               flex
-              items-center
+              flex-col
               justify-center
+              gap-[5px]
             "
           >
 
-            <div className="space-y-1">
-
-              <div className="w-6 h-1 rounded-full bg-black" />
-              <div className="w-6 h-1 rounded-full bg-black" />
-              <div className="w-6 h-1 rounded-full bg-black" />
-
-            </div>
+            <div className="w-9 h-[4px] rounded-full bg-black" />
+            <div className="w-9 h-[4px] rounded-full bg-black" />
+            <div className="w-9 h-[4px] rounded-full bg-black" />
 
           </button>
 
@@ -92,9 +87,8 @@ export default function PremiumHero({
           relative
           overflow-hidden
           rounded-[2rem]
-          p-5
           shadow-2xl
-          min-h-[340px]
+          h-[360px]
         "
       >
 
@@ -108,7 +102,7 @@ export default function PremiumHero({
           style={{
 
             backgroundImage:
-              'url(https://images.unsplash.com/photo-1490818387583-1baba5e638af?q=80&w=1400&auto=format&fit=crop)',
+              'url(https://images.unsplash.com/photo-1490818387583-1baba5e638af?q=80&w=1600&auto=format&fit=crop)',
 
             backgroundSize:
               'cover',
@@ -125,8 +119,7 @@ export default function PremiumHero({
           className="
             absolute
             inset-0
-            bg-black/25
-            backdrop-blur-[1px]
+            bg-black/30
           "
         />
 
@@ -136,9 +129,11 @@ export default function PremiumHero({
           className="
             relative
             z-10
+            h-full
             flex
             flex-col
-            h-full
+            px-5
+            pt-7
           "
         >
 
@@ -149,22 +144,23 @@ export default function PremiumHero({
             <h1
               className="
                 text-white
-                text-[2.2rem]
-                leading-[2.4rem]
+                text-[3rem]
+                leading-[3rem]
                 font-black
+                tracking-tight
               "
             >
               ¡Hola,
-              <br />
               {usuario}!
             </h1>
 
             <p
               className="
-                text-white/95
-                text-lg
-                mt-2
-                font-medium
+                text-white
+                text-[1.55rem]
+                leading-[1.7rem]
+                mt-3
+                font-semibold
               "
             >
               Fruta fresca,
@@ -175,32 +171,33 @@ export default function PremiumHero({
 
           {/* BUSCADOR */}
 
-          <div className="mt-6">
+          <div className="mt-7">
 
             <div
               className="
-                h-16
-                rounded-[1.6rem]
-                bg-white/92
+                h-[74px]
+                rounded-[2rem]
+                bg-white/95
                 backdrop-blur-xl
-                shadow-xl
-                px-5
+                px-7
                 flex
                 items-center
                 justify-between
+                shadow-2xl
               "
             >
 
               <span
                 className="
                   text-gray-500
-                  text-xl
+                  text-[1.8rem]
+                  font-medium
                 "
               >
                 Buscar productos...
               </span>
 
-              <span className="text-4xl">
+              <span className="text-[3rem]">
                 🔍
               </span>
 
@@ -215,7 +212,7 @@ export default function PremiumHero({
               grid
               grid-cols-2
               gap-4
-              mt-5
+              mt-6
             "
           >
 
@@ -223,15 +220,15 @@ export default function PremiumHero({
 
               <button
                 className="
+                  h-[76px]
                   w-full
-                  h-16
-                  rounded-[1.6rem]
-                  bg-white/88
+                  rounded-[2rem]
+                  bg-white/92
                   backdrop-blur-xl
                   shadow-2xl
                   text-green-800
                   font-black
-                  text-xl
+                  text-[1.5rem]
                 "
               >
                 🛍️ Ver catálogo
@@ -241,16 +238,16 @@ export default function PremiumHero({
 
             <button
               className="
-                h-16
-                rounded-[1.6rem]
-                bg-white/10
+                h-[76px]
+                rounded-[2rem]
+                bg-white/12
                 border
-                border-white/20
+                border-white/25
                 backdrop-blur-xl
                 shadow-2xl
                 text-white
                 font-black
-                text-xl
+                text-[1.5rem]
               "
             >
               🏷️ Ofertas
