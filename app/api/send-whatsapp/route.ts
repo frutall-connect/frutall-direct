@@ -35,7 +35,15 @@ ${body.metodoPago}
 📦 Estado:
 Pendiente
 
-`
+`console.log(
+  'FROM:',
+  process.env.TWILIO_WHATSAPP_FROM
+)
+
+console.log(
+  'TO:',
+  process.env.ADMIN_WHATSAPP
+)
 
     const response =
       await client.messages.create({
