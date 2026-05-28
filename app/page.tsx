@@ -305,8 +305,7 @@ export default function InicioPage() {
   <div
     className="
       text-2xl
-      items-center
-      justify-between
+      center
       z-10
     "
   >
