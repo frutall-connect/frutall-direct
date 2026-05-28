@@ -14,9 +14,11 @@ import { useCartStore } from '@/store/cartStore'
 
 export default function InicioPage() {
 
-  const [categorias, setCategorias] = useState<any[]>([])
+  const [categorias, setCategorias] =
+    useState<any[]>([])
 
-  const [usuario, setUsuario] = useState('')
+  const [usuario, setUsuario] =
+    useState('')
 
   const items = useCartStore(
     (state) => state.items
@@ -29,7 +31,6 @@ export default function InicioPage() {
   useEffect(() => {
 
     cargarCategorias()
-
     cargarUsuario()
 
   }, [])
@@ -51,11 +52,10 @@ export default function InicioPage() {
 
   async function cargarCategorias() {
 
-    const { data, error } = await supabase
-
-      .from('categorias')
-
-      .select('*')
+    const { data, error } =
+      await supabase
+        .from('categorias')
+        .select('*')
 
     if (!error && data) {
       setCategorias(data)
@@ -72,88 +72,110 @@ export default function InicioPage() {
 
     if (!usuario) return
 
-    const { data: pedido } = await supabase
+    const { data: pedido } =
+      await supabase
 
-      .from('pedidos')
+        .from('pedidos')
 
-      .select(`
-        *,
-        lineas_pedido (*)
-      `)
+        .select(`
+          *,
+          lineas_pedido (*)
+        `)
 
-      .eq('usuario_id', usuario.id)
+        .eq('usuario_id', usuario.id)
 
-      .order('created_at', {
-        ascending: false
-      })
+        .order('created_at', {
+          ascending: false
+        })
 
-      .limit(1)
+        .limit(1)
 
-      .single()
+        .single()
 
     if (!pedido) {
 
-      alert('No tienes pedidos anteriores')
+      alert(
+        'No tienes pedidos anteriores'
+      )
 
       return
 
     }
 
-    const nuevosItems = pedido.lineas_pedido.map(
-      (linea: any) => ({
+    const nuevosItems =
+      pedido.lineas_pedido.map(
+        (linea: any) => ({
 
-        id: linea.producto_id,
+          id: linea.producto_id,
 
-        nombre: linea.nombre_producto,
+          nombre:
+            linea.nombre_producto,
 
-        precio: linea.precio,
+          precio: linea.precio,
 
-        cantidad: linea.cantidad,
+          cantidad:
+            linea.cantidad,
 
-        envase: linea.envase || 'Caja',
+          envase:
+            linea.envase || 'Caja',
 
-        variedad: linea.variedad || 'Normal'
+          variedad:
+            linea.variedad || 'Normal'
 
-      })
-    )
+        })
+      )
 
     setItems(nuevosItems)
 
-    alert('Pedido cargado en carrito')
+    alert(
+      'Pedido cargado en carrito'
+    )
 
-    window.location.href = '/carrito'
+    window.location.href =
+      '/carrito'
 
   }
 
-  const totalProductos = items.reduce(
+  const totalProductos =
+    items.reduce(
 
-    (acc, item) =>
+      (acc, item) =>
+        acc + item.cantidad,
 
-      acc + item.cantidad,
+      0
 
-    0
-
-  )
+    )
 
   return (
 
     <MobileLayout>
 
-      <div className="min-h-screen bg-[#f5f3eb] pb-32">
+      <div
+        className="
+          min-h-screen
+          bg-[#f5f3eb]
+          pb-32
+        "
+      >
 
         {/* HEADER */}
 
         <div
           className="
             bg-white
+            border-b
             px-5
             pt-3
             pb-2
-            border-b
           "
         >
 
-          <div className="flex justify-center">
+          <div
+            className="
+              flex
+              justify-center
+            "
+          >
 
             <Image
               src="/logo-frutall-direct.png"
@@ -170,304 +192,454 @@ export default function InicioPage() {
 
         {/* CONTENIDO */}
 
-<div className="px-5 pt-5">
+        <div className="px-5 pt-5">
 
-{/* CATEGORÍAS */}
+          {/* HERO */}
 
-          <div className="grid grid-cols-2 gap-4 mt-6">
+          <div
+            className="
+              relative
+              overflow-hidden
+              rounded-[2rem]
+              bg-gradient-to-br
+              from-green-700
+              via-green-600
+              to-emerald-400
+              p-4
+              shadow-xl
+            "
+          >
 
-            {categorias.map((categoria) => (
+            {/* FONDO */}
 
-              <Link
+            <div
+              className="
+                absolute
+                inset-0
+                opacity-10
+              "
+              style={{
 
-  href={`/productos?categoria=${categoria.nombre}`}
+                backgroundImage:
+                  'url(https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1400&auto=format&fit=crop)',
 
-  key={categoria.id}
+                backgroundSize:
+                  'cover',
 
->
+                backgroundPosition:
+                  'center'
 
-                <div
-  className="
-    relative
-    rounded-[2rem]
-    overflow-hidden
-    shadow-xl
-    h-24
-    p-3
-    flex
-    flex-col
-    justify-between
-    transition
-    active:scale-[0.98]
-  "
-  style={{
-    background: categoria.color
-  }}
->
+              }}
+            />
 
-  {/* BRILLO */}
+            <div
+              className="
+                relative
+                z-10
+              "
+            >
 
-  <div
-    className="
-      absolute
-      inset-0
-      bg-gradient-to-br
-      from-white/20
-      to-transparent
-      pointer-events-none
-    "
-  />
+              {/* TOP */}
 
-  {/* ICONO */}
+              <div
+                className="
+                  flex
+                  items-center
+                  justify-between
+                  gap-3
+                "
+              >
 
-  <div
-    className="
-      text-2xl
-      z-10
-    " 
-  >
-    {categoria.icono}
-  </div>
+                <div>
 
-  {/* TEXTO */}
+                  <p
+                    className="
+                      text-white/80
+                      text-sm
+                    "
+                  >
+                    Bienvenido
+                  </p>
 
-  <div
-    className="
-      flex
-      items-center
-      justify-between
-      z-10
-    "
-  >
+                  <h1
+                    className="
+                      text-white
+                      text-2xl
+                      font-black
+                    "
+                  >
+                    {usuario}
+                  </h1>
 
-    <span
-      className="
-        text-white
-        text-base
-        font-black
-        tracking-tight
-      "
-    >
-      {categoria.nombre}
-    </span>
+                </div>
 
-    <span
-      className="
-        text-white
-        text-2xl
-        font-light
-      "
-    >
-      →
-    </span>
+                <button
+                  className="
+                    w-14
+                    h-14
+                    rounded-2xl
+                    bg-white/15
+                    backdrop-blur
+                    border
+                    border-white/20
+                    flex
+                    items-center
+                    justify-center
+                    text-white
+                    text-3xl
+                  "
+                >
+                  💬
+                </button>
 
-  </div>
+              </div>
 
-</div>
+              {/* BUSCADOR */}
 
-              </Link>
+              <div className="mt-4">
 
-            ))}
+                <input
+                  type="text"
+                  placeholder="Buscar productos..."
+                  className="
+                    w-full
+                    h-12
+                    rounded-2xl
+                    bg-white/90
+                    px-5
+                    text-black
+                    outline-none
+                    shadow-lg
+                  "
+                />
+
+              </div>
+
+              {/* BOTONES */}
+
+              <div
+                className="
+                  flex
+                  gap-3
+                  mt-4
+                "
+              >
+
+                <Link
+                  href="/productos"
+                  className="flex-1"
+                >
+
+                  <button
+                    className="
+                      w-full
+                      bg-white
+                      text-green-800
+                      py-3
+                      rounded-2xl
+                      font-black
+                      shadow-lg
+                    "
+                  >
+                    Ver catálogo
+                  </button>
+
+                </Link>
+
+                <button
+                  className="
+                    flex-1
+                    bg-white/15
+                    border
+                    border-white/20
+                    text-white
+                    py-3
+                    rounded-2xl
+                    font-bold
+                    backdrop-blur
+                  "
+                >
+                  Ofertas
+                </button>
+
+              </div>
+
+            </div>
 
           </div>
 
-          {/* OFERTAS */}
+          {/* CATEGORÍAS */}
 
-          {/* OFERTAS */}
-
-<div className="mt-5">
-
-  <div
-    className="
-      flex
-      items-center
-      justify-between
-      mb-3
-    "
-  >
-
-    <h3
-      className="
-        text-2xl
-        font-black
-        text-black
-      "
-    >
-      Ofertas Especiales
-    </h3>
-
-    <span
-      className="
-        text-green-700
-        text-4xl
-        font-light
-      "
-    >
-      »
-    </span>
-
-  </div>
-
-  <div
-    className="
-      relative
-      overflow-hidden
-      rounded-[2rem]
-      bg-gradient-to-br
-      from-white
-      to-green-50
-      p-4
-      shadow-xl
-      border
-      border-green-100
-    "
-  >
-
-    {/* BADGE */}
-
-    <div
-      className="
-        absolute
-        top-3
-        right-3
-        bg-red-500
-        text-white
-        text-xs
-        font-black
-        px-3
-        py-1
-        rounded-full
-        shadow
-      "
-    >
-      -20%
-    </div>
-
-    <div
-      className="
-        flex
-        gap-4
-        items-center
-      "
-    >
-
-      {/* IMAGEN */}
-
-      <div
-        className="
-          w-24
-          h-24
-          rounded-[1.5rem]
-          overflow-hidden
-          shrink-0
-          shadow-md
-        "
-      >
-
-        <img
-
-          src="
-https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=format&fit=crop
-"
-
-          alt="Oferta especial"
-
-          className="
-            w-full
-            h-full
-            object-cover
-          "
-
-        />
-
-      </div>
-
-      {/* INFO */}
-
-      <div className="flex-1">
-
-        <p
-          className="
-            text-xs
-            uppercase
-            tracking-wider
-            text-green-700
-            font-bold
-          "
-        >
-          Oferta del día
-        </p>
-
-        <h4
-          className="
-            text-xl
-            font-black
-            text-black
-            leading-tight
-            mt-1
-          "
-        >
-          Uva Roja Sin Semilla
-        </h4>
-
-        <div
-          className="
-            flex
-            items-center
-            gap-2
-            mt-3
-          "
-        >
-
-          <span
+          <div
             className="
-              text-3xl
-              font-black
-              text-green-800
+              grid
+              grid-cols-2
+              gap-4
+              mt-6
             "
           >
-            1,80€
-          </span>
 
-          <span
-            className="
-              text-sm
-              text-gray-400
-              line-through
-            "
-          >
-            2,30€
-          </span>
+            {categorias.map(
+              (categoria) => (
 
-        </div>
+                <Link
+                  href={`/productos?categoria=${categoria.nombre}`}
+                  key={categoria.id}
+                >
 
-        <div
-          className="
-            mt-2
-            text-sm
-            text-green-700
-            font-semibold
-          "
-        >
-          ✓ Disponible hoy
-        </div>
+                  <div
+                    className="
+                      relative
+                      rounded-[2rem]
+                      overflow-hidden
+                      shadow-xl
+                      h-24
+                      p-3
+                      flex
+                      flex-col
+                      justify-between
+                      transition
+                      active:scale-[0.98]
+                    "
+                    style={{
+                      background:
+                        categoria.color
+                    }}
+                  >
 
-      </div>
+                    <div
+                      className="
+                        absolute
+                        inset-0
+                        bg-gradient-to-br
+                        from-white/20
+                        to-transparent
+                      "
+                    />
 
-    </div>
+                    <div
+                      className="
+                        text-2xl
+                        z-10
+                      "
+                    >
+                      {categoria.icono}
+                    </div>
 
-  </div>
+                    <div
+                      className="
+                        flex
+                        items-center
+                        justify-between
+                        z-10
+                      "
+                    >
 
-</div>
+                      <span
+                        className="
+                          text-white
+                          text-base
+                          font-black
+                        "
+                      >
+                        {categoria.nombre}
+                      </span>
 
-</div>
+                      <span
+                        className="
+                          text-white
+                          text-2xl
+                        "
+                      >
+                        →
+                      </span>
+
+                    </div>
+
+                  </div>
+
+                </Link>
+
+              )
+            )}
+
+          </div>
+
+          {/* OFERTA */}
+
+          <div className="mt-6">
+
+            <div
+              className="
+                flex
+                items-center
+                justify-between
+                mb-3
+              "
+            >
+
+              <h3
+                className="
+                  text-2xl
+                  font-black
+                "
+              >
+                Ofertas Especiales
+              </h3>
+
+              <span
+                className="
+                  text-green-700
+                  text-4xl
+                "
+              >
+                »
+              </span>
+
+            </div>
+
+            <div
+              className="
+                relative
+                overflow-hidden
+                rounded-[2rem]
+                bg-gradient-to-br
+                from-white
+                to-green-50
+                p-4
+                shadow-xl
+                border
+                border-green-100
+              "
+            >
+
+              <div
+                className="
+                  absolute
+                  top-3
+                  right-3
+                  bg-red-500
+                  text-white
+                  text-xs
+                  font-black
+                  px-3
+                  py-1
+                  rounded-full
+                "
+              >
+                -20%
+              </div>
+
+              <div
+                className="
+                  flex
+                  gap-4
+                  items-center
+                "
+              >
+
+                <img
+                  src="https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=format&fit=crop"
+                  alt="Oferta"
+                  className="
+                    w-24
+                    h-24
+                    rounded-[1.5rem]
+                    object-cover
+                    shadow-md
+                  "
+                />
+
+                <div className="flex-1">
+
+                  <p
+                    className="
+                      text-xs
+                      uppercase
+                      tracking-wider
+                      text-green-700
+                      font-bold
+                    "
+                  >
+                    Oferta del día
+                  </p>
+
+                  <h4
+                    className="
+                      text-xl
+                      font-black
+                      leading-tight
+                      mt-1
+                    "
+                  >
+                    Uva Roja Sin Semilla
+                  </h4>
+
+                  <div
+                    className="
+                      flex
+                      items-center
+                      gap-2
+                      mt-3
+                    "
+                  >
+
+                    <span
+                      className="
+                        text-3xl
+                        font-black
+                        text-green-800
+                      "
+                    >
+                      1,80€
+                    </span>
+
+                    <span
+                      className="
+                        text-sm
+                        text-gray-400
+                        line-through
+                      "
+                    >
+                      2,30€
+                    </span>
+
+                  </div>
+
+                  <div
+                    className="
+                      mt-2
+                      text-sm
+                      text-green-700
+                      font-semibold
+                    "
+                  >
+                    ✓ Disponible hoy
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
 
           {/* BOTONES */}
 
-          <div className="grid grid-cols-2 gap-4 mt-4">
+          <div
+            className="
+              grid
+              grid-cols-2
+              gap-4
+              mt-6
+            "
+          >
 
             <button
-              onClick={repetirUltimoPedido}
+              onClick={
+                repetirUltimoPedido
+              }
               className="
                 bg-green-700
                 text-white
@@ -495,7 +667,9 @@ https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=fo
                   shadow-lg
                 "
               >
-                🛒 Carrito ({totalProductos})
+                🛒 Carrito (
+                {totalProductos}
+                )
               </button>
 
             </Link>
@@ -503,6 +677,8 @@ https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=fo
           </div>
 
         </div>
+
+      </div>
 
       <BottomNav />
 
