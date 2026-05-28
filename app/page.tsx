@@ -6,7 +6,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import MobileLayout from '@/components/layout/MobileLayout'
+
 import BottomNav from '@/components/layout/BottomNav'
+
+import PremiumHero from '@/components/home/PremiumHero'
 
 import { supabase } from '@/lib/supabaseClient'
 
@@ -196,177 +199,7 @@ export default function InicioPage() {
 
           {/* HERO */}
 
-          <div
-            className="
-              relative
-              overflow-hidden
-              rounded-[2rem]
-              bg-gradient-to-br
-              from-green-700
-              via-green-600
-              to-emerald-400
-              p-4
-              shadow-xl
-            "
-          >
-
-            {/* FONDO */}
-
-            <div
-              className="
-                absolute
-                inset-0
-                opacity-10
-              "
-              style={{
-
-                backgroundImage:
-                  'url(https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1400&auto=format&fit=crop)',
-
-                backgroundSize:
-                  'cover',
-
-                backgroundPosition:
-                  'center'
-
-              }}
-            />
-
-            <div
-              className="
-                relative
-                z-10
-              "
-            >
-
-              {/* TOP */}
-
-              <div
-                className="
-                  flex
-                  items-center
-                  justify-between
-                  gap-3
-                "
-              >
-
-                <div>
-
-                  <p
-                    className="
-                      text-white/80
-                      text-sm
-                    "
-                  >
-                    Bienvenido
-                  </p>
-
-                  <h1
-                    className="
-                      text-white
-                      text-2xl
-                      font-black
-                    "
-                  >
-                    {usuario}
-                  </h1>
-
-                </div>
-
-                <button
-                  className="
-                    w-14
-                    h-14
-                    rounded-2xl
-                    bg-white/15
-                    backdrop-blur
-                    border
-                    border-white/20
-                    flex
-                    items-center
-                    justify-center
-                    text-white
-                    text-3xl
-                  "
-                >
-                  💬
-                </button>
-
-              </div>
-
-              {/* BUSCADOR */}
-
-              <div className="mt-4">
-
-                <input
-                  type="text"
-                  placeholder="Buscar productos..."
-                  className="
-                    w-full
-                    h-12
-                    rounded-2xl
-                    bg-white/90
-                    px-5
-                    text-black
-                    outline-none
-                    shadow-lg
-                  "
-                />
-
-              </div>
-
-              {/* BOTONES */}
-
-              <div
-                className="
-                  flex
-                  gap-3
-                  mt-4
-                "
-              >
-
-                <Link
-                  href="/productos"
-                  className="flex-1"
-                >
-
-                  <button
-                    className="
-                      w-full
-                      bg-white
-                      text-green-800
-                      py-3
-                      rounded-2xl
-                      font-black
-                      shadow-lg
-                    "
-                  >
-                    Ver catálogo
-                  </button>
-
-                </Link>
-
-                <button
-                  className="
-                    flex-1
-                    bg-white/15
-                    border
-                    border-white/20
-                    text-white
-                    py-3
-                    rounded-2xl
-                    font-bold
-                    backdrop-blur
-                  "
-                >
-                  Ofertas
-                </button>
-
-              </div>
-
-            </div>
-
-          </div>
+<PremiumHero usuario={usuario} />
 
           {/* CATEGORÍAS */}
 
