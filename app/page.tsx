@@ -198,7 +198,7 @@ export default function InicioPage() {
     to-emerald-500
     px-6
     pt-8
-    pb-10
+    pb-7
     shadow-xl
   "
 >
