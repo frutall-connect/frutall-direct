@@ -269,22 +269,6 @@ export default function InicioPage() {
 >
 
                 <div
-                  className="
-                    relative
-                    rounded-3xl
-                    overflow-hidden
-                    shadow-lg
-                    h-24
-                    flex
-                    items-end
-                    p-2
-                  "
-                  style={{
-                    background: categoria.color
-                  }}
-                >
-
-                  <div
   className="
     relative
     rounded-[2rem]
@@ -449,7 +433,7 @@ https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=fo
 
                 <h4
                   className="
-                    text-lg
+                    text-xl
                     font-black
                     text-green-800
                   "
