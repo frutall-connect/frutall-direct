@@ -17,10 +17,12 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 30
-  },
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginBottom: 40,
+  paddingBottom: 25,
+  borderBottom: '1 solid #d1d5db'
+},
 
   logoBlock: {
     width: '45%'
@@ -36,27 +38,27 @@ const styles = StyleSheet.create({
     lineHeight: 1.6
   },
 
-  titleBlock: {
-    width: '45%',
-    alignItems: 'flex-end'
-  },
+ titleBlock: {
+  width: '42%',
+  alignItems: 'stretch',
+  justifyContent: 'flex-start'
+},
 
   title: {
-    fontSize: 34,
-    fontWeight: 'bold',
-    color: '#065f46',
-    marginBottom: 12
-  },
+  fontSize: 42,
+  fontWeight: 'heavy',
+  color: '#065f46',
+  marginBottom: 16,
+  textAlign: 'left'
+},
 
   albaranBox: {
-    backgroundColor: '#065f46',
-    color: 'white',
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-    borderRadius: 8,
-    fontSize: 18,
-    fontWeight: 'bold'
-  },
+  backgroundColor: '#065f46',
+  color: 'white',
+  paddingVertical: 14,
+  paddingHorizontal: 20,
+  borderRadius: 10
+},
 
   sectionRow: {
     flexDirection: 'row',
@@ -189,9 +191,23 @@ export default function AlbaranPDF({
 
             <View style={styles.albaranBox}>
 
-              <Text>
-                Nº {pedido.id}
-              </Text>
+              <Text
+  style={{
+    fontSize: 12,
+    marginBottom: 4
+  }}
+>
+  Nº ALBARÁN
+</Text>
+
+<Text
+  style={{
+    fontSize: 20,
+    fontWeight: 'bold'
+  }}
+>
+  {pedido.id.slice(0, 8)}
+</Text>
 
             </View>
 
