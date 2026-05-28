@@ -168,9 +168,9 @@ export default function AlbaranPDF({
           <View style={styles.logoBlock}>
 
             <Image
-              src="/pdf/logo.png"
-              style={styles.logo}
-            />
+  src="https://frutall-direct.vercel.app/pdf/logo.png"
+  style={styles.logo}
+/>
 
             <Text style={styles.company}>
               FrutALL Direct, S.L.{'\n'}
