@@ -140,28 +140,28 @@ col4: {
 },
 
   totalBox: {
-    marginTop: 24,
-    alignSelf: 'flex-end',
-    width: 220,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    border: '1 solid #d1d5db',
-    overflow: 'hidden'
-  },
+  marginTop: 32,
+  alignSelf: 'flex-end',
+  width: 280,
+  backgroundColor: '#ffffff',
+  borderRadius: 18,
+  border: '1 solid #d1d5db',
+  overflow: 'hidden'
+},
 
   totalRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 12,
-    borderBottom: '1 solid #e5e7eb'
-  },
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  paddingVertical: 16,
+  paddingHorizontal: 18,
+  borderBottom: '1 solid #f3f4f6'
+},
 
   totalFinal: {
-    backgroundColor: '#065f46',
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 18
-  }
+  backgroundColor: '#064e3b',
+  color: 'white'
+}
 
 })
 
@@ -376,32 +376,52 @@ export default function AlbaranPDF({
 
           <View style={styles.totalRow}>
 
-            <Text>
-              TOTAL
-            </Text>
+  <Text
+    style={{
+      fontSize: 12,
+      color: '#6b7280'
+    }}
+  >
+    SUBTOTAL
+  </Text>
 
-            <Text>
-              {pedido.total?.toFixed(2)} €
-            </Text>
+  <Text
+    style={{
+      fontSize: 14,
+      fontWeight: 'bold'
+    }}
+  >
+    {pedido.total?.toFixed(2)} €
+  </Text>
 
-          </View>
+</View>
 
           <View
-            style={[
-              styles.totalRow,
-              styles.totalFinal
-            ]}
-          >
+  style={[
+    styles.totalRow,
+    styles.totalFinal
+  ]}
+>
 
-            <Text>
-              TOTAL FINAL
-            </Text>
+  <Text
+    style={{
+      fontSize: 13,
+      fontWeight: 'bold'
+    }}
+  >
+    TOTAL FINAL
+  </Text>
 
-            <Text>
-              {pedido.total?.toFixed(2)} €
-            </Text>
+  <Text
+    style={{
+      fontSize: 24,
+      fontWeight: 'heavy'
+    }}
+  >
+    {pedido.total?.toFixed(2)} €
+  </Text>
 
-          </View>
+</View>
 
         </View>
 
