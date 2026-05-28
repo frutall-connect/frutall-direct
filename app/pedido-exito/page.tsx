@@ -9,7 +9,7 @@ export default function PedidoExitoPage() {
     <main
       className="
         min-h-screen
-        bg-[#f5f3eb]
+        bg-white
         flex
         items-center
         justify-center

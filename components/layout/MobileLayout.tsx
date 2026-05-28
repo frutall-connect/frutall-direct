@@ -8,7 +8,7 @@ export default function MobileLayout({
   title,
 }: Props) {
   return (
-    <main className="min-h-screen bg-[#f5f3eb] max-w-md mx-auto">
+    <main className="min-h-screen  max-w-md mx-auto">
 
       {title && (
         <div className="p-4 pb-0">

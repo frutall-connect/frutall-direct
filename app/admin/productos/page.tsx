@@ -433,7 +433,7 @@ const [previewImagen, setPreviewImagen] =
         <div
           className="
             min-h-screen
-            bg-[#f5f3eb]
+            bg-white
             pb-32
           "
         >
@@ -516,7 +516,7 @@ const [previewImagen, setPreviewImagen] =
 
                   className="
                     w-full
-                    bg-[#f5f3eb]
+                    bg-white
                     rounded-2xl
                     px-4
                     py-3
@@ -564,7 +564,7 @@ const [previewImagen, setPreviewImagen] =
 
                   className="
                     w-full
-                    bg-[#f5f3eb]
+                    bg-white
                     rounded-2xl
                     px-4
                     py-3
@@ -616,7 +616,7 @@ const [previewImagen, setPreviewImagen] =
 
   className="
     w-full
-    bg-[#f5f3eb]
+    bg-white
     rounded-2xl
     px-4
     py-3
@@ -692,7 +692,7 @@ const [previewImagen, setPreviewImagen] =
                   }
                   className="
                     w-full
-                    bg-[#f5f3eb]
+                    bg-white
                     rounded-2xl
                     px-4
                     py-3
@@ -717,7 +717,7 @@ const [previewImagen, setPreviewImagen] =
                   }
                   className="
                     w-full
-                    bg-[#f5f3eb]
+                    bg-white
                     rounded-2xl
                     px-4
                     py-3
@@ -740,7 +740,7 @@ const [previewImagen, setPreviewImagen] =
                   }
                   className="
                     w-full
-                    bg-[#f5f3eb]
+                    bg-white
                     rounded-2xl
                     px-4
                     py-3
@@ -777,7 +777,7 @@ const [previewImagen, setPreviewImagen] =
                   }
                   className="
                     w-full
-                    bg-[#f5f3eb]
+                    bg-white
                     rounded-2xl
                     px-4
                     py-3
@@ -891,7 +891,7 @@ const [previewImagen, setPreviewImagen] =
                         h-24
                         rounded-2xl
                         overflow-hidden
-                        bg-[#f5f3eb]
+                        bg-white
                         shrink-0
                       "
                     >

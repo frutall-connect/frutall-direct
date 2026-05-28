@@ -38,7 +38,7 @@ export default function RootLayout({
 
     <html lang="es">
 
-      <body className="bg-[#f5f3eb]">
+      <body className="bg-white">
 
         {children}
 

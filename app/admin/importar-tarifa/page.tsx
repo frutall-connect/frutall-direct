@@ -352,7 +352,7 @@ calibre:
     <main
       className="
         min-h-screen
-        bg-[#f5f3eb]
+        bg-white
         p-5
       "
     >

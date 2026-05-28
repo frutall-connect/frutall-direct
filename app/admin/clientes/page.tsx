@@ -122,7 +122,7 @@ export default function AdminClientesPage() {
 
       <MobileLayout>
 
-        <div className="min-h-screen bg-[#f5f3eb] pb-32">
+        <div className="min-h-screen  pb-32">
 
           {/* HEADER */}
 
@@ -264,7 +264,7 @@ export default function AdminClientesPage() {
 
                       <div
                         className="
-                          bg-[#f5f3eb]
+                          bg-white
                           rounded-2xl
                           p-4
                         "
@@ -292,7 +292,7 @@ export default function AdminClientesPage() {
                         href={`tel:${cliente.telefono}`}
                         className="
                           block
-                          bg-[#f5f3eb]
+                          bg-white
                           rounded-2xl
                           p-4
                         "
@@ -318,7 +318,7 @@ export default function AdminClientesPage() {
 
                       <div
                         className="
-                          bg-[#f5f3eb]
+                          bg-white
                           rounded-2xl
                           p-4
                         "
@@ -344,7 +344,7 @@ export default function AdminClientesPage() {
 
                       <div
                         className="
-                          bg-[#f5f3eb]
+                          bg-white
                           rounded-2xl
                           p-4
                         "

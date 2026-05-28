@@ -140,7 +140,7 @@ function ProductosContenido() {
 
      <BackButton />
 
-      <div className="min-h-screen bg-[#f5f3eb] pb-44">
+      <div className="min-h-screen bg-white pb-44">
 
         {/* HEADER */}
 
@@ -215,7 +215,7 @@ function ProductosContenido() {
               }
               className="
                 w-full
-                bg-[#f5f3eb]
+                bg-white
                 rounded-2xl
                 px-5
                 py-4

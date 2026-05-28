@@ -234,7 +234,7 @@ export default function AdminDashboardPage() {
 
       <MobileLayout>
 
-        <div className="min-h-screen bg-[#f5f3eb] pb-32">
+        <div className="min-h-screen bg-[white] pb-32">
 
           {/* HEADER */}
 
@@ -532,7 +532,7 @@ export default function AdminDashboardPage() {
                     <div
                       key={index}
                       className="
-                        bg-[#f5f3eb]
+                        bg-white
                         rounded-2xl
                         p-4
                         flex

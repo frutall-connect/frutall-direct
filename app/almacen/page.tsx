@@ -134,7 +134,7 @@ export default function AlmacenPage() {
     <div
       className="
         min-h-screen
-        bg-[#f5f3eb]
+        bg-white
         p-5
         pb-32
       "
@@ -257,7 +257,7 @@ export default function AlmacenPage() {
                     key={index}
 
                     className="
-                      bg-[#f5f3eb]
+                      bg-white
                       rounded-2xl
                       p-3
                       flex
