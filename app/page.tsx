@@ -388,7 +388,7 @@ export default function InicioPage() {
 
             </div>
 
-           <div
+            <div
   className="
     relative
     overflow-hidden
