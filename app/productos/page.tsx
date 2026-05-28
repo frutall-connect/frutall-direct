@@ -9,6 +9,9 @@ import {
 
 import Link from 'next/link'
 
+import BackButton
+  from '@/components/ui/BackButton'
+
 import { useSearchParams } from 'next/navigation'
 
 import MobileLayout from '@/components/layout/MobileLayout'

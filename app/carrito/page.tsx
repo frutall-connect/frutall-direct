@@ -3,6 +3,9 @@
 import MobileLayout
   from '@/components/layout/MobileLayout'
 
+import BackButton
+  from '@/components/ui/BackButton'
+
 import BottomNav
   from '@/components/layout/BottomNav'
 
@@ -295,6 +298,8 @@ try {
   return (
 
     <MobileLayout>
+
+     <BackButton />
 
       <div className="pb-28">
 

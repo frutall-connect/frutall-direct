@@ -3,6 +3,10 @@
 import { useEffect, useState } from 'react'
 
 import MobileLayout from '@/components/layout/MobileLayout'
+
+import BackButton
+  from '@/components/ui/BackButton'
+
 import BottomNav from '@/components/layout/BottomNav'
 
 import { supabase } from '@/lib/supabaseClient'
@@ -173,6 +177,8 @@ export default function PedidosPage() {
   return (
 
     <MobileLayout>
+
+     <BackButton />
 
       <div className="min-h-screen bg-[#f5f3eb] pb-32">
 
