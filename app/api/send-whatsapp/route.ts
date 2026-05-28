@@ -35,7 +35,7 @@ ${body.metodoPago}
 📦 Estado:
 Pendiente
 
-
+`
     const response =
       await client.messages.create({
 
