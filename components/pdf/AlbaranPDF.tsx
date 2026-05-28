@@ -84,47 +84,60 @@ const styles = StyleSheet.create({
 },
 
   table: {
-    marginTop: 20,
-    border: '1 solid #d1d5db',
-    borderRadius: 10,
-    overflow: 'hidden'
-  },
+  marginTop: 28,
+  backgroundColor: 'white',
+  borderRadius: 18,
+  overflow: 'hidden',
+  border: '1 solid #e5e7eb'
+},
 
   tableHeader: {
-    flexDirection: 'row',
-    backgroundColor: '#065f46',
-    color: 'white',
-    fontWeight: 'bold'
-  },
+  flexDirection: 'row',
+  backgroundColor: '#064e3b',
+  color: 'white',
+  fontWeight: 'bold',
+  minHeight: 44,
+  alignItems: 'center'
+},
 
   row: {
-    flexDirection: 'row',
-    borderBottom: '1 solid #e5e7eb',
-    alignItems: 'center'
-  },
+  flexDirection: 'row',
+  borderBottom: '1 solid #f3f4f6',
+  alignItems: 'center',
+  minHeight: 54
+},
 
   col1: {
-    width: '40%',
-    padding: 10
-  },
+  width: '46%',
+  paddingVertical: 14,
+  paddingHorizontal: 16,
+  fontSize: 12
+},
 
-  col2: {
-    width: '20%',
-    padding: 10,
-    textAlign: 'center'
-  },
+col2: {
+  width: '14%',
+  paddingVertical: 14,
+  paddingHorizontal: 10,
+  textAlign: 'center',
+  fontSize: 12
+},
 
-  col3: {
-    width: '20%',
-    padding: 10,
-    textAlign: 'center'
-  },
+col3: {
+  width: '18%',
+  paddingVertical: 14,
+  paddingHorizontal: 10,
+  textAlign: 'center',
+  fontSize: 12
+},
 
-  col4: {
-    width: '20%',
-    padding: 10,
-    textAlign: 'right'
-  },
+col4: {
+  width: '22%',
+  paddingVertical: 14,
+  paddingHorizontal: 16,
+  textAlign: 'right',
+  fontSize: 12,
+  fontWeight: 'bold'
+},
 
   totalBox: {
     marginTop: 24,
@@ -315,9 +328,28 @@ export default function AlbaranPDF({
                 style={styles.row}
               >
 
-                <Text style={styles.col1}>
-                  {linea.nombre_producto}
-                </Text>
+                <View style={styles.col1}>
+
+  <Text
+    style={{
+      fontSize: 12,
+      fontWeight: 'bold',
+      marginBottom: 4
+    }}
+  >
+    {linea.nombre_producto}
+  </Text>
+
+  <Text
+    style={{
+      fontSize: 10,
+      color: '#6b7280'
+    }}
+  >
+    Producto fresco seleccionado
+  </Text>
+
+</View>
 
                 <Text style={styles.col2}>
                   {linea.cantidad}
