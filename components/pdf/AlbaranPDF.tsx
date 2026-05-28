@@ -416,6 +416,46 @@ export default function AlbaranPDF({
     style={{
       fontSize: 24,
       fontWeight: 'heavy'
+footer: {
+  marginTop: 50,
+  paddingTop: 24,
+  borderTop: '1 solid #d1d5db',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center'
+},
+
+footerLeft: {
+  width: '60%'
+},
+
+footerBrand: {
+  fontSize: 18,
+  fontWeight: 'bold',
+  color: '#065f46',
+  marginBottom: 6
+},
+
+footerText: {
+  fontSize: 10,
+  color: '#6b7280',
+  lineHeight: 1.6
+},
+
+footerRight: {
+  width: '30%',
+  alignItems: 'flex-end'
+},
+
+badge: {
+  backgroundColor: '#ecfdf5',
+  color: '#065f46',
+  paddingVertical: 8,
+  paddingHorizontal: 14,
+  borderRadius: 999,
+  fontSize: 10,
+  fontWeight: 'bold'
+}
     }}
   >
     {pedido.total?.toFixed(2)} €
@@ -424,6 +464,33 @@ export default function AlbaranPDF({
 </View>
 
         </View>
+
+<View style={styles.footer}>
+
+  <View style={styles.footerLeft}>
+
+    <Text style={styles.footerBrand}>
+      FrutALL Direct
+    </Text>
+
+    <Text style={styles.footerText}>
+      Distribución premium de frutas y verduras
+      para hostelería, restauración y retail.
+      {'\n'}
+      Documento generado automáticamente.
+    </Text>
+
+  </View>
+
+  <View style={styles.footerRight}>
+
+    <Text style={styles.badge}>
+      FRESH • FAST • DIRECT
+    </Text>
+
+  </View>
+
+</View>
 
       </Page>
 
