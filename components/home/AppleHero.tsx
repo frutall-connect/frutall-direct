@@ -15,7 +15,7 @@ export default function AppleHero({
         relative
         overflow-hidden
         rounded-[2.2rem]
-        h-[330px]
+        h-[265px]
         shadow-[0_10px_35px_rgba(0,0,0,0.10)]
       "
     >
@@ -79,8 +79,8 @@ export default function AppleHero({
             text-white
             font-black
             tracking-[-0.05em]
-            text-[3rem]
-            leading-[2.8rem]
+            text-[2.2rem]
+            leading-[2.1rem]
             drop-shadow-xl
             mt-1
           "
@@ -108,8 +108,8 @@ export default function AppleHero({
 
         <div
           className="
-            mt-7
-            h-[64px]
+            mt-5
+            h-[54px]
             rounded-full
             bg-white/92
             backdrop-blur-md
@@ -124,7 +124,7 @@ export default function AppleHero({
           <span
             className="
               text-gray-500
-              text-[1.1rem]
+              text-[1rem]
             "
           >
             Buscar productos...
@@ -133,7 +133,7 @@ export default function AppleHero({
           <span
             className="
               text-green-700
-              text-[2rem]
+              text-[1.7rem]
             "
           >
             ⌕
@@ -159,7 +159,7 @@ export default function AppleHero({
             <button
               className="
                 w-full
-                h-[74px]
+                h-[58px]
                 rounded-[1.8rem]
                 bg-white/88
                 backdrop-blur-md
@@ -178,14 +178,14 @@ export default function AppleHero({
 
           <button
             className="
-              h-[74px]
+              h-[58px]
               rounded-[1.8rem]
               bg-white/12
               border
               border-white/30
               backdrop-blur-md
               text-white
-              text-[1.25rem]
+              text-[1rem]
               font-black
               shadow-xl
             "

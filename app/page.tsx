@@ -192,7 +192,7 @@ export default function InicioPage() {
 
         {/* CONTENIDO */}
 
-        <div className="px-5 pt-3">
+        <div className="px-4 pt-3">
 
           {/* HEADER */}
 

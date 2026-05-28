@@ -50,8 +50,8 @@ export default function AppleCategories() {
 
           <div
             className="
-              min-w-[88px]
-              h-[118px]
+              min-w-[74px]
+              h-[92px]
               bg-white
               rounded-[1.5rem]
               border
@@ -69,7 +69,7 @@ export default function AppleCategories() {
 
             <div
               className="
-                text-[2.5rem]
+                text-[2rem]
                 leading-none
                 text-center
                 mt-1
@@ -84,7 +84,7 @@ export default function AppleCategories() {
 
               <div
                 className="
-                  text-[0.95rem]
+                  text-[0.8rem]
                   font-semibold
                   text-black
                   tracking-[-0.02em]

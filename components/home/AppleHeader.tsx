@@ -25,7 +25,7 @@ export default function AppleHeader() {
         height={50}
         priority
         className="
-          h-[48px]
+          h-[40px]
           w-auto
           object-contain
         "
