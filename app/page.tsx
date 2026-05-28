@@ -170,9 +170,9 @@ export default function InicioPage() {
 
         {/* CONTENIDO */}
 
-{/* CATEGORÍAS */}
+<div className="px-5 pt-5">
 
-          {/* CATEGORÍAS */}
+{/* CATEGORÍAS */}
 
           <div className="grid grid-cols-2 gap-4 mt-6">
 
