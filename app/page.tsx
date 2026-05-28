@@ -282,7 +282,9 @@ export default function InicioPage() {
                   style={{
                     background: categoria.color
                   }}
-                ><div
+                >
+
+                  <div
   className="
     relative
     rounded-[2rem]
@@ -360,6 +362,12 @@ export default function InicioPage() {
   </div>
 
 </div>
+
+              </Link>
+
+            ))}
+
+          </div>
 
           {/* OFERTAS */}
 
