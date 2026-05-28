@@ -317,7 +317,7 @@ export default function InicioPage() {
     className="
       flex
       items-center
-      justify-between
+      
       z-10
     "
   >
