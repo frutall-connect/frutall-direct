@@ -187,17 +187,108 @@ export default function InicioPage() {
 
             </h2>
 
-            <h1
-              className="
-                text-3xl
-                leading-tight
-                font-black
-                text-black
-                mt-2
-              "
-            >
-              ¿Qué necesitas hoy?
-            </h1>
+            <div
+  className="
+    relative
+    overflow-hidden
+    rounded-b-[3rem]
+    bg-gradient-to-br
+    from-green-800
+    via-green-700
+    to-emerald-500
+    px-6
+    pt-10
+    pb-12
+    shadow-xl
+  "
+>
+
+  <div className="max-w-md">
+
+    <p
+      className="
+        text-green-100
+        font-semibold
+        tracking-wide
+        uppercase
+        text-sm
+      "
+    >
+      FrutALL Direct
+    </p>
+
+    <h1
+      className="
+        text-5xl
+        leading-tight
+        font-black
+        text-white
+        mt-3
+      "
+    >
+      Fruta y verdura fresca
+      para profesionales
+    </h1>
+
+    <p
+      className="
+        text-green-50/90
+        text-lg
+        mt-5
+        leading-relaxed
+      "
+    >
+      Distribución rápida para
+      hostelería, retail y restauración.
+    </p>
+
+    <div
+      className="
+        flex
+        gap-3
+        mt-8
+      "
+    >
+
+      <Link href="/productos">
+
+        <button
+          className="
+            bg-white
+            text-green-800
+            px-6
+            py-4
+            rounded-2xl
+            font-black
+            shadow-lg
+          "
+        >
+          Ver catálogo
+        </button>
+
+      </Link>
+
+      <button
+        className="
+          bg-white/15
+          backdrop-blur
+          border
+          border-white/20
+          text-white
+          px-6
+          py-4
+          rounded-2xl
+          font-bold
+        "
+      >
+        Ofertas
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
 
           </div>
 
