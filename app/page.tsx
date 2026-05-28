@@ -193,9 +193,7 @@ export default function InicioPage() {
 
           {/* CATEGORIAS */}
 
-          <AppleCategories
-            categorias={categorias}
-          />
+          <AppleCategories />
 
           {/* OFERTA */}
 
