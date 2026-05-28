@@ -137,36 +137,54 @@ export default function CarritoPage() {
 
     }
 
-await fetch(
+try {
 
-  '/api/send-whatsapp',
+  const waResponse = await fetch(
 
-  {
+    '/api/send-whatsapp',
 
-    method: 'POST',
+    {
 
-    headers: {
+      method: 'POST',
 
-      'Content-Type':
-        'application/json'
+      headers: {
 
-    },
+        'Content-Type':
+          'application/json'
 
-    body: JSON.stringify({
+      },
 
-      pedidoId:
-        pedidoData.id,
+      body: JSON.stringify({
 
-      total,
+        pedidoId:
+          pedidoData.id,
 
-      metodoPago
+        total,
 
-    })
+        metodoPago
 
-  }
+      })
 
-)
-    // ===== PEDIDO SIN PAGO =====
+    }
+
+  )
+
+  const waData =
+    await waResponse.json()
+
+  console.log(
+    'WHATSAPP RESPONSE:',
+    waData
+  )
+
+} catch (error) {
+
+  console.error(
+    'ERROR WHATSAPP:',
+    error
+  )
+
+}    // ===== PEDIDO SIN PAGO =====
 
     if (metodoPago === 'pendiente') {
 
