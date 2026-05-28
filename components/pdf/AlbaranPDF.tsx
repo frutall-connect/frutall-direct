@@ -162,6 +162,47 @@ col4: {
   backgroundColor: '#064e3b',
   color: 'white'
 },
+footer: {
+  marginTop: 50,
+  paddingTop: 24,
+  borderTop: '1 solid #d1d5db',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center'
+},
+
+footerLeft: {
+  width: '60%'
+},
+
+footerBrand: {
+  fontSize: 18,
+  fontWeight: 'bold',
+  color: '#065f46',
+  marginBottom: 6
+},
+
+footerText: {
+  fontSize: 10,
+  color: '#6b7280',
+  lineHeight: 1.6
+},
+
+footerRight: {
+  width: '30%',
+  alignItems: 'flex-end'
+},
+
+badge: {
+  backgroundColor: '#ecfdf5',
+  color: '#065f46',
+  paddingVertical: 8,
+  paddingHorizontal: 14,
+  borderRadius: 999,
+  fontSize: 10,
+  fontWeight: 'bold'
+}
+
 
 })
 
@@ -416,46 +457,6 @@ export default function AlbaranPDF({
     style={{
       fontSize: 24,
       fontWeight: 'heavy'
-footer: {
-  marginTop: 50,
-  paddingTop: 24,
-  borderTop: '1 solid #d1d5db',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center'
-},
-
-footerLeft: {
-  width: '60%'
-},
-
-footerBrand: {
-  fontSize: 18,
-  fontWeight: 'bold',
-  color: '#065f46',
-  marginBottom: 6
-},
-
-footerText: {
-  fontSize: 10,
-  color: '#6b7280',
-  lineHeight: 1.6
-},
-
-footerRight: {
-  width: '30%',
-  alignItems: 'flex-end'
-},
-
-badge: {
-  backgroundColor: '#ecfdf5',
-  color: '#065f46',
-  paddingVertical: 8,
-  paddingHorizontal: 14,
-  borderRadius: 999,
-  fontSize: 10,
-  fontWeight: 'bold'
-}
     }}
   >
     {pedido.total?.toFixed(2)} €
