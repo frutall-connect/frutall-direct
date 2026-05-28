@@ -35,7 +35,7 @@ ${body.metodoPago}
 📦 Estado:
 Pendiente
 
-`console.log(
+console.log(
   'FROM:',
   process.env.TWILIO_WHATSAPP_FROM
 )
