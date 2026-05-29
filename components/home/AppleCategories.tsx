@@ -4,118 +4,114 @@ import Link from 'next/link'
 
 const categoriasMock = [
 
-  {
-    nombre: 'Frutas',
-    icono: '🍎'
-  },
+{
+nombre: 'Frutas',
+icono: '🍎'
+},
 
-  {
-    nombre: 'Verduras',
-    icono: '🥬'
-  },
+{
+nombre: 'Verduras',
+icono: '🥬'
+},
 
-  {
-    nombre: 'Tubérculos',
-    icono: '🥔'
-  },
+{
+nombre: 'Tubérculos',
+icono: '🥔'
+},
 
-  {
-    nombre: 'Temporada',
-    icono: '🍅'
-  }
+{
+nombre: 'Temporada',
+icono: '🍅'
+}
 
 ]
 
 export default function AppleCategories() {
 
-  return (
+return (
 
-    <div
-      className="
-        flex
-        gap-3
-        overflow-x-auto
-        mt-5
-        pb-1
-        no-scrollbar
-      "
+```
+<div
+  className="
+    grid
+    grid-cols-4
+    gap-2
+    mt-5
+  "
+>
+
+  {categoriasMock.map((categoria) => (
+
+    <Link
+      key={categoria.nombre}
+      href={`/productos?categoria=${categoria.nombre}`}
     >
 
-      {categoriasMock.map((categoria) => (
+      <div
+        className="
+          h-[96px]
+          bg-white/80
+          backdrop-blur-md
+          rounded-[1.4rem]
+          border
+          border-white/40
+          shadow-[0_4px_12px_rgba(0,0,0,0.08)]
+          px-2
+          py-2
+          flex
+          flex-col
+          justify-between
+        "
+      >
 
-        <Link
-          key={categoria.nombre}
-          href={`/productos?categoria=${categoria.nombre}`}
+        <div
+          className="
+            text-[1.9rem]
+            leading-none
+            text-center
+            mt-1
+          "
         >
+          {categoria.icono}
+        </div>
+
+        <div>
 
           <div
             className="
-              min-w-[74px]
-              h-[92px]
-              bg-white
-              rounded-[1.5rem]
-              border
-              border-white/40
-              shadow-[0_4px_10px_rgba(0,0,0,0.05)]
-              px-3
-              py-3
-              flex
-              flex-col
-              justify-between
+              text-[0.78rem]
+              font-semibold
+              text-black
+              tracking-[-0.02em]
+              text-center
             "
           >
-
-            {/* ICONO */}
-
-            <div
-              className="
-                text-[2rem]
-                leading-none
-                text-center
-                mt-1
-              "
-            >
-              {categoria.icono}
-            </div>
-
-            {/* TEXTO */}
-
-            <div>
-
-              <div
-                className="
-                  text-[0.8rem]
-                  font-semibold
-                  text-black
-                  tracking-[-0.02em]
-                  text-center
-                "
-              >
-                {categoria.nombre}
-              </div>
-
-              <div
-                className="
-                  text-gray-400
-                  text-[1.3rem]
-                  leading-none
-                  text-right
-                  mt-1
-                "
-              >
-                →
-              </div>
-
-            </div>
-
+            {categoria.nombre}
           </div>
 
-        </Link>
+          <div
+            className="
+              text-gray-400
+              text-[1.1rem]
+              leading-none
+              text-right
+              mt-1
+            "
+          >
+            →
+          </div>
 
-      ))}
+        </div>
 
-    </div>
+      </div>
 
-  )
+    </Link>
+
+  ))}
+
+</div>
+```
+
+)
 
 }
