@@ -166,28 +166,17 @@ export default function InicioPage() {
     <MobileLayout>
 
       <div
-
   className="
     min-h-screen
     pb-32
     bg-cover
-    bg-center
+    bg-top
+    bg-no-repeat
     bg-fixed
   "
-
   style={{
-
-    backgroundImage:
-      `
-      linear-gradient(
-        rgba(245,245,245,0.88),
-        rgba(245,245,245,0.92)
-      ),
-      url('https://images.unsplash.com/photo-1619566636858-adf3ef46400b?q=80&w=1600&auto=format&fit=crop')
-      `
-
+    backgroundImage: "url('/hero-bg-premium.png')"
   }}
-
 >
 
         {/* CONTENIDO */}

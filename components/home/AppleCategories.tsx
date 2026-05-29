@@ -50,18 +50,8 @@ export default function AppleCategories() {
 
           <div
             className="
-              min-w-[74px]
-              h-[92px]
-              bg-white
-              rounded-[1.5rem]
-              border
-              border-[#ededed]
-              shadow-[0_4px_10px_rgba(0,0,0,0.05)]
-              px-3
-              py-3
-              flex
-              flex-col
-              justify-between
+  bg-white/75
+  backdrop-blur-md
             "
           >
 
