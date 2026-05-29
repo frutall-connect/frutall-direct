@@ -11,11 +11,13 @@ usuario: string
 return (
 
 <div
-  className="
-    relative
-    overflow-hidden
-    rounded-[2rem]
-  "
+className="
+  relative
+  overflow-hidden
+  rounded-[2rem]
+  bg-white/10
+  backdrop-blur-sm
+"
 >
 
   <div
