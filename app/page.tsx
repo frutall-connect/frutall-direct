@@ -12,7 +12,6 @@ import AppleOffer from '@/components/home/AppleOffer'
 import AppleActions from '@/components/home/AppleActions'
 
 import { supabase } from '@/lib/supabaseClient'
-
 import { useCartStore } from '@/store/cartStore'
 
 export default function InicioPage() {
@@ -76,6 +75,7 @@ if (!error && data) {
 
 async function repetirUltimoPedido() {
 
+```
 const { data: authData } =
   await supabase.auth.getUser()
 
@@ -88,21 +88,17 @@ const { data: pedido } =
   await supabase
     .from('pedidos')
     .select('*, lineas_pedido (*)')
-
     .eq(
       'usuario_id',
       usuario.id
     )
-
     .order(
       'created_at',
       {
         ascending: false
       }
     )
-
     .limit(1)
-
     .single()
 
 if (!pedido) {
@@ -170,8 +166,6 @@ return (
 ```
 <MobileLayout>
 
-  {/* HEADER BLANCO */}
-
   <div
     className="
       bg-white
@@ -184,22 +178,20 @@ return (
     <AppleHeader />
   </div>
 
-  {/* CONTENIDO */}
-
   <div
-  className="
-    min-h-screen
-    pb-32
-    bg-cover
-    bg-top
-    bg-no-repeat
-    bg-fixed
-  "
-  style={{
-    backgroundImage:
-      "url('/hero-bg-premium.png')"
-  }}
->
+    className="
+      min-h-screen
+      pb-32
+      bg-cover
+      bg-top
+      bg-no-repeat
+      bg-fixed
+    "
+    style={{
+      backgroundImage:
+        "url('/hero-bg-premium.png')"
+    }}
+  >
 
     <div className="px-4 pt-3">
 
@@ -212,15 +204,12 @@ return (
       <AppleOffer />
 
       <AppleActions
-
         totalProductos={
           totalProductos
         }
-
         repetirUltimoPedido={
           repetirUltimoPedido
         }
-
       />
 
     </div>
