@@ -185,16 +185,8 @@ return (
     className="
       min-h-screen
       pb-32
-      bg-cover
-      bg-top
-      bg-no-repeat
-      bg-fixed
     "
-    style={{
-      backgroundImage:
-        "url('/hero-bg-premium.png')"
-    }}
-  >
+   >
 
     <div className="px-4 pt-3">
 
