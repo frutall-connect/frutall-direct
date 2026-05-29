@@ -2,6 +2,8 @@
 
 import Image from 'next/image'
 
+import { FaWhatsapp } from 'react-icons/fa'
+
 export default function AppleHeader() {
 
   return (
@@ -43,8 +45,6 @@ export default function AppleHeader() {
       >
 
         {/* WHATSAPP */}
-
-        import { FaWhatsapp } from 'react-icons/fa'
 
 <button
   className="
