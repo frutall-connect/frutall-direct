@@ -10,16 +10,13 @@ export default function AppleHero({
 
   return (
 
-    <div
-      className="
-        relative
-        overflow-hidden
-        rounded-[2rem]
-        bg-white/10
-        backdrop-blur-sm
-      "
-    >
-
+    className="
+  relative
+  overflow-hidden
+  rounded-[2rem]
+  bg-white/10
+  backdrop-blur-sm
+"
       <div
         className="
           relative
@@ -30,7 +27,7 @@ export default function AppleHero({
         "
       >
 
-        <h1
+        <h4
           className="
             text-white
             font-black
@@ -41,7 +38,7 @@ export default function AppleHero({
           "
         >
           ¡Hola, {usuario}!
-        </h1>
+        </h4>
 
         <p
           className="
