@@ -22,25 +22,6 @@ className="
 
   <div
     className="
-      absolute
-      inset-0
-    "
-  >
-
-    <img
-      src="/hero-bg-premium.png"
-      alt=""
-      className="
-        w-full
-        h-full
-        object-cover
-      "
-    />
-
-  </div>
-
-  <div
-    className="
       relative
       z-10
       px-4
