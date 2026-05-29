@@ -50,7 +50,7 @@ export default function AppleCategories() {
 
           <div
             className="
-              min-w-[74px]
+              min-w-[25%]
               h-[92px]
               bg-white
               rounded-[1.5rem]
