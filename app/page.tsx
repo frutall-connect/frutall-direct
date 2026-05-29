@@ -188,8 +188,6 @@ export default function InicioPage() {
           <div
   className="
     bg-white
-    rounded-b-[2rem]
-    px-4
     pt-3
     pb-2
     shadow-sm
