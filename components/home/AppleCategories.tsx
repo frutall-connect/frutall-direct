@@ -3,115 +3,108 @@
 import Link from 'next/link'
 
 const categoriasMock = [
-
-{
-nombre: 'Frutas',
-icono: '🍎'
-},
-
-{
-nombre: 'Verduras',
-icono: '🥬'
-},
-
-{
-nombre: 'Tubérculos',
-icono: '🥔'
-},
-
-{
-nombre: 'Temporada',
-icono: '🍅'
-}
-
+  {
+    nombre: 'Frutas',
+    icono: '🍎'
+  },
+  {
+    nombre: 'Verduras',
+    icono: '🥬'
+  },
+  {
+    nombre: 'Tubérculos',
+    icono: '🥔'
+  },
+  {
+    nombre: 'Temporada',
+    icono: '🍅'
+  }
 ]
 
 export default function AppleCategories() {
 
-return (
+  return (
 
-```
-<div
-  className="
-    grid
-    grid-cols-4
-    gap-2
-    mt-5
-  "
->
-
-  {categoriasMock.map((categoria) => (
-
-    <Link
-      key={categoria.nombre}
-      href={`/productos?categoria=${categoria.nombre}`}
+    <div
+      className="
+        grid
+        grid-cols-4
+        gap-2
+        mt-5
+      "
     >
 
-      <div
-        className="
-          h-[96px]
-          bg-white/80
-          backdrop-blur-md
-          rounded-[1.4rem]
-          border
-          border-white/40
-          shadow-[0_4px_12px_rgba(0,0,0,0.08)]
-          px-2
-          py-2
-          flex
-          flex-col
-          justify-between
-        "
-      >
+      {categoriasMock.map((categoria) => (
 
-        <div
-          className="
-            text-[1.9rem]
-            leading-none
-            text-center
-            mt-1
-          "
+        <Link
+          key={categoria.nombre}
+          href={'/productos?categoria=' + categoria.nombre}
         >
-          {categoria.icono}
-        </div>
-
-        <div>
 
           <div
             className="
-              text-[0.78rem]
-              font-semibold
-              text-black
-              tracking-[-0.02em]
-              text-center
+              h-[96px]
+              bg-white/80
+              backdrop-blur-md
+              rounded-[1.4rem]
+              border
+              border-white/40
+              shadow-[0_4px_12px_rgba(0,0,0,0.08)]
+              px-2
+              py-2
+              flex
+              flex-col
+              justify-between
             "
           >
-            {categoria.nombre}
+
+            <div
+              className="
+                text-[1.9rem]
+                leading-none
+                text-center
+                mt-1
+              "
+            >
+              {categoria.icono}
+            </div>
+
+            <div>
+
+              <div
+                className="
+                  text-[0.78rem]
+                  font-semibold
+                  text-black
+                  tracking-[-0.02em]
+                  text-center
+                "
+              >
+                {categoria.nombre}
+              </div>
+
+              <div
+                className="
+                  text-gray-400
+                  text-[1.1rem]
+                  leading-none
+                  text-right
+                  mt-1
+                "
+              >
+                →
+              </div>
+
+            </div>
+
           </div>
 
-          <div
-            className="
-              text-gray-400
-              text-[1.1rem]
-              leading-none
-              text-right
-              mt-1
-            "
-          >
-            →
-          </div>
+        </Link>
 
-        </div>
+      ))}
 
-      </div>
+    </div>
 
-    </Link>
-
-  ))}
-
-</div>
-```
-
-)
+  )
 
 }
