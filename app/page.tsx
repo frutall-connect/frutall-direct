@@ -185,7 +185,18 @@ export default function InicioPage() {
 
           {/* HEADER */}
 
-          <AppleHeader />
+          <div
+  className="
+    bg-white
+    rounded-b-[2rem]
+    px-4
+    pt-3
+    pb-2
+    shadow-sm
+  "
+>
+  <AppleHeader />
+</div>
 
           {/* HERO */}
 
