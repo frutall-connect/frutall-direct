@@ -113,6 +113,7 @@ export default function AppleHero({
     className="
       text-green-700
       text-[1.6rem]
+      ml-2
     "
   >
     ⌕
