@@ -48,16 +48,11 @@ export default function AppleActions({
 
         <button
           className="
-            w-full
-            h-[58px]
-            rounded-[1.5rem]
-            bg-black
-            text-white
-            font-black
-            text-[0.98rem]
-            shadow-lg
-            active:scale-[0.98]
-            transition
+           bg-white/75
+backdrop-blur-md
+border
+border-white/40
+text-black
           "
         >
           Carrito ({totalProductos})

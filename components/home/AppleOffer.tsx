@@ -44,12 +44,13 @@ export default function AppleOffer() {
 
       <div
         className="
-          bg-white
+  bg-white/80
+  backdrop-blur-md
           rounded-[2rem]
           p-3
           shadow-sm
           border
-          border-gray-100
+          border-white/40
         "
       >
 
