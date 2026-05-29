@@ -12,30 +12,13 @@ export default function AppleHero({
 
     <div
       className="
-  relative
-  overflow-hidden
-  rounded-[2rem]
-"
+        relative
+        overflow-hidden
+        rounded-[2rem]
+        bg-white/10
+        backdrop-blur-sm
+      "
     >
-
-<div
-  className="
-    absolute
-    inset-0
-  "
->
-
-  <img
-    src="/hero-bg-premium.png"
-    alt=""
-    className="
-      w-full
-      h-full
-      object-cover
-    "
-  />
-
-</div>
 
       <div
         className="
