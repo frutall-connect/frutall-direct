@@ -20,31 +20,7 @@ export default function AppleHero({
       "
     >
 
-      {/* OVERLAY OSCURO SUPERIOR */}
-
-      <div
-        className="
-          absolute
-          inset-0
-        "
-
-        style={{
-
-          background:
-            `
-            linear-gradient(
-              to bottom,
-              rgba(0,0,0,0.28) 0%,
-              rgba(0,0,0,0.10) 35%,
-              rgba(255,255,255,0) 60%
-            )
-            `
-
-        }}
-
-      />
-
-      {/* CONTENIDO */}
+            {/* CONTENIDO */}
 
       <div
         className="
