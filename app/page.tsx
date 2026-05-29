@@ -76,7 +76,6 @@ if (!error && data) {
 
 async function repetirUltimoPedido() {
 
-```
 const { data: authData } =
   await supabase.auth.getUser()
 
