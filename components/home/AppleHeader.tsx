@@ -44,33 +44,24 @@ export default function AppleHeader() {
 
         {/* WHATSAPP */}
 
-        <button
-          className="
-            flex
-            items-center
-            justify-center
-          "
-        >
+        import { FaWhatsapp } from 'react-icons/fa'
 
-          <div
-            className="
-              w-11
-              h-11
-              rounded-full
-              border-[2.5px]
-              border-green-600
-              flex
-              items-center
-              justify-center
-              text-green-600
-              text-[1.6rem]
-              font-bold
-            "
-          >
-            ◔
-          </div>
-
-        </button>
+<button
+  className="
+    w-10
+    h-10
+    rounded-full
+    bg-white
+    flex
+    items-center
+    justify-center
+  "
+>
+  <FaWhatsapp
+    size={24}
+    className="text-[#25D366]"
+  />
+</button>
 
         {/* MENU */}
 
