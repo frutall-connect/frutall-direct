@@ -46,7 +46,10 @@ export default function AppleHeader() {
 
         {/* WHATSAPP */}
 
-<button
+<a
+  href="https://wa.me/34619627250"
+  target="_blank"
+  rel="noopener noreferrer"
   className="
     w-10
     h-10
@@ -61,8 +64,7 @@ export default function AppleHeader() {
     size={24}
     className="text-[#25D366]"
   />
-</button>
-
+</a>
         {/* MENU */}
 
         <button

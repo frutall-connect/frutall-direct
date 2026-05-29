@@ -2,24 +2,43 @@
 
 import Link from 'next/link'
 
+import { useState } from 'react'
+
+import { useRouter } from 'next/navigation'
+
 export default function AppleHero({
-usuario
+  usuario
 }: {
-usuario: string
+  usuario: string
 }) {
 
-return (
+  const [busqueda, setBusqueda] =
+    useState('')
 
-<div
-className="
-  relative
-  overflow-hidden
-  rounded-[2rem]
-  bg-white/10
-  backdrop-blur-sm
-"
->
+  const router =
+    useRouter()
 
+  function buscar() {
+
+    if (!busqueda.trim()) return
+
+    router.push(
+      `/productos?q=${encodeURIComponent(busqueda)}`
+    )
+
+  }
+
+  return (
+
+    <div
+      className="
+        relative
+        overflow-hidden
+        rounded-[2rem]
+        bg-white/10
+        backdrop-blur-sm
+      "
+    >
   <div
     className="
       relative
@@ -55,40 +74,51 @@ className="
       Fruta fresca, calidad garantizada
     </p>
 
-    <div
-      className="
-        mt-4
-        h-[52px]
-        rounded-full
-        bg-white/92
-        backdrop-blur-md
-        flex
-        items-center
-        justify-between
-        px-5
-        shadow-xl
-      "
-    >
+<div
+  className="
+    mt-4
+    h-[52px]
+    rounded-full
+    bg-white/92
+    backdrop-blur-md
+    flex
+    items-center
+    px-5
+    shadow-xl
+  "
+>
 
-      <span
-        className="
-          text-gray-500
-          text-[1rem]
-        "
-      >
-        Buscar productos...
-      </span>
+  <input
+    type="text"
+    value={busqueda}
+    onChange={(e) =>
+      setBusqueda(e.target.value)
+    }
+    onKeyDown={(e) => {
+      if (e.key === 'Enter') {
+        buscar()
+      }
+    }}
+    placeholder="Buscar productos..."
+    className="
+      flex-1
+      bg-transparent
+      outline-none
+      text-black
+    "
+  />
 
-      <span
-        className="
-          text-green-700
-          text-[1.6rem]
-        "
-      >
-        ⌕
-      </span>
+  <button
+    onClick={buscar}
+    className="
+      text-green-700
+      text-[1.6rem]
+    "
+  >
+    ⌕
+  </button>
 
-    </div>
+</div>
 
     <div
       className="
