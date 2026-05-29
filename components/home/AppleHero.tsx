@@ -11,14 +11,14 @@ export default function AppleHero({
   return (
 
     <div
-      className="
-        relative
-        overflow-hidden
-        rounded-[2.2rem]
-        h-[265px]
-        shadow-[0_10px_35px_rgba(0,0,0,0.10)]
-      "
-    >
+  className="
+    relative
+    overflow-hidden
+    rounded-[2.2rem]
+    bg-white/10
+    backdrop-blur-sm
+  "
+>
 
             {/* CONTENIDO */}
 
