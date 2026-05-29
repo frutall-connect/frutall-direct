@@ -88,10 +88,7 @@ if (!usuario) return
 const { data: pedido } =
   await supabase
     .from('pedidos')
-    .select(`
-      *,
-      lineas_pedido (*)
-    `)
+    .select('*, lineas_pedido (*)')
 
     .eq(
       'usuario_id',
