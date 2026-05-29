@@ -12,6 +12,7 @@ import AppleOffer from '@/components/home/AppleOffer'
 import AppleActions from '@/components/home/AppleActions'
 
 import { supabase } from '@/lib/supabaseClient'
+
 import { useCartStore } from '@/store/cartStore'
 
 export default function InicioPage() {
@@ -32,16 +33,13 @@ const setItems = useCartStore(
 
 useEffect(() => {
 
-```
 cargarCategorias()
 cargarUsuario()
-```
 
 }, [])
 
 async function cargarUsuario() {
 
-```
 const { data } =
   await supabase.auth.getUser()
 
@@ -54,13 +52,11 @@ const nombre =
 if (nombre) {
   setUsuario(nombre)
 }
-```
 
 }
 
 async function cargarCategorias() {
 
-```
 const { data, error } =
   await supabase
     .from('categorias')
@@ -69,13 +65,11 @@ const { data, error } =
 if (!error && data) {
   setCategorias(data)
 }
-```
 
 }
 
 async function repetirUltimoPedido() {
 
-```
 const { data: authData } =
   await supabase.auth.getUser()
 
@@ -86,19 +80,28 @@ if (!usuario) return
 
 const { data: pedido } =
   await supabase
+
     .from('pedidos')
-    .select('*, lineas_pedido (*)')
+
+    .select(`
+      *,
+      lineas_pedido (*)
+    `)
+
     .eq(
       'usuario_id',
       usuario.id
     )
+
     .order(
       'created_at',
       {
         ascending: false
       }
     )
+
     .limit(1)
+
     .single()
 
 if (!pedido) {
@@ -145,26 +148,24 @@ alert(
 
 window.location.href =
   '/carrito'
-```
 
 }
 
 const totalProductos =
 items.reduce(
 
-```
   (acc, item) =>
     acc + item.cantidad,
 
   0
 
 )
-```
 
 return (
 
-```
 <MobileLayout>
+
+  {/* HEADER BLANCO */}
 
   <div
     className="
@@ -177,6 +178,8 @@ return (
   >
     <AppleHeader />
   </div>
+
+  {/* CONTENIDO */}
 
   <div
     className="
@@ -204,12 +207,15 @@ return (
       <AppleOffer />
 
       <AppleActions
+
         totalProductos={
           totalProductos
         }
+
         repetirUltimoPedido={
           repetirUltimoPedido
         }
+
       />
 
     </div>
@@ -219,7 +225,6 @@ return (
   <BottomNav />
 
 </MobileLayout>
-```
 
 )
 
