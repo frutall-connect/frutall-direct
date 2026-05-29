@@ -33,13 +33,16 @@ const setItems = useCartStore(
 
 useEffect(() => {
 
+```
 cargarCategorias()
 cargarUsuario()
+```
 
 }, [])
 
 async function cargarUsuario() {
 
+```
 const { data } =
   await supabase.auth.getUser()
 
@@ -52,11 +55,13 @@ const nombre =
 if (nombre) {
   setUsuario(nombre)
 }
+```
 
 }
 
 async function cargarCategorias() {
 
+```
 const { data, error } =
   await supabase
     .from('categorias')
@@ -65,11 +70,13 @@ const { data, error } =
 if (!error && data) {
   setCategorias(data)
 }
+```
 
 }
 
 async function repetirUltimoPedido() {
 
+```
 const { data: authData } =
   await supabase.auth.getUser()
 
@@ -148,21 +155,25 @@ alert(
 
 window.location.href =
   '/carrito'
+```
 
 }
 
 const totalProductos =
 items.reduce(
 
+```
   (acc, item) =>
     acc + item.cantidad,
 
   0
 
 )
+```
 
 return (
 
+```
 <MobileLayout>
 
   {/* HEADER BLANCO */}
@@ -185,8 +196,16 @@ return (
     className="
       min-h-screen
       pb-32
+      bg-cover
+      bg-top
+      bg-no-repeat
+      bg-fixed
     "
-   >
+    style={{
+      backgroundImage:
+        "url('/hero-bg-premium.png')"
+    }}
+  >
 
     <div className="px-4 pt-3">
 
@@ -217,6 +236,7 @@ return (
   <BottomNav />
 
 </MobileLayout>
+```
 
 )
 
