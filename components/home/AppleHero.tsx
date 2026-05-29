@@ -32,7 +32,7 @@ export default function AppleHero({
 
         {/* TITULO */}
 
-        <h1
+        <h5
           className="
             text-white
             font-black
@@ -45,7 +45,7 @@ export default function AppleHero({
         >
           ¡Hola,
           {usuario}!
-        </h1>
+        </h5>
 
         {/* SUB */}
 
@@ -119,7 +119,7 @@ export default function AppleHero({
                 w-full
                 h-[58px]
                 rounded-[1.8rem]
-                bg-white/88
+                bg-white/75
                 backdrop-blur-md
                 text-green-700
                 text-[1.25rem]
