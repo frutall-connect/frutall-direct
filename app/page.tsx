@@ -193,19 +193,12 @@ return (
   {/* CONTENIDO */}
 
   <div
-    className="
-      min-h-screen
-      pb-32
-      bg-cover
-      bg-top
-      bg-no-repeat
-      bg-fixed
-    "
-    style={{
-      backgroundImage:
-        "url('/hero-bg-premium.png')"
-    }}
-  >
+  className="
+    min-h-screen
+    pb-32
+    bg-white
+  "
+>
 
     <div className="px-4 pt-3">
 
