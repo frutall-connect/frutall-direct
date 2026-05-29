@@ -20,24 +20,6 @@ export default function AppleHero({
       "
     >
 
-      {/* BACKGROUND */}
-
-      <img
-
-        src="/hero-bg-premium.png"
-
-        alt="Hero"
-
-        className="
-          absolute
-          inset-0
-          w-full
-          h-full
-          object-cover
-        "
-
-      />
-
       {/* OVERLAY OSCURO SUPERIOR */}
 
       <div
