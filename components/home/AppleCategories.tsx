@@ -83,18 +83,6 @@ export default function AppleCategories() {
                 {categoria.nombre}
               </div>
 
-              <div
-                className="
-                  text-gray-400
-                  text-[1.1rem]
-                  leading-none
-                  text-right
-                  mt-1
-                "
-              >
-                →
-              </div>
-
             </div>
 
           </div>
