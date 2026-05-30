@@ -29,13 +29,13 @@ export default function AppleActions({
         onClick={repetirUltimoPedido}
         className="
           h-[58px]
-          rounded-[1.5rem]
+          rounded-[1.4rem]
           bg-green-700/80
           backdrop-blur-md
           text-white
           font-black
           text-[0.98rem]
-          shadow-lg
+          shadow-xl
           active:scale-[0.98]
           transition
         "
