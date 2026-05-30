@@ -129,7 +129,7 @@ export default function AppleOffer() {
                 flex
                 items-end
                 gap-2
-                mt-3
+                mt-2
               "
             >
 
