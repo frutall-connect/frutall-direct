@@ -43,8 +43,8 @@ export default function AppleCategories() {
 
           <div
             className="
-              h-[96px]
-              bg-white/80
+              h-[84px]
+              bg-white/70
               backdrop-blur-md
               rounded-[1.4rem]
               border
