@@ -49,7 +49,7 @@ export default function AppleHero({
     "
   >
 
-    <h1
+    <h3
       className="
         text-white
         font-black
@@ -60,7 +60,7 @@ export default function AppleHero({
       "
     >
       ¡Hola, {usuario}!
-    </h1>
+    </h3>
 
     <p
       className="
