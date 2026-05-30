@@ -54,7 +54,7 @@ export default function AppleHero({
         text-white
         font-black
         tracking-[-0.05em]
-        text-[1rem]
+        text-[1.5rem]
         leading-[1.95rem]
         drop-shadow-xl
       "
