@@ -49,7 +49,7 @@ export default function AppleCategories() {
               rounded-[1.4rem]
               border
               border-white/40
-              shadow-[0_4px_12px_rgba(0,0,0,0.9)]
+              shadow-[0_4px_12px_rgba(0,0,0,0.6)]
               px-2
               py-2
               flex
