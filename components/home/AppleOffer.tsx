@@ -168,7 +168,6 @@ export default function AppleOffer() {
                 active:scale-[0.98]
                 transition
               " 
-                align= "right"
             >
               🛒
             </button>
