@@ -157,10 +157,11 @@ export default function AppleOffer() {
               onClick={agregarOferta}
               className="
                 mt-3
-                w-full
+                w-[42px]
                 h-[42px]
                 rounded-xl
-                bg-green-700
+                bg-green-700/50
+                backdrop-blur-md
                 text-white
                 font-black
                 text-[0.9rem]
