@@ -45,15 +45,24 @@ function ProductosContenido() {
     useSearchParams()
 
   const categoriaActual =
-    searchParams.get('categoria')
+  searchParams.get('categoria')
+
+const busquedaUrl =
+  searchParams.get('q') || ''
 
   const items = useCartStore(
     (state) => state.items
   )
 
   useEffect(() => {
-    cargarProductos()
-  }, [])
+
+  cargarProductos()
+
+  if (busquedaUrl) {
+    setBusqueda(busquedaUrl)
+  }
+
+}, [busquedaUrl])
 
   async function cargarProductos() {
 
