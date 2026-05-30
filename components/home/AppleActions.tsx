@@ -29,7 +29,7 @@ export default function AppleActions({
         onClick={repetirUltimoPedido}
         className="
           h-[58px]
-          rounded-[1.4rem]
+          rounded-[1.5rem]
           bg-green-700
           text-white
           font-black
@@ -47,18 +47,18 @@ export default function AppleActions({
       <Link href="/carrito">
 
         <button
-          w-full
-            h-[54px]
-            rounded-[1.4rem]
-            bg-white/75
-            backdrop-blur-md
-            text-green-700
-            text-[1rem]
-            font-grey
-            shadow-xl
-          "
-
-        >
+  className="
+    w-full
+    h-[54px]
+    rounded-[1.4rem]
+    bg-white/60
+    backdrop-blur-md
+    text-green-700
+    text-[1rem]
+    font-black
+    shadow-xl
+  "
+>
           Carrito ({totalProductos})
         </button>
 
