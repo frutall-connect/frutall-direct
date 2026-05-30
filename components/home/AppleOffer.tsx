@@ -160,7 +160,7 @@ export default function AppleOffer() {
                 w-[42px]
                 h-[35px]
                 rounded-xl
-                bg-white/50
+                bg-orange/20
                 backdrop-blur-md
                 text-white
                 font-black
