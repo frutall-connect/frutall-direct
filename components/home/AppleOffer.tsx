@@ -19,7 +19,7 @@ export default function AppleOffer() {
 
         <h2
           className="
-            text-[1.35rem]
+            text-[1.3rem]
             font-black
             tracking-tight
             text-black
@@ -31,21 +31,20 @@ export default function AppleOffer() {
         <span
           className="
             text-green-700
-            text-[1.5rem]
+            text-[1.4rem]
             font-light
           "
         >
-          →
         </span>
-
       </div>
 
       {/* CARD */}
 
       <div
         className="
-  bg-white/60
-  backdrop-blur-md
+          h-[100px]
+          bg-white/60
+          backdrop-blur-md
           rounded-[1.4rem]
           p-3
           shadow-sm
