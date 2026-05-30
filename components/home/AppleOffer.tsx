@@ -104,7 +104,7 @@ https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=fo
 
             <h3
               className="
-                text-[1.15rem]
+                text-[1.05rem]
                 leading-[1.2rem]
                 font-black
                 mt-3
@@ -127,7 +127,7 @@ https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=fo
 
               <span
                 className="
-                  text-[1.5rem]
+                  text-[1.4rem]
                   leading-none
                   font-black
                   text-green-700
