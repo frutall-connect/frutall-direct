@@ -128,8 +128,8 @@ export default function AppleOffer() {
               className="
                 flex
                 items-end
-                gap-2
-                mt-2
+                gap-1
+                mt-1
               "
             >
 
