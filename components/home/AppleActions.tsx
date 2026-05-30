@@ -53,9 +53,8 @@ export default function AppleActions({
     rounded-[1.4rem]
     bg-white/60
     backdrop-blur-md
-    text-green-700
+    text-grey-700
     text-[1rem]
-    font-black
     shadow-xl
   "
 >

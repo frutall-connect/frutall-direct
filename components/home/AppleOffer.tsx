@@ -42,11 +42,10 @@ export default function AppleOffer() {
 
       <div
         className="
-          h-[100px]
           bg-white/60
           backdrop-blur-md
           rounded-[1.4rem]
-          p-3
+          p-2
           shadow-sm
           border
           border-white/40
