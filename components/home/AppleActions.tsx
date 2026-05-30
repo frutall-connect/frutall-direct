@@ -28,7 +28,7 @@ export default function AppleActions({
       <button
         onClick={repetirUltimoPedido}
         className="
-          h-[58px]
+          h-[54px]
           rounded-[1.4rem]
           bg-green-700/80
           backdrop-blur-md
