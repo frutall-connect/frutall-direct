@@ -30,7 +30,8 @@ export default function AppleActions({
         className="
           h-[58px]
           rounded-[1.5rem]
-          bg-green-700
+          bg-green-700/50
+          backdrop-blur-md
           text-white
           font-black
           text-[0.98rem]
@@ -51,7 +52,7 @@ export default function AppleActions({
     w-full
     h-[54px]
     rounded-[1.4rem]
-    bg-white/60
+    bg-white/40
     backdrop-blur-md
     text-grey-700
     text-[1rem]
