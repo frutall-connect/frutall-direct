@@ -132,7 +132,6 @@ export default function AppleOffer() {
                 mt-1
               "
             >
-
               <span
                 className="
                   text-[1.4rem]
@@ -168,6 +167,7 @@ export default function AppleOffer() {
                 shadow-md
                 active:scale-[0.98]
                 transition
+                align:right
               "
             >
               🛒
