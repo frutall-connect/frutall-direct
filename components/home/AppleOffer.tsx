@@ -44,9 +44,9 @@ export default function AppleOffer() {
 
       <div
         className="
-  bg-white/80
+  bg-white/60
   backdrop-blur-md
-          rounded-[2rem]
+          rounded-[1.4rem]
           p-3
           shadow-sm
           border
@@ -75,7 +75,7 @@ https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=fo
             className="
               w-[92px]
               h-[92px]
-              rounded-[1.5rem]
+              rounded-[1.4rem]
               object-cover
             "
 
@@ -127,7 +127,7 @@ https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=fo
 
               <span
                 className="
-                  text-[1.7rem]
+                  text-[1.5rem]
                   leading-none
                   font-black
                   text-green-700
