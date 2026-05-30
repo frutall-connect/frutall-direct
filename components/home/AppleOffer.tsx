@@ -4,29 +4,29 @@ import { useCartStore } from '@/store/cartStore'
 
 export default function AppleOffer() {
 
-const addItem = useCartStore(
-  (state) => state.addItem
-)
+  const addItem = useCartStore(
+    (state) => state.addItem
+  )
 
-function agregarOferta() {
+  function agregarOferta() {
 
-  addItem({
+    addItem({
 
-    id: 'oferta-uva-roja',
+      id: 'oferta-uva-roja',
 
-    nombre: 'Uva Roja Sin Semilla',
+      nombre: 'Uva Roja Sin Semilla',
 
-    precio: 1.8,
+      precio: 1.8,
 
-    cantidad: 1,
+      cantidad: 1,
 
-    envase: 'Caja',
+      envase: 'Caja',
 
-    variedad: 'Normal'
+      variedad: 'Normal'
 
-  })
+    })
 
-}
+  }
 
   return (
 
@@ -54,14 +54,6 @@ function agregarOferta() {
           Oferta del día
         </h2>
 
-        <span
-          className="
-            text-green-700
-            text-[1.4rem]
-            font-light
-          "
-        >
-        </span>
       </div>
 
       {/* CARD */}
@@ -89,20 +81,14 @@ function agregarOferta() {
           {/* IMAGEN */}
 
           <img
-
-            src="
-https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=format&fit=crop
-"
-
+            src="https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=format&fit=crop"
             alt="Oferta"
-
             className="
               w-[92px]
               h-[92px]
               rounded-[1.4rem]
               object-cover
             "
-
           />
 
           {/* INFO */}
@@ -182,16 +168,13 @@ https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=fo
                 text-white
                 font-black
                 text-[0.9rem]
+                shadow-md
                 active:scale-[0.98]
                 transition
               "
             >
               🛒 Añadir al carrito
             </button>
-
-          </div>
-
-        </div>
 
           </div>
 
