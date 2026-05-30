@@ -1,6 +1,32 @@
 'use client'
 
+import { useCartStore } from '@/store/cartStore'
+
 export default function AppleOffer() {
+
+const addItem = useCartStore(
+  (state) => state.addItem
+)
+
+function agregarOferta() {
+
+  addItem({
+
+    id: 'oferta-uva-roja',
+
+    nombre: 'Uva Roja Sin Semilla',
+
+    precio: 1.8,
+
+    cantidad: 1,
+
+    envase: 'Caja',
+
+    variedad: 'Normal'
+
+  })
+
+}
 
   return (
 
@@ -144,6 +170,28 @@ https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=fo
               </span>
 
             </div>
+
+            <button
+              onClick={agregarOferta}
+              className="
+                mt-3
+                w-full
+                h-[42px]
+                rounded-xl
+                bg-green-700
+                text-white
+                font-black
+                text-[0.9rem]
+                active:scale-[0.98]
+                transition
+              "
+            >
+              🛒 Añadir al carrito
+            </button>
+
+          </div>
+
+        </div>
 
           </div>
 
