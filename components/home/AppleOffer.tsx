@@ -158,9 +158,9 @@ export default function AppleOffer() {
               className="
                 mt-3
                 w-[42px]
-                h-[42px]
+                h-[35px]
                 rounded-xl
-                bg-green-700/50
+                bg-white/50
                 backdrop-blur-md
                 text-white
                 font-black
