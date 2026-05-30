@@ -153,11 +153,7 @@ export default function AppleOffer() {
                 "
               >
                 2,30€
-              </span>
-
-            </div>
-
-            <button
+              </span><button
               onClick={agregarOferta}
               className="
                 mt-3
@@ -173,8 +169,12 @@ export default function AppleOffer() {
                 transition
               "
             >
-              🛒 Añadir al carrito
+              🛒
             </button>
+
+            </div>
+
+            
 
           </div>
 
