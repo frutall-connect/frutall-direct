@@ -154,6 +154,7 @@ export default function AppleOffer() {
                 2,30€
               </span><button
               onClick={agregarOferta}
+              align= "right"
               className="
                 mt-3
                 w-[42px]
@@ -167,7 +168,6 @@ export default function AppleOffer() {
                 shadow-md
                 active:scale-[0.98]
                 transition
-                align:right
               "
             >
               🛒
