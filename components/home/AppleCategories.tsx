@@ -44,12 +44,12 @@ export default function AppleCategories() {
           <div
             className="
               h-[84px]
-              bg-white/70
+              bg-white/60
               backdrop-blur-md
               rounded-[1.4rem]
               border
               border-white/40
-              shadow-[0_4px_12px_rgba(0,0,0,0.08)]
+              shadow-[0_4px_12px_rgba(0,0,0,0.9)]
               px-2
               py-2
               flex
