@@ -1,5 +1,9 @@
 'use client'
 
+import { useState, useEffect } from 'react'
+
+import { supabase } from '@/lib/supabaseClient'
+
 import { useCartStore } from '@/store/cartStore'
 
 import { useState } from 'react'
@@ -10,8 +14,33 @@ export default function AppleOffer() {
     (state) => state.addItem
   )
 
-const [mostrarToast, setMostrarToast] =
-  useState(false)
+  const [mostrarToast, setMostrarToast] =
+    useState(false)
+
+  const [oferta, setOferta] =
+    useState<any>(null)
+
+async function cargarOferta() {
+
+  const { data, error } =
+    await supabase
+      .from('ofertas_home')
+      .select('*')
+      .eq('activa', true)
+      .limit(1)
+      .single()
+
+  if (!error && data) {
+    setOferta(data)
+  }
+
+}
+
+useEffect(() => {
+
+  cargarOferta()
+
+}, [])
 
   function agregarOferta() {
 
