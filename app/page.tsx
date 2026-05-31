@@ -94,6 +94,9 @@ async function cargarCampana() {
       .eq('activa', true)
       .single()
 
+console.log('CAMPANA DATA:', data)
+console.log('CAMPANA ERROR:', error)
+
   if (!error && data) {
     setCampana(data)
   }
