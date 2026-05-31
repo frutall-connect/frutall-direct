@@ -239,25 +239,32 @@ const descuento =
                 "
               >
                 {Number(oferta?.productos?.precio).toFixed(2)}€
-              </span><button
-              onClick={agregarOferta}
-              className="
-                mt-3
-                w-[42px]
-                h-[35px]
-                rounded-xl
-                bg-orange-500/20
-                backdrop-blur-md
-                text-white
-                font-black
-                text-[0.9rem]
-                shadow-md
-                active:scale-[0.98]
-                transition
-              " 
-            >
-              🛒
-            </button>
+              </span><div className="flex items-center gap-2">
+
+  <span
+    className="
+      text-green-700
+      text-[1.4rem]
+      font-black
+    "
+  >
+    →
+  </span>
+
+  <button
+    onClick={agregarOferta}
+    className="
+      w-[42px]
+      h-[35px]
+      rounded-xl
+      bg-orange-500/20
+      shadow-md
+    "
+  >
+    🛒
+  </button>
+
+</div>
 
             </div>
 
