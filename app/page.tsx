@@ -229,9 +229,9 @@ return (
       linear-gradient(
         to bottom,
         rgba(255,255,255,0) 0%,
-        rgba(255,255,255,0) 20%,
-        rgba(255,255,255,0.35) 30%,
-        rgba(255,255,255,0.75) 55%,
+        rgba(255,255,255,0) 15%,
+        rgba(255,255,255,0.35) 25%,
+        rgba(255,255,255,0.75) 45%,
         rgba(255,255,255,1) 100%
       ),
       url('${
@@ -243,6 +243,10 @@ return (
 >
 
     <div className="px-4 pt-3">
+
+<p className="text-red-500 text-xs">
+  {campana?.imagen_fondo}
+</p>
 
       <AppleHero
         usuario={usuario}
