@@ -2,9 +2,11 @@
 
 import Link from 'next/link'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import { useRouter } from 'next/navigation'
+
+import { supabase } from '@/lib/supabaseClient'
 
 export default function AppleHero({
   usuario
@@ -17,6 +19,38 @@ export default function AppleHero({
 
   const router =
     useRouter()
+
+// =====================================================
+// FRUTALL-HERO-DINAMICO
+// =====================================================
+
+const [hero, setHero] =
+  useState<any>(null)
+
+async function cargarHero() {
+
+  const { data, error } =
+    await supabase
+      .from('hero_home')
+      .select('*')
+      .eq('activa', true)
+      .single()
+
+  if (!error && data) {
+    setHero(data)
+  }
+
+}
+
+useEffect(() => {
+
+  cargarHero()
+
+}, [])
+
+// =====================================================
+// FIN FRUTALL-HERO-DINAMICO
+// =====================================================
 
   function buscar() {
 
@@ -71,7 +105,10 @@ export default function AppleHero({
         drop-shadow-lg
       "
     >
-      Fruta fresca, calidad garantizada
+      {
+  hero?.subtitulo ||
+  'Fruta fresca, calidad garantizada'
+}
     </p>
 
 <div
