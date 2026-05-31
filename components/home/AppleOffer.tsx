@@ -219,7 +219,7 @@ const descuento =
                 mt-1
               "
             >
-              <span
+              <span align="right" 
                 className="
                   text-[1.4rem]
                   leading-none
