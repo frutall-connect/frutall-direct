@@ -232,7 +232,7 @@ return (
         rgba(255,255,255,0) 0%,
         rgba(255,255,255,0) 15%,
         rgba(255,255,255,0.35) 25%,
-        rgba(255,255,255,0.75) 45%,
+        rgba(255,255,255,0.90) 45%,
         rgba(255,255,255,1) 100%
       ),
       url('${
@@ -252,10 +252,6 @@ return (
       <AppleHero
         usuario={usuario}
       />
-
-<p className="text-red-500 text-xs">
-  {campana?.imagen_fondo}
-</p>
 
       <AppleCategories />
 
