@@ -240,6 +240,10 @@ return (
         usuario={usuario}
       />
 
+<p className="text-red-500">
+  {campana?.imagen_fondo || 'SIN CAMPAÑA'}
+</p>
+
       <AppleCategories />
 
       <AppleOffer />
