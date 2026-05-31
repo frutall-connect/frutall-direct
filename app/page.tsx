@@ -245,10 +245,6 @@ return (
 
     <div className="px-4 pt-3">
 
-<p className="text-red-500 text-xs">
-  {campana?.imagen_fondo}
-</p>
-
       <AppleHero
         usuario={usuario}
       />
