@@ -94,6 +94,10 @@ useEffect(() => {
           Oferta del día
         </h2>
 
+<p className="text-xs text-gray-500">
+  {JSON.stringify(oferta)}
+</p>
+
 {mostrarToast && (
 
   <div
