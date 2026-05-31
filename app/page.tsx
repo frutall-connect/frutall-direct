@@ -92,9 +92,6 @@ async function cargarCampana() {
     .from('campanas_home')
     .select('*')
 
-console.log('CAMPANA DATA:', data)
-console.log('CAMPANA ERROR:', error)
-
   if (!error && data) {
     setCampana(data)
   }
@@ -219,29 +216,34 @@ return (
   {/* CONTENIDO */}
 
   <div
-    className="
-      min-h-screen
-      pb-32
-      bg-cover
-      bg-top
-      bg-no-repeat
-      bg-fixed
-    "
-    style={{
-  backgroundImage:
-  "url('https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=1600')"
-}}
-  >
+  className="
+    min-h-screen
+    pb-32
+    bg-cover
+    bg-top
+    bg-no-repeat
+    bg-fixed
+  "
+  style={{
+    backgroundImage: `
+      linear-gradient(
+        to bottom,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0) 20%,
+        rgba(255,255,255,0.35) 45%,
+        rgba(255,255,255,0.75) 70%,
+        rgba(255,255,255,1) 100%
+      ),
+      url('https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=1600')
+    `
+  }}
+>
 
     <div className="px-4 pt-3">
 
       <AppleHero
         usuario={usuario}
       />
-
-<p className="text-red-500">
-  {campana?.imagen_fondo || 'SIN CAMPAÑA'}
-</p>
 
 <p className="text-red-500 text-xs">
   {campana?.imagen_fondo}
