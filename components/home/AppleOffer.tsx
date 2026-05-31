@@ -127,7 +127,7 @@ const descuento =
       left-1/2
       -translate-x-1/2
       z-[999]
-      bg-green-700
+      bg-grey
       text-white
       px-5
       py-3
