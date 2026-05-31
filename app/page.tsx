@@ -88,16 +88,17 @@ if (!error && data) {
 async function cargarCampana() {
 
   const { data, error } =
-  await supabase
-    .from('campanas_home')
-    .select('*')
+    await supabase
+      .from('campanas_home')
+      .select('*')
+      .eq('activa', true)
+      .single()
 
   if (!error && data) {
     setCampana(data)
   }
 
 }
-
 // =====================================================
 // FIN FRUTALL-CAMPANA-HOME
 // =====================================================
