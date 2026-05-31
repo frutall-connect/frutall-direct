@@ -72,7 +72,7 @@ const [mostrarToast, setMostrarToast] =
   <div
     className="
       fixed
-      top-48
+      top-148
       left-1/2
       -translate-x-1/2
       z-[999]
