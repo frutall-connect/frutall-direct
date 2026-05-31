@@ -6,8 +6,6 @@ import { supabase } from '@/lib/supabaseClient'
 
 import { useCartStore } from '@/store/cartStore'
 
-import { useState } from 'react'
-
 export default function AppleOffer() {
 
   const addItem = useCartStore(
