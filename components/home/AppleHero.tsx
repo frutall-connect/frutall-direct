@@ -65,14 +65,45 @@ useEffect(() => {
   return (
 
     <div
-      className="
-        relative
-        overflow-hidden
-        rounded-[2rem]
-        bg-white/10
-        backdrop-blur-sm
-      "
-    >
+  className="
+    relative
+    overflow-hidden
+    rounded-[2rem]
+  "
+>
+
+  {/* =====================================================
+      FRUTALL-HERO-DINAMICO
+      Fondo dinámico desde Supabase
+  ===================================================== */}
+
+  <img
+    src={
+      hero?.imagen ||
+      '/hero-bg-premium.png'
+    }
+    alt=""
+    className="
+      absolute
+      inset-0
+      w-full
+      h-full
+      object-cover
+    "
+  />
+
+  <div
+    className="
+      absolute
+      inset-0
+      bg-black/15
+      backdrop-blur-[8px]
+    "
+  />
+
+  {/* =====================================================
+      FIN FRUTALL-HERO-DINAMICO
+  ===================================================== */}
   <div
     className="
       relative
