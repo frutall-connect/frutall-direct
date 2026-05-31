@@ -204,7 +204,7 @@ const descuento =
                 text-[1.05rem]
                 leading-[1.2rem]
                 font-black
-                mt-3
+                mt-1
                 text-black
               "
             >
@@ -219,7 +219,7 @@ const descuento =
                 mt-1
               "
             >
-              <span align="right" 
+              <span 
                 className="
                   text-[1.4rem]
                   leading-none
