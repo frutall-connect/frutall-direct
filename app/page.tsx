@@ -23,6 +23,17 @@ useState<any[]>([])
 const [usuario, setUsuario] =
 useState('Cliente')
 
+// =====================================================
+// FRUTALL-CAMPANA-HOME
+// =====================================================
+
+const [campana, setCampana] =
+useState<any>(null)
+
+// =====================================================
+// FIN FRUTALL-CAMPANA-HOME
+// =====================================================
+
 const items = useCartStore(
 (state) => state.items
 )
@@ -33,8 +44,9 @@ const setItems = useCartStore(
 
 useEffect(() => {
 
-cargarCategorias()
-cargarUsuario()
+  cargarCategorias()
+  cargarUsuario()
+  cargarCampana()
 
 }, [])
 
@@ -67,6 +79,30 @@ if (!error && data) {
 }
 
 }
+
+// =====================================================
+// FRUTALL-CAMPANA-HOME
+// Carga la campaña activa
+// =====================================================
+
+async function cargarCampana() {
+
+  const { data, error } =
+    await supabase
+      .from('campanas_home')
+      .select('*')
+      .eq('activa', true)
+      .single()
+
+  if (!error && data) {
+    setCampana(data)
+  }
+
+}
+
+// =====================================================
+// FIN FRUTALL-CAMPANA-HOME
+// =====================================================
 
 async function repetirUltimoPedido() {
 
@@ -191,9 +227,11 @@ return (
       bg-fixed
     "
     style={{
-      backgroundImage:
-        "url('/hero-bg-premium.png')"
-    }}
+  backgroundImage: `url('${
+    campana?.imagen_fondo ||
+    '/hero-bg-premium.png'
+  }')`
+}}
   >
 
     <div className="px-4 pt-3">
