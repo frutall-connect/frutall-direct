@@ -228,10 +228,8 @@ return (
       bg-fixed
     "
     style={{
-  backgroundImage: `url('${
-    campana?.imagen_fondo ||
-    '/hero-bg-premium.png'
-  }')`
+  backgroundImage:
+  "url('https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=1600')"
 }}
   >
 
@@ -243,6 +241,10 @@ return (
 
 <p className="text-red-500">
   {campana?.imagen_fondo || 'SIN CAMPAÑA'}
+</p>
+
+<p className="text-red-500 text-xs">
+  {campana?.imagen_fondo}
 </p>
 
       <AppleCategories />
