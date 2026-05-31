@@ -36,6 +36,9 @@ async function cargarHero() {
       .eq('activa', true)
       .single()
 
+  console.log('HERO DATA:', data)
+  console.log('HERO ERROR:', error)
+
   if (!error && data) {
     setHero(data)
   }
@@ -95,6 +98,10 @@ useEffect(() => {
     >
       ¡Hola, {usuario}!
     </h3>
+
+<p className="text-red-500 text-xs">
+  {hero ? JSON.stringify(hero) : 'SIN HERO'}
+</p>
 
     <p
       className="
