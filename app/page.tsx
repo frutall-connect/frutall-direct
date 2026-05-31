@@ -234,7 +234,10 @@ return (
         rgba(255,255,255,0.75) 55%,
         rgba(255,255,255,1) 100%
       ),
-      url('https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=1600')
+      url('${
+  campana?.imagen_fondo ||
+  '/hero-bg-premium.png'
+}')
     `
   }}
 >
