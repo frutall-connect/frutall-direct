@@ -2,31 +2,44 @@
 
 import { useCartStore } from '@/store/cartStore'
 
+import { useState } from 'react'
+
 export default function AppleOffer() {
 
   const addItem = useCartStore(
     (state) => state.addItem
   )
 
+const [mostrarToast, setMostrarToast] =
+  useState(false)
+
   function agregarOferta() {
 
-    addItem({
+  addItem({
 
-      id: 'oferta-uva-roja',
+    id: 'oferta-uva-roja',
 
-      nombre: 'Uva Roja Sin Semilla',
+    nombre: 'Uva Roja Sin Semilla',
 
-      precio: 1.8,
+    precio: 1.8,
 
-      cantidad: 1,
+    cantidad: 1,
 
-      envase: 'Caja',
+    envase: 'Caja',
 
-      variedad: 'Normal'
+    variedad: 'Normal'
 
-    })
+  })
 
-  }
+  setMostrarToast(true)
+
+  setTimeout(() => {
+
+    setMostrarToast(false)
+
+  }, 2000)
+
+}
 
   return (
 
@@ -53,6 +66,29 @@ export default function AppleOffer() {
         >
           Oferta del día
         </h2>
+
+{mostrarToast && (
+
+  <div
+    className="
+      fixed
+      top-24
+      left-1/2
+      -translate-x-1/2
+      z-[999]
+      bg-green-700
+      text-white
+      px-5
+      py-3
+      rounded-2xl
+      shadow-xl
+      font-bold
+    "
+  >
+    ✅ Añadido al carrito
+  </div>
+
+)}
 
       </div>
 
