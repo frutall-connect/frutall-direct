@@ -11,25 +11,28 @@ export default function AppleOffer() {
 
   async function cargarOferta() {
 
-    const { data, error } =
-      await supabase
-        .from('ofertas_home')
-        .select(`
-          precio_oferta,
-          productos (
-            id,
-            nombre,
-            precio,
-            imagen
-          )
-        `)
-        .eq('activa', true)
+  const { data, error } =
+    await supabase
+      .from('ofertas_home')
+      .select(`
+        precio_oferta,
+        productos (
+          id,
+          nombre,
+          precio,
+          imagen
+        )
+      `)
+      .eq('activa', true)
 
-    if (!error && data) {
-      setOfertas(data)
-    }
+  console.log('OFERTAS:', data)
+  console.log('ERROR OFERTAS:', error)
 
+  if (!error && data) {
+    setOfertas(data)
   }
+
+}
 
   useEffect(() => {
 
