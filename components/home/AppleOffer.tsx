@@ -28,6 +28,9 @@ async function cargarOferta() {
       .limit(1)
       .single()
 
+  console.log('DATA:', data)
+  console.log('ERROR:', error)
+
   if (!error && data) {
     setOferta(data)
   }
