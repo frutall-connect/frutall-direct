@@ -23,9 +23,16 @@ async function cargarOferta() {
   const { data, error } =
     await supabase
       .from('ofertas_home')
-      .select('*')
+      .select(`
+        precio_oferta,
+        productos (
+          id,
+          nombre,
+          precio,
+          imagen
+        )
+      `)
       .eq('activa', true)
-      .limit(1)
       .single()
 
   console.log('DATA:', data)
@@ -98,7 +105,7 @@ useEffect(() => {
         </h2>
 
 <p className="text-xs text-red-500">
-  {oferta ? JSON.stringify(oferta) : 'SIN OFERTA'}
+  {oferta?.productos?.nombre}
 </p>
 
 {mostrarToast && (
