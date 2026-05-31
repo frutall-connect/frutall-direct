@@ -88,11 +88,9 @@ if (!error && data) {
 async function cargarCampana() {
 
   const { data, error } =
-    await supabase
-      .from('campanas_home')
-      .select('*')
-      .eq('activa', true)
-      .single()
+  await supabase
+    .from('campanas_home')
+    .select('*')
 
 console.log('CAMPANA DATA:', data)
 console.log('CAMPANA ERROR:', error)
