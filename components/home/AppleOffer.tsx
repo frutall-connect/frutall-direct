@@ -52,13 +52,15 @@ useEffect(() => {
 
   function agregarOferta() {
 
+  if (!oferta) return
+
   addItem({
 
-    id: 'oferta-uva-roja',
+    id: oferta.productos.id,
 
-    nombre: 'Uva Roja Sin Semilla',
+    nombre: oferta.productos.nombre,
 
-    precio: 1.8,
+    precio: oferta.precio_oferta,
 
     cantidad: 1,
 
@@ -77,6 +79,18 @@ useEffect(() => {
   }, 2000)
 
 }
+
+const descuento =
+  oferta
+    ? Math.round(
+        (
+          (oferta.productos.precio -
+            oferta.precio_oferta)
+          /
+          oferta.productos.precio
+        ) * 100
+      )
+    : 0
 
   return (
 
@@ -103,10 +117,6 @@ useEffect(() => {
         >
           Oferta del día
         </h2>
-
-<p className="text-xs text-red-500">
-  {oferta?.productos?.nombre}
-</p>
 
 {mostrarToast && (
 
@@ -158,7 +168,7 @@ useEffect(() => {
           {/* IMAGEN */}
 
           <img
-            src="https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1200&auto=format&fit=crop"
+            src={oferta?.productos?.imagen}
             alt="Oferta"
             className="
               w-[92px]
@@ -186,7 +196,7 @@ useEffect(() => {
                 font-black
               "
             >
-              -20%
+              -{descuento}%
             </div>
 
             <h3
@@ -198,7 +208,7 @@ useEffect(() => {
                 text-black
               "
             >
-              Uva Roja Sin Semilla
+              {oferta?.productos?.nombre}
             </h3>
 
             <div
@@ -217,7 +227,7 @@ useEffect(() => {
                   text-green-700
                 "
               >
-                1,80€
+                {Number(oferta?.precio_oferta).toFixed(2)}€
               </span>
 
               <span
@@ -228,7 +238,7 @@ useEffect(() => {
                   mb-[2px]
                 "
               >
-                2,30€
+                {Number(oferta?.productos?.precio).toFixed(2)}€
               </span><button
               onClick={agregarOferta}
               className="
@@ -236,7 +246,7 @@ useEffect(() => {
                 w-[42px]
                 h-[35px]
                 rounded-xl
-                bg-orange/20
+                bg-orange-500/20
                 backdrop-blur-md
                 text-white
                 font-black
