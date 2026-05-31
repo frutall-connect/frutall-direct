@@ -15,8 +15,8 @@ export default function AppleOffer() {
   const [mostrarToast, setMostrarToast] =
     useState(false)
 
-  const [oferta, setOferta] =
-    useState<any>(null)
+  const [ofertas, setOfertas] =
+  useState<any[]>([])
 
 async function cargarOferta() {
 
@@ -33,17 +33,12 @@ async function cargarOferta() {
         )
       `)
       .eq('activa', true)
-      .single()
-
-  console.log('DATA:', data)
-  console.log('ERROR:', error)
 
   if (!error && data) {
-    setOferta(data)
+    setOfertas(data)
   }
 
 }
-
 useEffect(() => {
 
   cargarOferta()
@@ -146,7 +141,33 @@ const descuento =
       {/* CARD */}
 
       <div
+  className="
+    flex
+    gap-4
+    overflow-x-auto
+    snap-x
+    pb-2
+  "
+>
+
+  {ofertas.map((oferta, index) => {
+
+    const descuento =
+      Math.round(
+        (
+          (oferta.productos.precio -
+            oferta.precio_oferta)
+          /
+          oferta.productos.precio
+        ) * 100
+      )
+
+    return (
+
+      <div
+        key={index}
         className="
+          min-w-[340px]
           bg-white/60
           backdrop-blur-md
           rounded-[1.4rem]
@@ -154,6 +175,7 @@ const descuento =
           shadow-sm
           border
           border-white/40
+          snap-start
         "
       >
 
@@ -164,6 +186,92 @@ const descuento =
             items-center
           "
         >
+
+          <img
+            src={oferta.productos.imagen}
+            alt="Oferta"
+            className="
+              w-[92px]
+              h-[92px]
+              rounded-[1.4rem]
+              object-cover
+            "
+          />
+
+          <div className="flex-1">
+
+            <div
+              className="
+                inline-flex
+                px-3
+                py-1
+                rounded-full
+                bg-red-500
+                text-white
+                text-[0.7rem]
+                font-black
+              "
+            >
+              -{descuento}%
+            </div>
+
+            <h3
+              className="
+                text-[1.05rem]
+                leading-[1.2rem]
+                font-black
+                mt-1
+              "
+            >
+              {oferta.productos.nombre}
+            </h3>
+
+            <div
+              className="
+                flex
+                items-end
+                gap-1
+                mt-1
+              "
+            >
+
+              <span
+                className="
+                  text-[1.4rem]
+                  font-black
+                  text-green-700
+                "
+              >
+                {Number(
+                  oferta.precio_oferta
+                ).toFixed(2)}€
+              </span>
+
+              <span
+                className="
+                  text-gray-400
+                  line-through
+                  text-[0.9rem]
+                "
+              >
+                {Number(
+                  oferta.productos.precio
+                ).toFixed(2)}€
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    )
+
+  })}
+
+</div>
 
           {/* IMAGEN */}
 
