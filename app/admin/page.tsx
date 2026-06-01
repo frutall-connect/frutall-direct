@@ -9,6 +9,12 @@ export default function AdminPage() {
     },
 
     {
+      titulo: 'Ofertas',
+      href: '/admin/ofertas',
+      emoji: '🔥'
+    },
+
+    {
       titulo: 'Importar tarifa',
       href: '/admin/importar-tarifa',
       emoji: '📥'
