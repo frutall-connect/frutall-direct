@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-import AdminGuard from '@/components/admin/AdminGuard'
+import AdminGuard from '@/components/auth/AdminGuard'
 
 export default function AdminHomePage() {
 
