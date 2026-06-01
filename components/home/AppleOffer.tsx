@@ -14,7 +14,15 @@ export default function AppleOffer() {
   const { data, error } =
   await supabase
     .from('ofertas_home')
-    .select('*')
+    .select(`
+      precio_oferta,
+      productos (
+        id,
+        nombre,
+        precio,
+        imagen
+      )
+    `)
     .eq('activa', true)
 
   console.log('OFERTAS:', data)
