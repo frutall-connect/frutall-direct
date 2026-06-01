@@ -4,10 +4,18 @@ import { useState, useEffect } from 'react'
 
 import { supabase } from '@/lib/supabaseClient'
 
+import { useCartStore }
+from '@/store/cartStore'
+
 export default function AppleOffer() {
 
   const [ofertas, setOfertas] =
     useState<any[]>([])
+
+const addItem =
+  useCartStore(
+    (state) => state.addItem
+  )
 
   async function cargarOferta() {
 
@@ -153,13 +161,102 @@ export default function AppleOffer() {
                   </h3>
 
                   <div
-                    className="
-                      flex
-                      items-end
-                      gap-2
-                      mt-1
-                    "
-                  >
+  className="
+    flex
+    items-center
+    justify-between
+    mt-2
+  "
+>
+
+  <div
+    className="
+      flex
+      items-end
+      gap-2
+    "
+  >
+
+    <span
+      className="
+        text-[1.4rem]
+        font-black
+        text-green-700
+      "
+    >
+      {Number(
+        oferta.precio_oferta
+      ).toFixed(2)}€
+    </span>
+
+    <span
+      className="
+        text-gray-400
+        line-through
+        text-[0.9rem]
+      "
+    >
+      {Number(
+        oferta.productos.precio
+      ).toFixed(2)}€
+    </span>
+
+  </div>
+
+  <div
+    className="
+      flex
+      items-center
+      gap-2
+    "
+  >
+
+    <span
+      className="
+        text-green-700
+        text-[1.4rem]
+        font-black
+      "
+    >
+      →
+    </span>
+
+    <button
+      onClick={() => {
+
+        addItem({
+
+          id: oferta.productos.id,
+
+          nombre:
+            oferta.productos.nombre,
+
+          precio:
+            oferta.precio_oferta,
+
+          cantidad: 1,
+
+          envase: 'Caja',
+
+          variedad: 'Normal'
+
+        })
+
+      }}
+      className="
+        w-[42px]
+        h-[35px]
+        rounded-xl
+        bg-orange-500/20
+        shadow-md
+      "
+    >
+      🛒
+    </button>
+
+  </div>
+
+</div>
 
                     <span
                       className="
