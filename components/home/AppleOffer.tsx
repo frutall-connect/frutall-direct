@@ -25,9 +25,6 @@ export default function AppleOffer() {
     `)
     .eq('activa', true)
 
-  console.log('OFERTAS:', data)
-  console.log('ERROR OFERTAS:', error)
-
   if (!error && data) {
     setOfertas(data)
   }
