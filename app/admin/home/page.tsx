@@ -104,8 +104,17 @@ async function activarCampana(id: string) {
     })
     .eq('id', id)
 
-  await cargarDatos()
   await cargarCampanas()
+setCampana(null)
+
+const seleccionada =
+  campanas.find(
+    c => c.id === id
+  )
+
+if (seleccionada) {
+  setCampana(seleccionada)
+}
 
 }
 
@@ -202,6 +211,8 @@ async function eliminarCampana(id: string) {
   }
 
   alert('Campaña actualizada')
+
+await cargarCampanas()
 
 }
 
@@ -341,14 +352,14 @@ async function cargarCampanas() {
         >
 
           <h2
-            className="
-              text-xl
-              font-black
-              mb-4
-            "
-          >
-            Campaña activa
-          </h2>
+  className="
+    text-xl
+    font-black
+    mb-4
+  "
+>
+  Editor de campaña
+</h2>
 
 <div className="mt-10">
 
@@ -442,6 +453,21 @@ async function cargarCampanas() {
           >
             Desactivar
           </button>
+
+<button
+  onClick={() =>
+    setCampana(c)
+  }
+  className="
+    px-4
+    py-2
+    rounded-xl
+    bg-blue-600
+    text-white
+  "
+>
+  Editar
+</button>
 
           <button
             onClick={() =>
