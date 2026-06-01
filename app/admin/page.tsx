@@ -3,6 +3,12 @@ export default function AdminPage() {
   const links = [
 
     {
+      titulo: 'Gestión Home',
+      href: '/admin/home',
+      emoji: '🏠'
+    },
+
+    {
       titulo: 'Importar tarifa',
       href: '/admin/importar-tarifa',
       emoji: '📥'
