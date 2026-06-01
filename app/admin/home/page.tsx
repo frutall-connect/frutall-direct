@@ -177,6 +177,9 @@ alert('Hero actualizado')
             "
           >
             Guardar Hero
+
+console.log('HERO COMPLETO', hero)
+console.log('HERO ID', hero?.id)
           </button>
 
         </div>
