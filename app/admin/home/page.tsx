@@ -39,13 +39,15 @@ export default function AdminHomePage() {
   async function guardarHero() {
 
   const { data, error } =
-    await supabase
-      .from('hero_home')
-      .update({
-        subtitulo:
-          'PRUEBA ' +
-          new Date().toISOString()
-      })
+  await supabase
+    .from('hero_home')
+    .update({
+      titulo: hero.titulo,
+      subtitulo: hero.subtitulo,
+      imagen: hero.imagen
+    })
+    .eq('id', hero.id)
+    .select()
 
 }
 
