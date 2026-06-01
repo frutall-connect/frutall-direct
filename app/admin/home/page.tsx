@@ -165,22 +165,19 @@ alert('Hero actualizado')
             "
           />
 
-          <button
-            onClick={guardarHero}
-            className="
-              bg-green-700
-              text-white
-              px-5
-              py-3
-              rounded-xl
-              font-bold
-            "
-          >
-            Guardar Hero
-
-console.log('HERO COMPLETO', hero)
-console.log('HERO ID', hero?.id)
-          </button>
+         <button
+  onClick={guardarHero}
+  className="
+    bg-green-700
+    text-white
+    px-5
+    py-3
+    rounded-xl
+    font-bold
+  "
+>
+  Guardar Hero
+</button>
 
         </div>
 
