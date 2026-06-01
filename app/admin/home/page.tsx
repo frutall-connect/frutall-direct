@@ -40,16 +40,20 @@ export default function AdminHomePage() {
 
     if (!hero) return
 
-    await supabase
-      .from('hero_home')
-      .update({
-        titulo: hero.titulo,
-        subtitulo: hero.subtitulo,
-        imagen: hero.imagen
-      })
-      .eq('id', hero.id)
+    const { data, error } =
+  await supabase
+    .from('hero_home')
+    .update({
+      titulo: hero.titulo,
+      subtitulo: hero.subtitulo,
+      imagen: hero.imagen
+    })
+    .eq('id', hero.id)
 
-    alert('Hero actualizado')
+console.log('UPDATE HERO', data)
+console.log('ERROR HERO', error)
+
+alert('Hero actualizado')
 
   }
 
