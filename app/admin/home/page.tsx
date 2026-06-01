@@ -46,10 +46,6 @@ export default function AdminHomePage() {
           'PRUEBA ' +
           new Date().toISOString()
       })
-      .neq('id', '')
-
-  console.log(data)
-  console.log(error)
 
 }
 
