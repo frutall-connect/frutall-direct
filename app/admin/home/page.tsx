@@ -56,24 +56,30 @@ async function subirImagen(
 
   async function cargarDatos() {
 
-    const { data: heroData } =
-      await supabase
-        .from('hero_home')
-        .select('*')
-        .eq('activa', true)
-        .single()
+  const { data: heroData } =
+    await supabase
+      .from('hero_home')
+      .select('*')
+      .eq('activa', true)
+      .single()
 
-    const { data: campanaData } =
-      await supabase
-        .from('campanas_home')
-        .select('*')
-        .eq('activa', true)
-        .single()
+  const { data: campanaData, error } =
+    await supabase
+      .from('campanas_home')
+      .select('*')
+      .eq('activa', true)
+      .maybeSingle()
 
-    setHero(heroData)
+  console.log('CAMPANA ACTIVA', campanaData)
+  console.log('ERROR CAMPANA', error)
+
+  setHero(heroData)
+
+  if (campanaData) {
     setCampana(campanaData)
-
   }
+
+}
 
   useEffect(() => {
 
