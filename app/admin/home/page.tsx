@@ -78,8 +78,6 @@ async function subirImagen(
   useEffect(() => {
 
   cargarDatos()
-  cargarHero()
-  cargarCampana()
   cargarCampanas()
 
 }, [])
@@ -100,8 +98,8 @@ async function activarCampana(id: string) {
     })
     .eq('id', id)
 
+  await cargarDatos()
   await cargarCampanas()
-  await cargarCampana()
 
 }
 
