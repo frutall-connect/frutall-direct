@@ -162,7 +162,17 @@ async function eliminarCampana(id: string) {
 
   async function guardarCampana() {
 
-  if (!campana) return
+  console.log('CAMPANA COMPLETA', campana)
+
+  if (!campana?.id) {
+
+    alert(
+      'La campaña no tiene ID'
+    )
+
+    return
+
+  }
 
   const { data, error } =
     await supabase
@@ -174,12 +184,15 @@ async function eliminarCampana(id: string) {
       .eq('id', campana.id)
       .select()
 
-  console.log('UPDATE CAMPANA', data)
-  console.log('ERROR CAMPANA', error)
+  console.log(data)
+  console.log(error)
 
   if (error) {
+
     alert(error.message)
+
     return
+
   }
 
   alert('Campaña actualizada')
