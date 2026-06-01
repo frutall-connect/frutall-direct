@@ -258,32 +258,7 @@ const addItem =
 
 </div>
 
-                    <span
-                      className="
-                        text-[1.4rem]
-                        font-black
-                        text-green-700
-                      "
-                    >
-                      {Number(
-                        oferta.precio_oferta
-                      ).toFixed(2)}€
-                    </span>
-
-                    <span
-                      className="
-                        text-gray-400
-                        line-through
-                        text-[0.9rem]
-                      "
-                    >
-                      {Number(
-                        oferta.productos.precio
-                      ).toFixed(2)}€
-                    </span>
-
-                  </div>
-
+               
                 </div>
 
               </div>
