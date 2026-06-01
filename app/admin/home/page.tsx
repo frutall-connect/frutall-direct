@@ -12,6 +12,9 @@ const [subiendo, setSubiendo] =
   const [hero, setHero] = useState<any>(null)
   const [campana, setCampana] = useState<any>(null)
 
+const [campanas, setCampanas] =
+  useState<any[]>([])
+
 async function subirImagen(
   archivo: File
 ) {
@@ -74,9 +77,63 @@ async function subirImagen(
 
   useEffect(() => {
 
-    cargarDatos()
+  cargarDatos()
+  cargarHero()
+  cargarCampana()
+  cargarCampanas()
 
-  }, [])
+}, [])
+
+async function activarCampana(id: string) {
+
+  await supabase
+    .from('campanas_home')
+    .update({
+      activa: false
+    })
+    .neq('id', '')
+
+  await supabase
+    .from('campanas_home')
+    .update({
+      activa: true
+    })
+    .eq('id', id)
+
+  await cargarCampanas()
+  await cargarCampana()
+
+}
+
+async function desactivarCampana(id: string) {
+
+  await supabase
+    .from('campanas_home')
+    .update({
+      activa: false
+    })
+    .eq('id', id)
+
+  await cargarCampanas()
+
+}
+
+async function eliminarCampana(id: string) {
+
+  if (
+    !confirm(
+      '¿Eliminar campaña?'
+    )
+  ) return
+
+  await supabase
+    .from('campanas_home')
+    .delete()
+    .eq('id', id)
+
+  await cargarCampanas()
+
+}
 
   async function guardarHero() {
 
@@ -128,6 +185,22 @@ async function subirImagen(
   }
 
   alert('Campaña actualizada')
+
+}
+
+async function cargarCampanas() {
+
+  const { data } =
+    await supabase
+      .from('campanas_home')
+      .select('*')
+      .order('created_at', {
+        ascending: false
+      })
+
+  if (data) {
+    setCampanas(data)
+  }
 
 }
 
@@ -259,6 +332,124 @@ async function subirImagen(
           >
             Campaña activa
           </h2>
+
+<div className="mt-10">
+
+  <h2
+    className="
+      text-2xl
+      font-black
+      mb-4
+    "
+  >
+    Todas las campañas
+  </h2>
+
+  <div className="space-y-4">
+
+    {campanas.map((c) => (
+
+      <div
+        key={c.id}
+        className="
+          bg-white
+          rounded-2xl
+          p-4
+          shadow
+        "
+      >
+
+        <img
+          src={c.imagen_fondo}
+          className="
+            w-full
+            h-40
+            object-cover
+            rounded-xl
+          "
+        />
+
+        <div className="mt-3">
+
+          <h3
+            className="
+              font-black
+              text-lg
+            "
+          >
+            {c.nombre}
+          </h3>
+
+          <p>
+            {c.activa
+              ? '🟢 Activa'
+              : '⚪ Inactiva'}
+          </p>
+
+        </div>
+
+        <div
+          className="
+            flex
+            gap-2
+            mt-3
+          "
+        >
+
+          <button
+            onClick={() =>
+              activarCampana(c.id)
+            }
+            className="
+              px-4
+              py-2
+              rounded-xl
+              bg-green-600
+              text-white
+            "
+          >
+            Activar
+          </button>
+
+          <button
+            onClick={() =>
+              desactivarCampana(c.id)
+            }
+            className="
+              px-4
+              py-2
+              rounded-xl
+              bg-yellow-500
+              text-white
+            "
+          >
+            Desactivar
+          </button>
+
+          <button
+            onClick={() =>
+              eliminarCampana(c.id)
+            }
+            className="
+              px-4
+              py-2
+              rounded-xl
+              bg-red-600
+              text-white
+            "
+          >
+            Eliminar
+          </button>
+
+        </div>
+
+      </div>
+
+    ))}
+
+  </div>
+
+</div>
 
           <input
             value={campana?.nombre || ''}
