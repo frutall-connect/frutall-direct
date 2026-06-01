@@ -38,24 +38,33 @@ export default function AdminHomePage() {
 
   async function guardarHero() {
 
-    if (!hero) return
+  if (!hero) return
 
-    const { data, error } =
-  await supabase
-    .from('hero_home')
-    .update({
-      titulo: hero.titulo,
-      subtitulo: hero.subtitulo,
-      imagen: hero.imagen
-    })
-    .eq('id', hero.id)
+  console.log('HERO COMPLETO', hero)
+  console.log('HERO ID', hero?.id)
 
-console.log('UPDATE HERO', data)
-console.log('ERROR HERO', error)
+  const { data, error } =
+    await supabase
+      .from('hero_home')
+      .update({
+        titulo: hero.titulo,
+        subtitulo: hero.subtitulo,
+        imagen: hero.imagen
+      })
+      .eq('id', hero.id)
+      .select()
 
-alert('Hero actualizado')
+  console.log('UPDATE HERO', data)
+  console.log('ERROR HERO', error)
 
+  if (error) {
+    alert(error.message)
+    return
   }
+
+  alert('Hero actualizado')
+
+}
 
   async function guardarCampana() {
 
