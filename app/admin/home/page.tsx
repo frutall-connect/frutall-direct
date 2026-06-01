@@ -49,6 +49,8 @@ export default function AdminHomePage() {
     .eq('id', hero.id)
     .select()
 
+alert('Actualizado')
+
 }
 
   async function guardarCampana() {
