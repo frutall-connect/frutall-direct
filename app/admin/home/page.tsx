@@ -6,8 +6,50 @@ import AdminGuard from '@/components/auth/AdminGuard'
 
 export default function AdminHomePage() {
 
+const [subiendo, setSubiendo] =
+  useState(false)
+
   const [hero, setHero] = useState<any>(null)
   const [campana, setCampana] = useState<any>(null)
+
+async function subirImagen(
+  archivo: File
+) {
+
+  setSubiendo(true)
+
+  const nombre =
+    `${Date.now()}-${archivo.name}`
+
+  const { error } =
+    await supabase.storage
+      .from('campanas')
+      .upload(nombre, archivo)
+
+  if (error) {
+
+    alert(error.message)
+
+    setSubiendo(false)
+
+    return
+
+  }
+
+  const { data } =
+    supabase.storage
+      .from('campanas')
+      .getPublicUrl(nombre)
+
+  setCampana({
+    ...campana,
+    imagen_fondo:
+      data.publicUrl
+  })
+
+  setSubiendo(false)
+
+}
 
   async function cargarDatos() {
 
@@ -254,7 +296,61 @@ export default function AdminHomePage() {
             "
           />
 
-          <button
+<input
+  type="file"
+  accept="image/*"
+  onChange={(e) => {
+
+    const archivo =
+      e.target.files?.[0]
+
+    if (archivo) {
+
+      subirImagen(archivo)
+
+    }
+
+  }}
+  className="
+    w-full
+    border
+    p-3
+    rounded-xl
+    mb-4
+  "
+/>
+
+{subiendo && (
+
+  <p
+    className="
+      text-green-700
+      font-bold
+      mb-4
+    "
+  >
+    Subiendo imagen...
+  </p>
+
+)}
+
+{campana?.imagen_fondo && (
+
+  <img
+    src={campana.imagen_fondo}
+    alt="Vista previa"
+    className="
+      w-full
+      h-[220px]
+      object-cover
+      rounded-2xl
+      mb-4
+    "
+  />
+
+)}          
+
+<button
             onClick={guardarCampana}
             className="
               bg-green-700
