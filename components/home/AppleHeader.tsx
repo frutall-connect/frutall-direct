@@ -2,7 +2,21 @@
 
 import Image from 'next/image'
 
-import { FaWhatsapp } from 'react-icons/fa'
+import { useRouter } from 'next/navigation'
+
+import { FaWhatsapp, FaArrowLeft } from 'react-icons/fa'
+
+const router = useRouter()
+
+function volver() {
+
+  if (window.history.length > 1) {
+    router.back()
+  } else {
+    router.push('/')
+  }
+
+}
 
 export default function AppleHeader() {
 
@@ -65,6 +79,24 @@ export default function AppleHeader() {
     className="text-[#25D366]"
   />
 </a>
+
+<button
+  onClick={volver}
+  aria-label="Volver"
+  className="
+    w-10
+    h-10
+    flex
+    items-center
+    justify-center
+  "
+>
+  <FaArrowLeft
+    size={20}
+    className="text-black"
+  />
+</button>
+
         {/* MENU */}
 
         <button
