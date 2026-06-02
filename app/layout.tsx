@@ -1,5 +1,7 @@
 import './globals.css'
 
+import AppleHeader from '@/components/home/AppleHeader'
+
 export const metadata = {
 
   title: 'FrutALL Direct',
