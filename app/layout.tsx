@@ -2,30 +2,6 @@ import './globals.css'
 
 import AppleHeader from '@/components/home/AppleHeader'
 
-export default function MobileLayout({
-  children
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <>
-      <div
-        className="
-          bg-white
-          w-full
-          px-4
-          pt-3
-          pb-2
-        "
-      >
-        <AppleHeader />
-      </div>
-
-      {children}
-    </>
-  )
-}
-
 export const metadata = {
 
   title: 'FrutALL Direct',
