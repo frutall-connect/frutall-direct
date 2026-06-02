@@ -4,155 +4,48 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import AdminGuard from '@/components/auth/AdminGuard'
 
-export default function AdminHomePage() {
-
-const [subiendo, setSubiendo] =
-  useState(false)
-
-  const [hero, setHero] = useState<any>(null)
-  const [campana, setCampana] = useState<any>(null)
-
-const [campanas, setCampanas] =
-  useState<any[]>([])
-
-async function subirImagen(
-  archivo: File
-) {
-
-  setSubiendo(true)
-
-  const nombre =
-    `${Date.now()}-${archivo.name}`
-
-  const { error } =
-    await supabase.storage
-      .from('campanas')
-      .upload(nombre, archivo)
-
-  if (error) {
-
-    alert(error.message)
-
-    setSubiendo(false)
-
-    return
-
-  }
-
-  const { data } =
-    supabase.storage
-      .from('campanas')
-      .getPublicUrl(nombre)
-
-  setCampana({
-    ...campana,
-    imagen_fondo:
-      data.publicUrl
-  })
-
-  setSubiendo(false)
-
+const emptyCampaign = {
+  nombre: '',
+  imagen_fondo: '',
+  activa: false,
+  fecha_inicio: '',
+  fecha_fin: ''
 }
 
-  async function cargarDatos() {
+export default function AdminHomePage() {
+  const [hero, setHero] = useState<any>(null)
+  const [campanas, setCampanas] = useState<any[]>([])
+  const [crear, setCrear] = useState<any>(emptyCampaign)
+  const [editar, setEditar] = useState<any>(null)
+  const [subiendo, setSubiendo] = useState(false)
 
-  const { data: heroData } =
-    await supabase
+  useEffect(() => {
+    cargarHero()
+    cargarCampanas()
+  }, [])
+
+  async function cargarHero() {
+    const { data } = await supabase
       .from('hero_home')
       .select('*')
       .eq('activa', true)
       .single()
 
-  const { data: campanaData, error } =
-    await supabase
-      .from('campanas_home')
-      .select('*')
-      .eq('activa', true)
-      .maybeSingle()
-
-  console.log('CAMPANA ACTIVA', campanaData)
-  console.log('ERROR CAMPANA', error)
-
-  setHero(heroData)
-
-  if (campanaData) {
-    setCampana(campanaData)
+    setHero(data)
   }
 
-}
+  async function cargarCampanas() {
+    const { data } = await supabase
+      .from('campanas_home')
+      .select('*')
+      .order('created_at', { ascending: false })
 
-  useEffect(() => {
-
-  cargarDatos()
-  cargarCampanas()
-
-}, [])
-
-async function activarCampana(id: string) {
-
-  await supabase
-    .from('campanas_home')
-    .update({
-      activa: false
-    })
-    .neq('id', '')
-
-  await supabase
-    .from('campanas_home')
-    .update({
-      activa: true
-    })
-    .eq('id', id)
-
-  await cargarCampanas()
-setCampana(null)
-
-const seleccionada =
-  campanas.find(
-    c => c.id === id
-  )
-
-if (seleccionada) {
-  setCampana(seleccionada)
-}
-
-}
-
-async function desactivarCampana(id: string) {
-
-  await supabase
-    .from('campanas_home')
-    .update({
-      activa: false
-    })
-    .eq('id', id)
-
-  await cargarCampanas()
-
-}
-
-async function eliminarCampana(id: string) {
-
-  if (
-    !confirm(
-      '¿Eliminar campaña?'
-    )
-  ) return
-
-  await supabase
-    .from('campanas_home')
-    .delete()
-    .eq('id', id)
-
-  await cargarCampanas()
-
-}
+    setCampanas(data || [])
+  }
 
   async function guardarHero() {
+    if (!hero) return
 
-  if (!hero) return
-
-  const { data, error } =
     await supabase
       .from('hero_home')
       .update({
@@ -161,449 +54,183 @@ async function eliminarCampana(id: string) {
         imagen: hero.imagen
       })
       .eq('id', hero.id)
-      .select()
 
-  console.log('UPDATE HERO', data)
-  console.log('ERROR HERO', error)
-
-  if (error) {
-    alert(error.message)
-    return
+    alert('Hero actualizado')
   }
 
-  alert('Hero actualizado')
+  async function subirImagen(file: File, modo: 'crear' | 'editar') {
+    setSubiendo(true)
 
-}
+    const nombre = `${Date.now()}-${file.name}`
 
-  async function guardarCampana() {
+    const { error } = await supabase.storage
+      .from('campanas')
+      .upload(nombre, file)
 
-  console.log('CAMPANA COMPLETA', campana)
+    if (error) {
+      alert(error.message)
+      setSubiendo(false)
+      return
+    }
 
-  if (!campana?.id) {
+    const { data } = supabase.storage
+      .from('campanas')
+      .getPublicUrl(nombre)
 
-    alert(
-      'La campaña no tiene ID'
-    )
+    if (modo === 'crear') {
+      setCrear((p:any) => ({ ...p, imagen_fondo: data.publicUrl }))
+    } else {
+      setEditar((p:any) => ({ ...p, imagen_fondo: data.publicUrl }))
+    }
 
-    return
-
+    setSubiendo(false)
   }
 
-  const { data, error } =
+  async function crearCampana() {
+    await supabase.from('campanas_home').insert({
+      nombre: crear.nombre,
+      imagen_fondo: crear.imagen_fondo,
+      fecha_inicio: crear.fecha_inicio || null,
+      fecha_fin: crear.fecha_fin || null,
+      activa: false
+    })
+
+    setCrear(emptyCampaign)
+    cargarCampanas()
+  }
+
+  async function guardarEdicion() {
+    if (!editar?.id) return
+
     await supabase
       .from('campanas_home')
       .update({
-        nombre: campana.nombre,
-        imagen_fondo: campana.imagen_fondo
+        nombre: editar.nombre,
+        imagen_fondo: editar.imagen_fondo,
+        fecha_inicio: editar.fecha_inicio || null,
+        fecha_fin: editar.fecha_fin || null
       })
-      .eq('id', campana.id)
-      .select()
+      .eq('id', editar.id)
 
-  console.log(data)
-  console.log(error)
-
-  if (error) {
-
-    alert(error.message)
-
-    return
-
+    cargarCampanas()
+    alert('Campaña actualizada')
   }
 
-  alert('Campaña actualizada')
-
-await cargarCampanas()
-
-}
-
-async function cargarCampanas() {
-
-  const { data } =
-    await supabase
-      .from('campanas_home')
-      .select('*')
-      .order('created_at', {
-        ascending: false
-      })
-
-  if (data) {
-    setCampanas(data)
+  async function activar(id:string) {
+    await supabase.from('campanas_home').update({ activa:false }).neq('id','')
+    await supabase.from('campanas_home').update({ activa:true }).eq('id',id)
+    cargarCampanas()
   }
 
-}
+  async function desactivar(id:string) {
+    await supabase.from('campanas_home').update({ activa:false }).eq('id',id)
+    cargarCampanas()
+  }
+
+  async function eliminar(id:string) {
+    if (!confirm('¿Eliminar campaña?')) return
+    await supabase.from('campanas_home').delete().eq('id',id)
+    if (editar?.id === id) setEditar(null)
+    cargarCampanas()
+  }
 
   return (
-
     <AdminGuard>
+      <div className="max-w-6xl mx-auto p-6 space-y-8">
 
-      <div className="max-w-5xl mx-auto p-6">
+        <div className="bg-white p-6 rounded-3xl shadow">
+          <h2 className="font-black text-2xl mb-4">Hero</h2>
 
-        <h1
-          className="
-            text-3xl
-            font-black
-            mb-8
-          "
-        >
-          Gestión Home
-        </h1>
-
-        {/* HERO */}
-
-        <div
-          className="
-            bg-white
-            rounded-3xl
-            shadow
-            p-6
-            mb-8
-          "
-        >
-
-          <h2
-            className="
-              text-xl
-              font-black
-              mb-4
-            "
-          >
-            Hero
-          </h2>
-
-          <input
+          <input className="w-full border p-3 rounded-xl mb-3"
             value={hero?.titulo || ''}
-            onChange={(e) =>
-              setHero({
-                ...hero,
-                titulo: e.target.value
-              })
-            }
+            onChange={(e)=>setHero({...hero,titulo:e.target.value})}
             placeholder="Título"
-            className="
-              w-full
-              border
-              p-3
-              rounded-xl
-              mb-3
-            "
           />
 
-          <input
+          <input className="w-full border p-3 rounded-xl mb-3"
             value={hero?.subtitulo || ''}
-            onChange={(e) =>
-              setHero({
-                ...hero,
-                subtitulo: e.target.value
-              })
-            }
+            onChange={(e)=>setHero({...hero,subtitulo:e.target.value})}
             placeholder="Subtítulo"
-            className="
-              w-full
-              border
-              p-3
-              rounded-xl
-              mb-3
-            "
           />
 
-          <input
+          <input className="w-full border p-3 rounded-xl mb-4"
             value={hero?.imagen || ''}
-            onChange={(e) =>
-              setHero({
-                ...hero,
-                imagen: e.target.value
-              })
-            }
-            placeholder="URL imagen"
-            className="
-              w-full
-              border
-              p-3
-              rounded-xl
-              mb-4
-            "
+            onChange={(e)=>setHero({...hero,imagen:e.target.value})}
+            placeholder="Imagen"
           />
 
-         <button
-  onClick={guardarHero}
-  className="
-    bg-green-700
-    text-white
-    px-5
-    py-3
-    rounded-xl
-    font-bold
-  "
->
-  Guardar Hero
-</button>
-
+          <button onClick={guardarHero} className="bg-green-700 text-white px-5 py-3 rounded-xl">
+            Guardar Hero
+          </button>
         </div>
 
-        {/* CAMPAÑA */}
+        <div className="bg-white p-6 rounded-3xl shadow">
+          <h2 className="font-black text-2xl mb-4">Crear campaña</h2>
 
-        <div
-          className="
-            bg-white
-            rounded-3xl
-            shadow
-            p-6
-          "
-        >
+          <input className="w-full border p-3 rounded-xl mb-3" placeholder="Nombre"
+            value={crear.nombre}
+            onChange={(e)=>setCrear({...crear,nombre:e.target.value})}
+          />
 
-          <h2
-  className="
-    text-xl
-    font-black
-    mb-4
-  "
->
-  Editor de campaña
-</h2>
+          <input type="datetime-local" className="w-full border p-3 rounded-xl mb-3"
+            value={crear.fecha_inicio}
+            onChange={(e)=>setCrear({...crear,fecha_inicio:e.target.value})}
+          />
 
-<div className="mt-10">
+          <input type="datetime-local" className="w-full border p-3 rounded-xl mb-3"
+            value={crear.fecha_fin}
+            onChange={(e)=>setCrear({...crear,fecha_fin:e.target.value})}
+          />
 
-  <h2
-    className="
-      text-2xl
-      font-black
-      mb-4
-    "
-  >
-    Todas las campañas
-  </h2>
+          <input type="file" accept="image/*"
+            onChange={(e)=>e.target.files?.[0] && subirImagen(e.target.files[0],'crear')}
+          />
 
-  <div className="space-y-4">
+          {crear.imagen_fondo && <img src={crear.imagen_fondo} className="w-full h-56 object-cover rounded-xl mt-4" />}
 
-    {campanas.map((c) => (
-
-      <div
-        key={c.id}
-        className="
-          bg-white
-          rounded-2xl
-          p-4
-          shadow
-        "
-      >
-
-        <img
-          src={c.imagen_fondo}
-          className="
-            w-full
-            h-40
-            object-cover
-            rounded-xl
-          "
-        />
-
-        <div className="mt-3">
-
-          <h3
-            className="
-              font-black
-              text-lg
-            "
-          >
-            {c.nombre}
-          </h3>
-
-          <p>
-            {c.activa
-              ? '🟢 Activa'
-              : '⚪ Inactiva'}
-          </p>
-
+          <button onClick={crearCampana} className="mt-4 bg-blue-600 text-white px-5 py-3 rounded-xl">
+            Crear campaña
+          </button>
         </div>
 
-        <div
-          className="
-            flex
-            gap-2
-            mt-3
-          "
-        >
+        {editar && (
+          <div className="bg-white p-6 rounded-3xl shadow">
+            <h2 className="font-black text-2xl mb-4">Editar campaña</h2>
 
-          <button
-            onClick={() =>
-              activarCampana(c.id)
-            }
-            className="
-              px-4
-              py-2
-              rounded-xl
-              bg-green-600
-              text-white
-            "
-          >
-            Activar
-          </button>
+            <input className="w-full border p-3 rounded-xl mb-3"
+              value={editar.nombre}
+              onChange={(e)=>setEditar({...editar,nombre:e.target.value})}
+            />
 
-          <button
-            onClick={() =>
-              desactivarCampana(c.id)
-            }
-            className="
-              px-4
-              py-2
-              rounded-xl
-              bg-yellow-500
-              text-white
-            "
-          >
-            Desactivar
-          </button>
+            <input type="file" accept="image/*"
+              onChange={(e)=>e.target.files?.[0] && subirImagen(e.target.files[0],'editar')}
+            />
 
-<button
-  onClick={() =>
-    setCampana(c)
-  }
-  className="
-    px-4
-    py-2
-    rounded-xl
-    bg-blue-600
-    text-white
-  "
->
-  Editar
-</button>
+            <button onClick={guardarEdicion} className="mt-4 bg-green-700 text-white px-5 py-3 rounded-xl">
+              Guardar cambios
+            </button>
+          </div>
+        )}
 
-          <button
-            onClick={() =>
-              eliminarCampana(c.id)
-            }
-            className="
-              px-4
-              py-2
-              rounded-xl
-              bg-red-600
-              text-white
-            "
-          >
-            Eliminar
-          </button>
+        <div className="space-y-4">
+          {campanas.map((c)=>(
+            <div key={c.id} className="bg-white p-4 rounded-2xl shadow">
+              <img src={c.imagen_fondo} className="w-full h-48 object-cover rounded-xl" />
+              <div className="mt-3 font-bold">{c.nombre}</div>
+              <div>{c.activa ? '🟢 Activa' : '⚪ Inactiva'}</div>
 
+              <div className="flex gap-2 mt-3 flex-wrap">
+                <button onClick={()=>setEditar(c)} className="bg-blue-600 text-white px-4 py-2 rounded-xl">Editar</button>
+                <button onClick={()=>activar(c.id)} className="bg-green-600 text-white px-4 py-2 rounded-xl">Activar</button>
+                <button onClick={()=>desactivar(c.id)} className="bg-yellow-500 text-white px-4 py-2 rounded-xl">Desactivar</button>
+                <button onClick={()=>eliminar(c.id)} className="bg-red-600 text-white px-4 py-2 rounded-xl">Eliminar</button>
+              </div>
+            </div>
+          ))}
         </div>
 
+        {subiendo && <p>Subiendo imagen...</p>}
       </div>
-
-    ))}
-
-  </div>
-
-</div>
-
-          <input
-            value={campana?.nombre || ''}
-            onChange={(e) =>
-              setCampana({
-                ...campana,
-                nombre: e.target.value
-              })
-            }
-            placeholder="Nombre"
-            className="
-              w-full
-              border
-              p-3
-              rounded-xl
-              mb-3
-            "
-          />
-
-          <input
-            value={campana?.imagen_fondo || ''}
-            onChange={(e) =>
-              setCampana({
-                ...campana,
-                imagen_fondo: e.target.value
-              })
-            }
-            placeholder="URL fondo"
-            className="
-              w-full
-              border
-              p-3
-              rounded-xl
-              mb-4
-            "
-          />
-
-<input
-  type="file"
-  accept="image/*"
-  onChange={(e) => {
-
-    const archivo =
-      e.target.files?.[0]
-
-    if (archivo) {
-
-      subirImagen(archivo)
-
-    }
-
-  }}
-  className="
-    w-full
-    border
-    p-3
-    rounded-xl
-    mb-4
-  "
-/>
-
-{subiendo && (
-
-  <p
-    className="
-      text-green-700
-      font-bold
-      mb-4
-    "
-  >
-    Subiendo imagen...
-  </p>
-
-)}
-
-{campana?.imagen_fondo && (
-
-  <img
-    src={campana.imagen_fondo}
-    alt="Vista previa"
-    className="
-      w-full
-      h-[220px]
-      object-cover
-      rounded-2xl
-      mb-4
-    "
-  />
-
-)}          
-
-<button
-            onClick={guardarCampana}
-            className="
-              bg-green-700
-              text-white
-              px-5
-              py-3
-              rounded-xl
-              font-bold
-            "
-          >
-            Guardar Campaña
-          </button>
-
-        </div>
-
-      </div>
-
     </AdminGuard>
-
   )
-
 }
