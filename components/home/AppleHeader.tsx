@@ -1,24 +1,20 @@
 'use client'
 
 import Image from 'next/image'
-
 import { useRouter } from 'next/navigation'
-
 import { FaWhatsapp, FaArrowLeft } from 'react-icons/fa'
 
-const router = useRouter()
-
-function volver() {
-
-  if (window.history.length > 1) {
-    router.back()
-  } else {
-    router.push('/')
-  }
-
-}
-
 export default function AppleHeader() {
+
+  const router = useRouter()
+
+  function volver() {
+    if (window.history.length > 1) {
+      router.back()
+    } else {
+      router.push('/')
+    }
+  }
 
   return (
 
