@@ -1,3 +1,5 @@
+import AdminGuard from '@/components/auth/AdminGuard'
+
 export default function AdminPage() {
 
   const links = [
@@ -48,7 +50,9 @@ export default function AdminPage() {
 
   return (
 
-    <main
+    <AdminGuard allow={['admin']}>
+
+      <main
       className="
         min-h-screen
         bg-white
@@ -117,7 +121,9 @@ export default function AdminPage() {
 
       </div>
 
-    </main>
+      </main>
+
+    </AdminGuard>
 
   )
 

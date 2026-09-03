@@ -165,11 +165,46 @@ export default function CuentaPage() {
 
         </div>
 
-        {/* ADMIN */}
+        {/* ACCESS PANELS */}
 
         {rol === 'admin' && (
 
           <div className="px-4 space-y-4">
+
+            <Link href="/admin">
+
+              <div
+                className="
+                  bg-black
+                  text-white
+                  rounded-3xl
+                  p-5
+                  shadow-lg
+                "
+              >
+
+                <h2
+                  className="
+                    text-2xl
+                    font-black
+                  "
+                >
+                  Panel de administración
+                </h2>
+
+                <p
+                  className="
+                    text-sm
+                    opacity-70
+                    mt-1
+                  "
+                >
+                  Gestión completa de FrutALL
+                </p>
+
+              </div>
+
+            </Link>
 
             <Link href="/admin/dashboard">
 
@@ -270,6 +305,49 @@ export default function CuentaPage() {
                   "
                 >
                   Gestión pedidos
+                </p>
+
+              </div>
+
+            </Link>
+
+          </div>
+
+        )}
+
+        {rol === 'almacen' && (
+
+          <div className="px-4">
+
+            <Link href="/almacen">
+
+              <div
+                className="
+                  bg-purple-700
+                  text-white
+                  rounded-3xl
+                  p-5
+                  shadow-lg
+                "
+              >
+
+                <h2
+                  className="
+                    text-2xl
+                    font-black
+                  "
+                >
+                  Panel de almacén
+                </h2>
+
+                <p
+                  className="
+                    text-sm
+                    opacity-80
+                    mt-1
+                  "
+                >
+                  Gestión operativa de pedidos
                 </p>
 
               </div>

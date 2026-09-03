@@ -9,6 +9,9 @@ import { useParams }
 import { supabase }
   from '@/lib/supabaseClient'
 
+import AdminGuard
+  from '@/components/auth/AdminGuard'
+
 export default function PedidoDetallePage() {
 
   const params = useParams()
@@ -60,9 +63,16 @@ export default function PedidoDetallePage() {
 
   }, [params.id])
 
-  if (!pedido) {
+  return (
 
-    return (
+    <AdminGuard
+      allow={[
+        'admin',
+        'almacen'
+      ]}
+    >
+
+    {!pedido ? (
 
       <main className="p-10">
 
@@ -70,11 +80,7 @@ export default function PedidoDetallePage() {
 
       </main>
 
-    )
-
-  }
-
-  return (
+    ) : (
 
     <main
       className="
@@ -222,6 +228,10 @@ export default function PedidoDetallePage() {
       </div>
 
     </main>
+
+    )}
+
+    </AdminGuard>
 
   )
 

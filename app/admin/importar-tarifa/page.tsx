@@ -12,6 +12,9 @@ import {
 
 } from '@/lib/supabaseClient'
 
+import AdminGuard
+  from '@/components/auth/AdminGuard'
+
 export default function ImportarTarifaPage() {
 
   const [texto, setTexto] =
@@ -349,6 +352,12 @@ calibre:
 }
   return (
 
+    <AdminGuard
+      allow={[
+        'admin'
+      ]}
+    >
+
     <main
       className="
         min-h-screen
@@ -523,6 +532,8 @@ KUMATO 6KG 18,40
       </div>
 
     </main>
+
+    </AdminGuard>
 
   )
 

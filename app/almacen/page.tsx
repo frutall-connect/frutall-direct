@@ -12,6 +12,9 @@ import { useEffect, useState }
 import { supabase }
   from '@/lib/supabaseClient'
 
+import AdminGuard
+  from '@/components/auth/AdminGuard'
+
 export default function AlmacenPage() {
 
   const [pedidos, setPedidos] =
@@ -126,6 +129,8 @@ export default function AlmacenPage() {
   }
 
   return (
+
+<AdminGuard allow={['admin', 'almacen']}>
 
 <>
 
@@ -432,6 +437,8 @@ export default function AlmacenPage() {
     </div>
 
   </>
+
+  </AdminGuard>
 
   )
 

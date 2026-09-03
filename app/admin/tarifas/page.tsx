@@ -13,6 +13,9 @@ import {
 
 } from '@/lib/supabaseClient'
 
+import AdminGuard
+  from '@/components/auth/AdminGuard'
+
 export default function TarifasPage() {
 
   const [tarifas, setTarifas] =
@@ -47,6 +50,13 @@ export default function TarifasPage() {
   }
 
   return (
+
+    <AdminGuard
+      allow={[
+        'admin',
+        'almacen'
+      ]}
+    >
 
     <main
       className="
@@ -131,6 +141,8 @@ export default function TarifasPage() {
       </div>
 
     </main>
+
+    </AdminGuard>
 
   )
 
