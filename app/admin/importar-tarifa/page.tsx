@@ -15,13 +15,80 @@ import {
 import AdminGuard
   from '@/components/auth/AdminGuard'
 
+type CatalogItem = {
+  id: string
+  nombre: string
+  producto_base_id?: string | null
+}
+
+type AliasItem = {
+  alias: string
+  variedad_id: string
+}
+
+type TarifaPreview = {
+  linea_original: string
+  producto: string | null
+  variedad: string | null
+  precio: string
+  formato: string | null
+  calibre: string | null
+  caracteristicas_comerciales: string[]
+  requiere_revision: boolean
+}
+
+const COMMERCIAL_FEATURES = [
+  'caja azul',
+  'sello azul',
+  'florette',
+  'caja',
+  'malla',
+  'saco',
+  'extra',
+]
+
+function normalizeText(value: string) {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function findCatalogItems(value: string, items: CatalogItem[]) {
+  const normalizedValue = normalizeText(value)
+
+  return [...items]
+    .filter((item) => item.nombre)
+    .sort((a, b) => b.nombre.length - a.nombre.length)
+    .filter((item) => normalizedValue.includes(normalizeText(item.nombre)))
+}
+
+function findCatalogItem(value: string, items: CatalogItem[]) {
+  return findCatalogItems(value, items)[0] || null
+}
+
+function removeCatalogItem(value: string, item: CatalogItem | null) {
+  if (!item) return value
+
+  return normalizeText(value)
+    .replace(normalizeText(item.nombre), ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function titleCase(value: string) {
+  return value.replace(/\b\p{L}/gu, (letter) => letter.toUpperCase())
+}
+
 export default function ImportarTarifaPage() {
 
   const [texto, setTexto] =
     useState('')
 
   const [resultado, setResultado] =
-    useState<any[]>([])
+    useState<TarifaPreview[]>([])
 
 async function guardarTarifa() {
 
@@ -98,258 +165,127 @@ nombre:
 
   async function procesar() {
 
-  const lineas =
-
-    texto
-
+    const lineas = texto
       .split('\n')
-
-      .map(
-        (l) => l.trim()
-      )
-
+      .map((linea) => linea.trim())
       .filter(Boolean)
 
-  const encontrados: any[] = []
+    const [
+      { data: productosBase },
+      { data: variedades },
+      { data: aliases },
+      { data: formatos },
+      { data: calibres },
+    ] = await Promise.all([
+      supabase.from('productos_base').select('id, nombre'),
+      supabase.from('variedades_producto').select('id, nombre, producto_base_id'),
+      supabase.from('aliases_producto').select('alias, variedad_id'),
+      supabase.from('formatos_producto').select('id, nombre'),
+      supabase.from('calibres_producto').select('id, nombre'),
+    ])
 
-  const { data: variedades } =
-    await supabase
+    const productos = (productosBase || []) as CatalogItem[]
+    const catalogoVariedades = (variedades || []) as CatalogItem[]
+    const catalogoFormatos = (formatos || []) as CatalogItem[]
+    const catalogoCalibres = (calibres || []) as CatalogItem[]
+    const catalogoAliases = (aliases || []) as AliasItem[]
+    const resultados: TarifaPreview[] = []
 
-      .from(
-        'variedades_producto'
-      )
+    for (let index = 0; index < lineas.length; index++) {
+      const lineaConPrecio = lineas[index]
+      const precioMatch = lineaConPrecio.match(/(\d+[.,]\d{1,2})/)
 
-      .select('*')
+      if (!precioMatch) continue
 
-  const { data: aliases } =
-    await supabase
+      const anterior = lineas[index - 1]
+      const productoEnLinea = findCatalogItem(lineaConPrecio, productos)
+      const productoEnAnterior = anterior
+        ? findCatalogItem(anterior, productos)
+        : null
+      const lineaOriginal = anterior &&
+        !/(\d+[.,]\d{1,2})/.test(anterior) &&
+        !productoEnLinea &&
+        productoEnAnterior
+        ? `${anterior}\n${lineaConPrecio}`
+        : lineaConPrecio
 
-      .from(
-        'aliases_producto'
-      )
-
-      .select(`
-        alias,
-        variedad_id
-      `)
-
-  const { data: formatos } =
-    await supabase
-
-      .from(
-        'formatos_producto'
-      )
-
-      .select('*')
-
-const { data: calibres } =
-  await supabase
-
-    .from(
-      'calibres_producto'
-    )
-
-    .select('*')
-
-  const variedadesOrdenadas =
-
-    variedades?.sort(
-
-      (a, b) =>
-
-        b.nombre.length -
-        a.nombre.length
-
-    )
-
-  for (let i = 0; i < lineas.length; i++) {
-
-    const linea =
-      lineas[i]
-
-    const precioMatch =
-
-      linea.match(
-        /(\d+[.,]\d{1,2})/
-      )
-
-    if (!precioMatch) continue
-
-    const precio =
-      precioMatch[1]
-
-    let posibleProducto =
-
-  linea
-
-    .replace(
-      /(\d+[.,]\d{1,2})/,
-      ''
-    )
-
-    .trim()
-
-if (!posibleProducto) {
-
-  posibleProducto =
-    lineas[i - 1] || ''
-
-}
-
-    const textoNormalizado =
-
-      posibleProducto
-
-        .toLowerCase()
-
+      const textoSinPrecio = lineaOriginal
+        .replace(/(\d+[.,]\d{1,2})/, ' ')
         .replace(/\s+/g, ' ')
-
         .trim()
 
-    let match =
+      const productosDetectados = findCatalogItems(textoSinPrecio, productos)
+      const producto = productosDetectados[0] || null
+      let textoRestante = removeCatalogItem(textoSinPrecio, producto)
 
-      variedadesOrdenadas?.find((v) => {
+      const variedadesDelProducto = producto
+        ? catalogoVariedades.filter(
+            (item) => String(item.producto_base_id) === String(producto.id)
+          )
+        : []
+      const variedadesDetectadas = findCatalogItems(
+        textoRestante,
+        variedadesDelProducto
+      )
+      let variedad: CatalogItem | null =
+        variedadesDetectadas[0] || null
 
-        const variedadNormalizada =
-
-          v.nombre
-
-            .toLowerCase()
-
-            .replace(/\s+/g, ' ')
-
-            .trim()
-
-        return textoNormalizado.includes(
-          variedadNormalizada
+      if (!variedad) {
+        const alias = catalogoAliases.find((item) =>
+          normalizeText(textoRestante).includes(normalizeText(item.alias))
         )
 
-      })
-
-    if (!match) {
-
-      const palabras =
-
-        textoNormalizado.split(' ')
-
-      const aliasEncontrado =
-
-        aliases?.find((a) => {
-
-          const aliasNormalizado =
-
-            a.alias
-
-              .toLowerCase()
-
-              .replace(/\s+/g, ' ')
-
-              .trim()
-
-          return palabras.includes(
-            aliasNormalizado
-          )
-
-        })
-
-      if (aliasEncontrado) {
-
-        match =
-          variedadesOrdenadas?.find(
-
-            (v) =>
-
-              String(v.id).trim() ===
-              String(
-                aliasEncontrado.variedad_id
-              ).trim()
-
-          )
-
+        variedad = alias
+          ? variedadesDelProducto.find(
+              (item) => String(item.id) === String(alias.variedad_id)
+            ) || null
+          : null
       }
 
+      textoRestante = removeCatalogItem(textoRestante, variedad)
+
+      const formato = findCatalogItem(textoRestante, catalogoFormatos)
+      textoRestante = removeCatalogItem(textoRestante, formato)
+
+      const calibre = findCatalogItem(textoRestante, catalogoCalibres)
+      textoRestante = removeCatalogItem(textoRestante, calibre)
+
+      const caracteristicas: string[] = []
+      let textoCaracteristicas = normalizeText(textoRestante)
+
+      for (const feature of COMMERCIAL_FEATURES) {
+        if (textoCaracteristicas.includes(feature)) {
+          caracteristicas.push(titleCase(feature))
+          textoCaracteristicas = textoCaracteristicas.replace(feature, ' ')
+        }
+      }
+
+      const textoSinCaracteristicas = textoCaracteristicas
+        .replace(/\s+/g, ' ')
+        .trim()
+      const variedadPendiente = !variedad &&
+        caracteristicas.length > 0
+
+      resultados.push({
+        linea_original: lineaOriginal,
+        producto: producto?.nombre || null,
+        variedad: variedad?.nombre || null,
+        precio: precioMatch[1].replace(',', '.'),
+        formato: formato?.nombre || null,
+        calibre: calibre?.nombre || null,
+        caracteristicas_comerciales: caracteristicas,
+        requiere_revision:
+          !producto ||
+          productosDetectados.length > 1 ||
+          variedadesDetectadas.length > 1 ||
+          variedadPendiente ||
+          Boolean(textoSinCaracteristicas),
+      })
     }
 
-    const formatosOrdenados =
-
-  formatos?.sort(
-
-    (a, b) =>
-
-      b.nombre.length -
-      a.nombre.length
-
-  )
-
-const formatoEncontrado =
-
-  formatosOrdenados?.find((f) => {
-
-    const formatoNormalizado =
-
-      f.nombre
-
-        .toLowerCase()
-
-        .replace(/\s+/g, ' ')
-
-        .trim()
-
-    return textoNormalizado.includes(
-      formatoNormalizado
-    )
-
-  })
-
-const palabras =
-
-  textoNormalizado
-    .split(' ')
-
-const calibreEncontrado =
-
-  calibres?.find((c) => {
-
-    const calibreNormalizado =
-
-      c.nombre
-
-        .toLowerCase()
-
-        .replace(/\s+/g, ' ')
-
-        .trim()
-
-    return palabras.includes(
-      calibreNormalizado
-    )
-
-  })
-    encontrados.push({
-
-      producto:
-        posibleProducto,
-
-      variedad:
-        match?.nombre || null,
-
-      precio,
-
-      formato:
-        formatoEncontrado?.nombre || null,
-
-calibre:
-  calibreEncontrado?.nombre || null,
-
-    })
-
+    setResultado(resultados)
   }
 
-  setResultado(
-    encontrados
-  )
-
-}
   return (
 
     <AdminGuard
@@ -475,7 +411,15 @@ KUMATO 6KG 18,40
                 "
               >
 
-                {item.linea}
+                Línea original: {item.linea_original}
+
+              </p>
+
+              <p className="mt-2">
+
+                🍅 Producto:
+                {' '}
+                {item.producto || 'Pendiente de revisión'}
 
               </p>
 
@@ -523,6 +467,29 @@ KUMATO 6KG 18,40
   }
 
 </p>
+
+<p>
+
+  🏷️ Características:
+  {' '}
+
+  {
+    item.caracteristicas_comerciales.length > 0
+      ? item.caracteristicas_comerciales.join(', ')
+      : 'Ninguna detectada'
+  }
+
+</p>
+
+{item.requiere_revision && (
+
+  <p className="mt-2 font-bold text-amber-700">
+
+    Requiere revisión antes de guardar
+
+  </p>
+
+)}
 
             </div>
 
