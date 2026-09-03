@@ -56,13 +56,32 @@ function normalizeText(value: string) {
     .trim()
 }
 
-function findCatalogItems(value: string, items: CatalogItem[]) {
-  const normalizedValue = normalizeText(value)
+function catalogNameVariants(value: string) {
+  const normalized = normalizeText(value)
+  const variants = new Set([normalized])
 
+  if (normalized.endsWith('ones')) {
+    variants.add(`${normalized.slice(0, -4)}on`)
+  } else if (normalized.endsWith('s')) {
+    variants.add(normalized.slice(0, -1))
+  }
+
+  return [...variants]
+}
+
+function matchesCatalogItem(value: string, item: CatalogItem) {
+  const normalizedValue = ` ${normalizeText(value)} `
+
+  return catalogNameVariants(item.nombre).some((variant) =>
+    normalizedValue.includes(` ${variant} `)
+  )
+}
+
+function findCatalogItems(value: string, items: CatalogItem[]) {
   return [...items]
     .filter((item) => item.nombre)
     .sort((a, b) => b.nombre.length - a.nombre.length)
-    .filter((item) => normalizedValue.includes(normalizeText(item.nombre)))
+    .filter((item) => matchesCatalogItem(value, item))
 }
 
 function findCatalogItem(value: string, items: CatalogItem[]) {
@@ -72,8 +91,17 @@ function findCatalogItem(value: string, items: CatalogItem[]) {
 function removeCatalogItem(value: string, item: CatalogItem | null) {
   if (!item) return value
 
-  return normalizeText(value)
-    .replace(normalizeText(item.nombre), ' ')
+  const normalizedValue = normalizeText(value)
+  const matchedName = catalogNameVariants(item.nombre).find((variant) =>
+    ` ${normalizedValue} `.includes(` ${variant} `)
+  )
+
+  if (!matchedName) return normalizedValue
+
+  const escapedName = matchedName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+  return normalizedValue
+    .replace(new RegExp(`(^|\\s)${escapedName}(?=\\s|$)`, 'i'), ' ')
     .replace(/\s+/g, ' ')
     .trim()
 }
