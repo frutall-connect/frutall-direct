@@ -66,8 +66,6 @@ export default function CuentaPage() {
 
   }
 
-const esAdmin = true
-
   return (
 
     <MobileLayout>
@@ -281,47 +279,6 @@ const esAdmin = true
           </div>
 
         )}
-
-{
-
-  esAdmin && (
-
-    <a
-
-      href="/admin"
-
-      className="
-        mt-6
-        bg-black
-        text-white
-        rounded-3xl
-        p-5
-        flex
-        items-center
-        justify-between
-        text-xl
-        font-bold
-      "
-
-    >
-
-      <span>
-
-        ⚙️ Panel Admin
-
-      </span>
-
-      <span>
-
-        →
-
-      </span>
-
-    </a>
-
-  )
-
-}
 
         {/* LOGOUT */}
 
