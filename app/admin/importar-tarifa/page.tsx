@@ -39,12 +39,128 @@ const [fechaTarifa, setFechaTarifa] =
   useState('')
 
 async function guardarTarifa() {
-  alert(
-    'La persistencia de tarifas esta pendiente de la RPC de importacion.'
-  )
+  try {
+    if (!proveedor.trim()) {
+      alert('Indica el proveedor de la tarifa.')
+      return
+    }
 
+    if (!fechaTarifa) {
+      alert('Indica la fecha de la tarifa.')
+      return
+    }
+
+    const lineasValidas = resultado.filter((item) => {
+      const precio = Number(item.precio.replace(',', '.'))
+
+      return (
+        item.motivos_revision.length === 0 &&
+        Boolean(item.producto_base_id) &&
+        Boolean(item.variedad_id) &&
+        Boolean(item.formato_id) &&
+        Number.isFinite(precio) &&
+        precio > 0 &&
+        !item.texto_no_resuelto
+      )
+    })
+
+    if (lineasValidas.length === 0) {
+      alert('No hay líneas válidas para guardar.')
+      return
+    }
+
+    let guardadas = 0
+
+    for (const item of lineasValidas) {
+      const precio = Number(item.precio.replace(',', '.'))
+
+      let consultaReferencia = supabase
+        .from('referencias_producto')
+        .select('id')
+        .eq('variedad_id', item.variedad_id)
+        .eq('formato_id', Number(item.formato_id))
+
+      if (item.calibre_id) {
+        consultaReferencia = consultaReferencia.eq(
+          'calibre_id',
+          Number(item.calibre_id)
+        )
+      } else {
+        consultaReferencia = consultaReferencia.is(
+          'calibre_id',
+          null
+        )
+      }
+
+      let { data: referencia, error } =
+        await consultaReferencia.maybeSingle()
+
+      if (error) {
+        throw error
+      }
+
+      if (!referencia) {
+        const { data: nuevaReferencia, error: errorNuevaReferencia } =
+          await supabase
+            .from('referencias_producto')
+            .insert({
+              variedad_id: item.variedad_id,
+              formato_id: Number(item.formato_id),
+              calibre_id: item.calibre_id
+                ? Number(item.calibre_id)
+                : null,
+              sku: [
+                item.producto,
+                item.variedad,
+                item.formato,
+                item.calibre,
+              ]
+                .filter(Boolean)
+                .join('-')
+                .toUpperCase()
+                .replace(/\s+/g, '-'),
+              activo: true,
+            })
+            .select('id')
+            .single()
+
+        if (errorNuevaReferencia) {
+          throw errorNuevaReferencia
+        }
+
+        referencia = nuevaReferencia
+      }
+
+      const { error: errorTarifa } = await supabase
+        .from('tarifas_proveedor')
+        .insert({
+          referencia_id: referencia.id,
+          proveedor: proveedor.trim(),
+          precio_compra: precio,
+          fecha: fechaTarifa,
+          observaciones: item.observaciones,
+        })
+
+      if (errorTarifa) {
+        throw errorTarifa
+      }
+
+      guardadas += 1
+    }
+
+    alert(
+      `Importación completada. Líneas guardadas: ${guardadas}.`
+    )
+  } catch (error) {
+    console.error('Error al guardar la tarifa:', error)
+
+    alert(
+      error instanceof Error
+        ? error.message
+        : 'No se pudo guardar la tarifa.'
+    )
+  }
 }
-
   async function procesar() {
 
     const [
