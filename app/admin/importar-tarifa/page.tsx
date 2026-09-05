@@ -167,6 +167,18 @@ KUMATO 6KG 18,40
   onClick={guardarTarifa}
   disabled={guardarDeshabilitado}
 
+console.log(
+  'Bloqueos de guardado:',
+  resultado.map((item) => ({
+    linea: item.linea_original,
+    motivos: item.motivos_revision,
+    producto_base_id: item.producto_base_id,
+    variedad_id: item.variedad_id,
+    precio: item.precio,
+    texto_no_resuelto: item.texto_no_resuelto,
+  }))
+)
+
   className="
     mt-4
     w-full
