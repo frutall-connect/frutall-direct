@@ -152,14 +152,12 @@ async function guardarTarifa() {
       `Importación completada. Líneas guardadas: ${guardadas}.`
     )
   } catch (error) {
-    console.error('Error al guardar la tarifa:', error)
+  console.error('Error al guardar la tarifa:', error)
 
-    alert(
-      error instanceof Error
-        ? error.message
-        : 'No se pudo guardar la tarifa.'
-    )
-  }
+  alert(
+    `Error al guardar la tarifa:\n\n${JSON.stringify(error, null, 2)}`
+  )
+}
 }
   async function procesar() {
 
