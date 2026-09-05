@@ -260,7 +260,6 @@ export function parseTarifa(
     }
 
     // No se asigna una referencia sin resolverla contra referencias_producto.
-    motivosRevision.push('Referencia comercial pendiente de resolver')
 
     const observaciones = JSON.stringify({
       linea_original: lineaOriginal,
