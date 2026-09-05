@@ -67,20 +67,19 @@ async function guardarTarifa() {
   }
 
   const guardarDeshabilitado =
-    resultado.length === 0 ||
-    resultado.some((item) => {
-      const precio = Number(item.precio.replace(',', '.'))
+  resultado.length === 0 ||
+  resultado.some((item) => {
+    const precio = Number(item.precio.replace(',', '.'))
 
-      return (
-        item.motivos_revision.length > 0 ||
-        !item.producto_base_id ||
-        !item.variedad_id ||
-        !item.referencia_id ||
-        !Number.isFinite(precio) ||
-        precio <= 0 ||
-        Boolean(item.texto_no_resuelto)
-      )
-    })
+    return (
+      item.motivos_revision.length > 0 ||
+      !item.producto_base_id ||
+      !item.variedad_id ||
+      !Number.isFinite(precio) ||
+      precio <= 0 ||
+      Boolean(item.texto_no_resuelto)
+    )
+  })
 
   return (
 
