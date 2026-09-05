@@ -68,16 +68,16 @@ async function guardarTarifa() {
 
   const guardarDeshabilitado =
   resultado.length === 0 ||
-  resultado.some((item) => {
+  !resultado.some((item) => {
     const precio = Number(item.precio.replace(',', '.'))
 
     return (
-      item.motivos_revision.length > 0 ||
-      !item.producto_base_id ||
-      !item.variedad_id ||
-      !Number.isFinite(precio) ||
-      precio <= 0 ||
-      Boolean(item.texto_no_resuelto)
+      item.motivos_revision.length === 0 &&
+      Boolean(item.producto_base_id) &&
+      Boolean(item.variedad_id) &&
+      Number.isFinite(precio) &&
+      precio > 0 &&
+      !item.texto_no_resuelto
     )
   })
 
