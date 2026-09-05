@@ -235,8 +235,8 @@ export function parseTarifa(
       motivosRevision.push('Formato ambiguo')
     }
 
-    if (!calibre) {
-      motivosRevision.push('Calibre pendiente de validar para esta referencia')
+    if (calibresDetectados.length > 1) {
+      motivosRevision.push('Calibre ambiguo')
     }
 
     if (calibresDetectados.length > 1) {
