@@ -32,6 +32,12 @@ export default function ImportarTarifaPage() {
   const [resultado, setResultado] =
     useState<TarifaPreview[]>([])
 
+const [proveedor, setProveedor] =
+  useState('')
+
+const [fechaTarifa, setFechaTarifa] =
+  useState('')
+
 async function guardarTarifa() {
   alert(
     'La persistencia de tarifas esta pendiente de la RPC de importacion.'
@@ -108,6 +114,35 @@ async function guardarTarifa() {
         Importar tarifa
 
       </h1>
+
+<input
+  type="text"
+  value={proveedor}
+  onChange={(e) => setProveedor(e.target.value)}
+  placeholder="Proveedor de la tarifa"
+  className="
+    w-full
+    rounded-3xl
+    p-5
+    mb-4
+    bg-white
+    shadow-lg
+  "
+/>
+
+<input
+  type="date"
+  value={fechaTarifa}
+  onChange={(e) => setFechaTarifa(e.target.value)}
+  className="
+    w-full
+    rounded-3xl
+    p-5
+    mb-4
+    bg-white
+    shadow-lg
+  "
+/>
 
       <textarea
 
