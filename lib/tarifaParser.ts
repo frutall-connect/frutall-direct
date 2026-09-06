@@ -228,20 +228,16 @@ export function parseTarifa(
     }
 
     if (!formato) {
-      motivosRevision.push('Formato pendiente de validar para esta referencia')
-    }
+  motivosRevision.push('Formato pendiente de validar para esta referencia')
+}
 
-    if (formatosDetectados.length > 1) {
-      motivosRevision.push('Formato ambiguo')
-    }
+if (formatosDetectados.length > 1) {
+  motivosRevision.push('Formato ambiguo')
+}
 
-    if (calibresDetectados.length > 1) {
-      motivosRevision.push('Calibre ambiguo')
-    }
-
-    if (calibresDetectados.length > 1) {
-      motivosRevision.push('Calibre ambiguo')
-    }
+if (calibresDetectados.length > 1) {
+  motivosRevision.push('Calibre ambiguo')
+}
 
     if (!Number.isFinite(precio) || precio <= 0) {
       motivosRevision.push('Precio no valido')
