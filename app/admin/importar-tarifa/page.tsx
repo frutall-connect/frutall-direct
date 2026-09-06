@@ -139,17 +139,48 @@ export default function ImportarTarifaPage() {
           referencia = nuevaReferencia
         }
 
-        const {
-          error: errorTarifa,
-        } = await supabase
-          .from('tarifas_proveedor')
-          .insert({
-            referencia_id: referencia.id,
-            proveedor: proveedor.trim(),
-            precio_compra: precio,
-            fecha: fechaTarifa,
-            observaciones: item.observaciones,
-          })
+        const { data: tarifaExistente, error: errorBusquedaTarifa } =
+  await supabase
+    .from('tarifas_proveedor')
+    .select('id')
+    .eq('referencia_id', referencia.id)
+    .eq('proveedor', proveedor.trim())
+    .maybeSingle()
+
+if (errorBusquedaTarifa) {
+  throw errorBusquedaTarifa
+}
+
+if (tarifaExistente) {
+  const { error: errorActualizacion } = await supabase
+    .from('tarifas_proveedor')
+    .update({
+      precio_compra: precio,
+      fecha: fechaTarifa,
+      observaciones: item.observaciones,
+    })
+    .eq('id', tarifaExistente.id)
+
+  if (errorActualizacion) {
+    throw errorActualizacion
+  }
+} else {
+  const { error: errorInsercion } = await supabase
+    .from('tarifas_proveedor')
+    .insert({
+      referencia_id: referencia.id,
+      proveedor: proveedor.trim(),
+      precio_compra: precio,
+      fecha: fechaTarifa,
+      observaciones: item.observaciones,
+    })
+
+  if (errorInsercion) {
+    throw errorInsercion
+  }
+}
+
+guardadas += 1
 
         if (errorTarifa) {
           throw errorTarifa
