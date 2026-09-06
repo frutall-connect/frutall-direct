@@ -182,11 +182,6 @@ if (tarifaExistente) {
 
 guardadas += 1
 
-        if (errorTarifa) {
-          throw errorTarifa
-        }
-
-        guardadas += 1
       }
 
       alert(
