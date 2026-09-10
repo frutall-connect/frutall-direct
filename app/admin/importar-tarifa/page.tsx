@@ -180,8 +180,14 @@ export default function ImportarTarifaPage() {
       } = await supabase
         .from('tarifas_proveedor')
         .select('id')
-        .eq('referencia_id', referencia.id)
-        .eq('proveedor', proveedor.trim())
+        .eq(
+          'referencia_id',
+          referencia.id
+        )
+        .eq(
+          'proveedor',
+          proveedor.trim()
+        )
         .maybeSingle()
 
       if (errorBusquedaTarifa) {
@@ -198,7 +204,10 @@ export default function ImportarTarifaPage() {
             fecha: fechaTarifa,
             observaciones: item.observaciones,
           })
-          .eq('id', tarifaExistente.id)
+          .eq(
+            'id',
+            tarifaExistente.id
+          )
 
         if (errorActualizacion) {
           throw errorActualizacion
