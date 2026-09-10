@@ -2,6 +2,7 @@ export type CatalogItem = {
   id: string
   nombre: string
   producto_base_id?: string | null
+  prioridad?: number
 }
 
 export type AliasItem = {
