@@ -26,182 +26,221 @@ export default function ImportarTarifaPage() {
     useState('')
 
   async function guardarTarifa() {
-    try {
-      const {
-        data: { user },
-        error: errorUsuario,
-      } = await supabase.auth.getUser()
+  try {
+    const {
+      data: { user },
+      error: errorUsuario,
+    } = await supabase.auth.getUser()
 
-      console.log('Usuario autenticado:', user?.id)
-      console.log('Error de autenticación:', errorUsuario)
+    console.log('Usuario autenticado:', user?.id)
+    console.log('Error de autenticación:', errorUsuario)
 
-      if (!user) {
-        alert('No hay un usuario autenticado.')
-        return
-      }
-
-      if (!proveedor.trim()) {
-        alert('Indica el proveedor de la tarifa.')
-        return
-      }
-
-      if (!fechaTarifa) {
-        alert('Indica la fecha de la tarifa.')
-        return
-      }
-
-      const lineasValidas = resultado.filter((item) => {
-        const precio = Number(
-          item.precio.replace(',', '.')
-        )
-
-        return (
-          item.motivos_revision.length === 0 &&
-          Boolean(item.producto_base_id) &&
-          Boolean(item.variedad_id) &&
-          Boolean(item.formato_id) &&
-          Number.isFinite(precio) &&
-          precio > 0 &&
-          !item.texto_no_resuelto
-        )
-      })
-
-      if (lineasValidas.length === 0) {
-        alert('No hay líneas válidas para guardar.')
-        return
-      }
-
-      let guardadas = 0
-
-      for (const item of lineasValidas) {
-        const precio = Number(
-          item.precio.replace(',', '.')
-        )
-
-        let consultaReferencia = supabase
-          .from('referencias_producto')
-          .select('id')
-          .eq('variedad_id', item.variedad_id)
-          .eq('formato_id', Number(item.formato_id))
-
-        if (item.calibre_id) {
-          consultaReferencia = consultaReferencia.eq(
-            'calibre_id',
-            Number(item.calibre_id)
-          )
-        } else {
-          consultaReferencia = consultaReferencia.is(
-            'calibre_id',
-            null
-          )
-        }
-
-        let {
-          data: referencia,
-          error,
-        } = await consultaReferencia.maybeSingle()
-
-        if (error) {
-          throw error
-        }
-
-        if (!referencia) {
-          const {
-            data: nuevaReferencia,
-            error: errorNuevaReferencia,
-          } = await supabase
-            .from('referencias_producto')
-            .insert({
-              variedad_id: item.variedad_id,
-              formato_id: Number(item.formato_id),
-              calibre_id: item.calibre_id
-                ? Number(item.calibre_id)
-                : null,
-              sku: [
-                item.producto,
-                item.variedad,
-                item.formato,
-                item.calibre,
-              ]
-                .filter(Boolean)
-                .join('-')
-                .toUpperCase()
-                .replace(/\s+/g, '-'),
-              activo: true,
-            })
-            .select('id')
-            .single()
-
-          if (errorNuevaReferencia) {
-            throw errorNuevaReferencia
-          }
-
-          referencia = nuevaReferencia
-        }
-
-        const { data: tarifaExistente, error: errorBusquedaTarifa } =
-  await supabase
-    .from('tarifas_proveedor')
-    .select('id')
-    .eq('referencia_id', referencia.id)
-    .eq('proveedor', proveedor.trim())
-    .maybeSingle()
-
-if (errorBusquedaTarifa) {
-  throw errorBusquedaTarifa
-}
-
-if (tarifaExistente) {
-  const { error: errorActualizacion } = await supabase
-    .from('tarifas_proveedor')
-    .update({
-      precio_compra: precio,
-      fecha: fechaTarifa,
-      observaciones: item.observaciones,
-    })
-    .eq('id', tarifaExistente.id)
-
-  if (errorActualizacion) {
-    throw errorActualizacion
-  }
-} else {
-  const { error: errorInsercion } = await supabase
-    .from('tarifas_proveedor')
-    .insert({
-      referencia_id: referencia.id,
-      proveedor: proveedor.trim(),
-      precio_compra: precio,
-      fecha: fechaTarifa,
-      observaciones: item.observaciones,
-    })
-
-  if (errorInsercion) {
-    throw errorInsercion
-  }
-}
-
-guardadas += 1
-
-      }
-
-      alert(
-        `Importación completada. Líneas guardadas: ${guardadas}.`
-      )
-    } catch (error) {
-      console.error(
-        'Error al guardar la tarifa:',
-        error
-      )
-
-      alert(
-        `Error al guardar la tarifa:\n\n${JSON.stringify(
-          error,
-          null,
-          2
-        )}`
-      )
+    if (!user) {
+      alert('No hay un usuario autenticado.')
+      return
     }
+
+    if (!proveedor.trim()) {
+      alert('Indica el proveedor de la tarifa.')
+      return
+    }
+
+    if (!fechaTarifa) {
+      alert('Indica la fecha de la tarifa.')
+      return
+    }
+
+    const lineasGuardables = resultado.filter((item) => {
+      const precio = Number(
+        item.precio.replace(',', '.')
+      )
+
+      return (
+        Boolean(item.producto_base_id) &&
+        Number.isFinite(precio) &&
+        precio > 0 &&
+        !item.texto_no_resuelto
+      )
+    })
+
+    if (lineasGuardables.length === 0) {
+      alert('No hay líneas identificables con precio para guardar.')
+      return
+    }
+
+    let guardadas = 0
+
+    for (const item of lineasGuardables) {
+      const precio = Number(
+        item.precio.replace(',', '.')
+      )
+
+      let consultaReferencia = supabase
+        .from('referencias_producto')
+        .select('id')
+        .eq(
+          'producto_base_id',
+          item.producto_base_id
+        )
+
+      if (item.variedad_id) {
+        consultaReferencia = consultaReferencia.eq(
+          'variedad_id',
+          item.variedad_id
+        )
+      } else {
+        consultaReferencia = consultaReferencia.is(
+          'variedad_id',
+          null
+        )
+      }
+
+      if (item.formato_id) {
+        consultaReferencia = consultaReferencia.eq(
+          'formato_id',
+          Number(item.formato_id)
+        )
+      } else {
+        consultaReferencia = consultaReferencia.is(
+          'formato_id',
+          null
+        )
+      }
+
+      if (item.calibre_id) {
+        consultaReferencia = consultaReferencia.eq(
+          'calibre_id',
+          Number(item.calibre_id)
+        )
+      } else {
+        consultaReferencia = consultaReferencia.is(
+          'calibre_id',
+          null
+        )
+      }
+
+      const {
+        data: referencias,
+        error: errorBusquedaReferencia,
+      } = await consultaReferencia.limit(2)
+
+      if (errorBusquedaReferencia) {
+        throw errorBusquedaReferencia
+      }
+
+      let referencia = referencias?.[0] ?? null
+
+      if (referencias && referencias.length > 1) {
+        throw new Error(
+          `Hay referencias duplicadas para "${item.producto}" / "${item.variedad ?? 'sin variedad'}".`
+        )
+      }
+
+      if (!referencia) {
+        const {
+          data: nuevaReferencia,
+          error: errorNuevaReferencia,
+        } = await supabase
+          .from('referencias_producto')
+          .insert({
+            producto_base_id: item.producto_base_id,
+            variedad_id: item.variedad_id || null,
+            formato_id: item.formato_id
+              ? Number(item.formato_id)
+              : null,
+            calibre_id: item.calibre_id
+              ? Number(item.calibre_id)
+              : null,
+            sku: [
+              item.producto,
+              item.variedad,
+              item.formato,
+              item.calibre,
+            ]
+              .filter(Boolean)
+              .join('-')
+              .toUpperCase()
+              .replace(/\s+/g, '-'),
+            activo: true,
+          })
+          .select('id')
+          .single()
+
+        if (errorNuevaReferencia) {
+          throw errorNuevaReferencia
+        }
+
+        referencia = nuevaReferencia
+      }
+
+      const {
+        data: tarifaExistente,
+        error: errorBusquedaTarifa,
+      } = await supabase
+        .from('tarifas_proveedor')
+        .select('id')
+        .eq('referencia_id', referencia.id)
+        .eq('proveedor', proveedor.trim())
+        .maybeSingle()
+
+      if (errorBusquedaTarifa) {
+        throw errorBusquedaTarifa
+      }
+
+      if (tarifaExistente) {
+        const {
+          error: errorActualizacion,
+        } = await supabase
+          .from('tarifas_proveedor')
+          .update({
+            precio_compra: precio,
+            fecha: fechaTarifa,
+            observaciones: item.observaciones,
+          })
+          .eq('id', tarifaExistente.id)
+
+        if (errorActualizacion) {
+          throw errorActualizacion
+        }
+      } else {
+        const {
+          error: errorInsercion,
+        } = await supabase
+          .from('tarifas_proveedor')
+          .insert({
+            referencia_id: referencia.id,
+            proveedor: proveedor.trim(),
+            precio_compra: precio,
+            fecha: fechaTarifa,
+            observaciones: item.observaciones,
+          })
+
+        if (errorInsercion) {
+          throw errorInsercion
+        }
+      }
+
+      guardadas += 1
+    }
+
+    alert(
+      `Importación completada. Líneas guardadas: ${guardadas}.`
+    )
+  } catch (error) {
+    console.error(
+      'Error al guardar la tarifa:',
+      error
+    )
+
+    alert(
+      `Error al guardar la tarifa:\n\n${JSON.stringify(
+        error,
+        null,
+        2
+      )}`
+    )
   }
+}
 
   async function procesar() {
     const [
