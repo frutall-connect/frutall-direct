@@ -245,41 +245,112 @@ export default function ImportarTarifaPage() {
 
   async function procesar() {
     const [
-      { data: productosBase },
-      { data: variedades },
-      { data: aliases },
-      { data: formatos },
-      { data: calibres },
-    ] = await Promise.all([
-      supabase
-        .from('productos_base')
-        .select('id, nombre'),
+  { data: productosBase },
+  { data: variedades },
+  { data: aliases },
+  { data: formatos },
+  { data: calibres },
+  { data: referencias },
+] = await Promise.all([
+  supabase
+    .from('productos_base')
+    .select('id, nombre, created_at'),
 
-      supabase
-        .from('variedades_producto')
-        .select(
-          'id, nombre, producto_base_id'
-        ),
+  supabase
+    .from('variedades_producto')
+    .select(
+      'id, nombre, producto_base_id'
+    ),
 
-      supabase
-        .from('aliases_producto')
-        .select(
-          'alias, variedad_id'
-        ),
+  supabase
+    .from('aliases_producto')
+    .select(
+      'alias, variedad_id'
+    ),
 
-      supabase
-        .from('formatos_producto')
-        .select('id, nombre'),
+  supabase
+    .from('formatos_producto')
+    .select('id, nombre'),
 
-      supabase
-        .from('calibres_producto')
-        .select('id, nombre'),
-    ])
+  supabase
+    .from('calibres_producto')
+    .select('id, nombre'),
+
+  supabase
+    .from('referencias_producto')
+    .select('id, producto_base_id, variedad_id'),
+])
+
+const variedadesPorProducto = new Map<string, number>()
+const referenciasPorProducto = new Map<string, number>()
+const aliasesPorProducto = new Map<string, number>()
+
+for (const variedad of variedades || []) {
+  if (!variedad.producto_base_id) continue
+
+  const productoId = String(variedad.producto_base_id)
+
+  variedadesPorProducto.set(
+    productoId,
+    (variedadesPorProducto.get(productoId) || 0) + 1
+  )
+}
+
+for (const referencia of referencias || []) {
+  if (!referencia.producto_base_id) continue
+
+  const productoId = String(referencia.producto_base_id)
+
+  referenciasPorProducto.set(
+    productoId,
+    (referenciasPorProducto.get(productoId) || 0) + 1
+  )
+}
+
+for (const alias of aliases || []) {
+  const variedad = (variedades || []).find(
+    (item) => String(item.id) === String(alias.variedad_id)
+  )
+
+  if (!variedad?.producto_base_id) continue
+
+  const productoId = String(variedad.producto_base_id)
+
+  aliasesPorProducto.set(
+    productoId,
+    (aliasesPorProducto.get(productoId) || 0) + 1
+  )
+}
+
+const productosBaseConPrioridad = (productosBase || []).map(
+  (producto) => {
+    const id = String(producto.id)
+
+    const referenciasCount =
+      referenciasPorProducto.get(id) || 0
+
+    const aliasesCount =
+      aliasesPorProducto.get(id) || 0
+
+    const variedadesCount =
+      variedadesPorProducto.get(id) || 0
+
+    const prioridad =
+      referenciasCount * 1000000 +
+      aliasesCount * 1000 +
+      variedadesCount
+
+    return {
+      ...producto,
+      prioridad,
+    }
+  }
+)
 
     setResultado(
       parseTarifa(texto, {
         productosBase:
-          (productosBase || []) as CatalogItem[],
+  productosBaseConPrioridad as CatalogItem[],
 
         variedades:
           (variedades || []) as CatalogItem[],
