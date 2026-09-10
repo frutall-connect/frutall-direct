@@ -58,13 +58,14 @@ export default function ImportarTarifaPage() {
       return (
         Boolean(item.producto_base_id) &&
         Number.isFinite(precio) &&
-        precio > 0 &&
-        !item.texto_no_resuelto
+        precio > 0
       )
     })
 
     if (lineasGuardables.length === 0) {
-      alert('No hay líneas identificables con precio para guardar.')
+      alert(
+        'No hay líneas identificables con precio válido para guardar.'
+      )
       return
     }
 
