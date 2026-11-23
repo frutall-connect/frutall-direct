@@ -1,0 +1,53 @@
+-- VERIFICACIONES PREPARADAS, NO EJECUTADAS. SOLO INSTANCIA DESECHABLE AUTORIZADA.
+BEGIN;
+DO $test$
+DECLARE
+  actor text;
+  tabla text;
+  privilegio text;
+  n bigint;
+BEGIN
+  IF pg_catalog.current_database() <> 'frutall_checkout_1b_test_disposable'
+    OR current_user <> 'frutall_1b_owner'
+    OR session_user <> 'frutall_1b_owner'
+    OR (pg_catalog.inet_server_addr() IS NOT NULL
+        AND pg_catalog.inet_server_addr() NOT IN ('127.0.0.1'::inet, '::1'::inet))
+  THEN RAISE EXCEPTION 'Destino no autorizado'; END IF;
+
+  FOREACH actor IN ARRAY ARRAY['frutall_1b_actor_a','frutall_1b_actor_b'] LOOP
+    IF NOT pg_catalog.has_schema_privilege(actor,'checkout_fase1a_prototipo','USAGE')
+      OR pg_catalog.has_schema_privilege(actor,'checkout_fase1a_prototipo','CREATE')
+      OR NOT pg_catalog.has_function_privilege(actor,'checkout_fase1a_prototipo.operar(bigint,text,jsonb)','EXECUTE')
+      OR pg_catalog.has_function_privilege(actor,'checkout_fase1a_prototipo.entero(jsonb,text,bigint)','EXECUTE')
+      OR pg_catalog.has_function_privilege(actor,'checkout_fase1a_prototipo.texto(jsonb,text,text[])','EXECUTE')
+      OR pg_catalog.has_function_privilege(actor,'checkout_fase1a_prototipo.lineas_canonicas(jsonb)','EXECUTE')
+    THEN RAISE EXCEPTION 'Permisos efectivos de funciones/esquema incorrectos: %', actor; END IF;
+    FOREACH tabla IN ARRAY ARRAY['checkout_intentos','checkout_sesiones','checkout_webhook_inbox','checkout_trabajos','checkout_auditoria'] LOOP
+      FOREACH privilegio IN ARRAY ARRAY['SELECT','INSERT','UPDATE','DELETE','TRUNCATE','REFERENCES','TRIGGER'] LOOP
+        IF pg_catalog.has_table_privilege(actor,'checkout_fase1a_prototipo.' || tabla,privilegio) THEN
+          RAISE EXCEPTION 'Permiso efectivo inesperado: %, %, %', actor, tabla, privilegio;
+        END IF;
+      END LOOP;
+    END LOOP;
+  END LOOP;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_proc p
+    JOIN pg_catalog.pg_namespace nsp ON nsp.oid = p.pronamespace
+    JOIN pg_catalog.pg_roles r ON r.oid = p.proowner
+    WHERE nsp.nspname = 'checkout_fase1a_prototipo' AND p.proname = 'operar'
+      AND p.prosecdef AND r.rolname = 'frutall_1b_owner'
+      AND 'search_path=pg_catalog' = ANY(p.proconfig)
+  ) THEN RAISE EXCEPTION 'Configuracion de funcion privilegiada inesperada'; END IF;
+
+  SELECT pg_catalog.count(*) INTO n FROM checkout_fase1a_prototipo.checkout_auditoria
+    WHERE actor_sintetico = 'frutall_1b_actor_a' AND operacion_id BETWEEN 1 AND 7;
+  IF n <> 7 THEN RAISE EXCEPTION 'Auditoria de fixtures incompleta'; END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM checkout_fase1a_prototipo.checkout_intentos
+    WHERE id = 1 AND snapshot_version = 1 AND total_centimos = 1100
+      AND snapshot = '[{"producto":"sint_producto_a","cantidad":1,"centimos":500,"subtotal_centimos":500},{"producto":"sint_producto_b","cantidad":2,"centimos":300,"subtotal_centimos":600}]'::jsonb
+      AND estado = 'creacion_incierta' AND version = 1
+  ) THEN RAISE EXCEPTION 'Snapshot o estado inicial incorrecto'; END IF;
+END;
+$test$;
+ROLLBACK;

@@ -1,0 +1,202 @@
+-- PRUEBAS SINTETICAS 1B. NO EJECUTADAS. NO USAR EN UNA BASE REAL.
+-- Ejecutar solo con autorizacion futura y destino desechable confirmado.
+-- Se requiere el modelo y los datos del actor A, y cliente que falle ante errores.
+BEGIN;
+DO $guard$
+BEGIN
+  IF pg_catalog.current_database() <> 'frutall_checkout_1b_test_disposable'
+    OR current_user <> 'frutall_1b_actor_a'
+    OR session_user <> 'frutall_1b_actor_a'
+    OR (pg_catalog.inet_server_addr() IS NOT NULL
+        AND pg_catalog.inet_server_addr() NOT IN ('127.0.0.1'::inet, '::1'::inet))
+  THEN
+    RAISE EXCEPTION 'Destino no autorizado para pruebas sinteticas';
+  END IF;
+END;
+$guard$;
+
+DO $test$
+DECLARE
+  r jsonb;
+  anterior jsonb;
+  reclamacion jsonb;
+  evento_reclamado jsonb;
+  sin_sesion jsonb;
+  rechazado boolean;
+  parametros jsonb;
+BEGIN
+  -- Igualdad canonica de lineas pese a distinto orden.
+  r := checkout_fase1a_prototipo.operar(1, 'crear_intento',
+    '{"intento":1,"cuenta":"sint_cuenta_a","clave":"sint_clave_a","lineas":[{"producto":"sint_producto_a","cantidad":1},{"producto":"sint_producto_b","cantidad":2}]}'::jsonb);
+  IF r ->> 'total_centimos' <> '1100' OR r ->> 'resultado' <> 'creado' THEN
+    RAISE EXCEPTION 'Resultado idempotente o total incorrecto';
+  END IF;
+  rechazado := false;
+  BEGIN
+    PERFORM checkout_fase1a_prototipo.operar(1, 'crear_intento',
+      '{"intento":1,"cuenta":"sint_cuenta_a","clave":"sint_clave_a","lineas":[{"producto":"sint_producto_a","cantidad":2}]}'::jsonb);
+  EXCEPTION WHEN unique_violation THEN rechazado := true;
+  END;
+  IF NOT rechazado THEN RAISE EXCEPTION 'Reutilizacion contradictoria aceptada'; END IF;
+
+  rechazado := false;
+  BEGIN
+    PERFORM checkout_fase1a_prototipo.operar(1001, 'crear_intento',
+      '{"intento":3,"cuenta":"sint_cuenta_a","clave":"sint_clave_c","lineas":[{"producto":"sint_producto_a","cantidad":1,"centimos":1}]}'::jsonb);
+  EXCEPTION WHEN invalid_parameter_value THEN rechazado := true;
+  END;
+  IF NOT rechazado THEN RAISE EXCEPTION 'Precio aportado aceptado'; END IF;
+  rechazado := false;
+  BEGIN
+    PERFORM checkout_fase1a_prototipo.operar(1002, 'crear_intento',
+      '{"intento":3,"cuenta":"sint_cuenta_a","clave":"sint_clave_c","lineas":[{"producto":"sint_producto_a","cantidad":101}]}'::jsonb);
+  EXCEPTION WHEN invalid_parameter_value THEN rechazado := true;
+  END;
+  IF NOT rechazado THEN RAISE EXCEPTION 'Cantidad fuera de limite aceptada'; END IF;
+  rechazado := false;
+  BEGIN
+    PERFORM checkout_fase1a_prototipo.operar(1003, 'crear_intento',
+      '{"intento":3,"cuenta":"sint_cuenta_a","clave":"sint_clave_c","lineas":[{"producto":"sint_producto_a","cantidad":1},{"producto":"sint_producto_a","cantidad":1}]}'::jsonb);
+  EXCEPTION WHEN invalid_parameter_value THEN rechazado := true;
+  END;
+  IF NOT rechazado THEN RAISE EXCEPTION 'Producto duplicado aceptado'; END IF;
+
+  -- El ejecutor no puede fabricar auditoria ni alterar registros directamente.
+  rechazado := false;
+  BEGIN
+    INSERT INTO checkout_fase1a_prototipo.checkout_auditoria
+      (operacion_id,actor_sintetico,accion,parametros,resultado,cambios)
+    VALUES (9999,'frutall_1b_actor_a','sint_falsa','{}','{}','[]');
+  EXCEPTION WHEN insufficient_privilege THEN rechazado := true;
+  END;
+  IF NOT rechazado THEN RAISE EXCEPTION 'INSERT directo de auditoria permitido'; END IF;
+  rechazado := false;
+  BEGIN
+    UPDATE checkout_fase1a_prototipo.checkout_trabajos SET estado = 'finalizado' WHERE id = 1;
+  EXCEPTION WHEN insufficient_privilege THEN rechazado := true;
+  END;
+  IF NOT rechazado THEN RAISE EXCEPTION 'UPDATE directo de trabajo permitido'; END IF;
+  rechazado := false;
+  BEGIN
+    UPDATE checkout_fase1a_prototipo.checkout_webhook_inbox SET estado = 'procesado' WHERE id = 1;
+  EXCEPTION WHEN insufficient_privilege THEN rechazado := true;
+  END;
+  IF NOT rechazado THEN RAISE EXCEPTION 'Procesamiento directo de evento permitido'; END IF;
+  rechazado := false;
+  BEGIN
+    UPDATE checkout_fase1a_prototipo.checkout_sesiones SET intento_id = 2 WHERE id = 1;
+  EXCEPTION WHEN insufficient_privilege THEN rechazado := true;
+  END;
+  IF NOT rechazado THEN RAISE EXCEPTION 'Reasignacion directa de sesion permitida'; END IF;
+  rechazado := false;
+  BEGIN
+    UPDATE checkout_fase1a_prototipo.checkout_auditoria SET resultado = '{}'::jsonb WHERE operacion_id = 1;
+  EXCEPTION WHEN insufficient_privilege THEN rechazado := true;
+  END;
+  IF NOT rechazado THEN RAISE EXCEPTION 'UPDATE directo de auditoria permitido'; END IF;
+  rechazado := false;
+  BEGIN
+    DELETE FROM checkout_fase1a_prototipo.checkout_intentos WHERE id = 1;
+  EXCEPTION WHEN insufficient_privilege THEN rechazado := true;
+  END;
+  IF NOT rechazado THEN RAISE EXCEPTION 'DELETE directo permitido'; END IF;
+
+  -- Reclamacion, nueva generacion y finalizacion de la generacion anterior.
+  reclamacion := checkout_fase1a_prototipo.operar(1010,'reclamar_trabajo','{"trabajo":1,"version":0}'::jsonb);
+  parametros := pg_catalog.jsonb_build_object('trabajo',1,'version',1,'fence',reclamacion -> 'fence',
+    'generacion',reclamacion -> 'generacion','token','00000000-0000-4000-8000-000000000000','version_destino',1);
+  rechazado := false;
+  BEGIN
+    PERFORM checkout_fase1a_prototipo.operar(1009,'finalizar_trabajo',parametros);
+  EXCEPTION WHEN object_not_in_prerequisite_state THEN rechazado := true;
+  END;
+  IF NOT rechazado THEN RAISE EXCEPTION 'Token de lease incorrecto aceptado'; END IF;
+  r := checkout_fase1a_prototipo.operar(1011,'solicitar_trabajo',
+    '{"trabajo":1,"tipo":"despacho_simulado","destino":1}'::jsonb);
+  IF r ->> 'generacion' <> '2' OR r ->> 'version' <> '2' THEN RAISE EXCEPTION 'Generacion no actualizada'; END IF;
+  parametros := pg_catalog.jsonb_build_object('trabajo',1,'version',1,'fence',reclamacion -> 'fence',
+    'generacion',reclamacion -> 'generacion','token',reclamacion -> 'token','version_destino',1);
+  rechazado := false;
+  BEGIN
+    PERFORM checkout_fase1a_prototipo.operar(1012,'finalizar_trabajo',parametros);
+  EXCEPTION WHEN raise_exception THEN rechazado := true;
+  END;
+  IF NOT rechazado THEN RAISE EXCEPTION 'CAS obsoleto aceptado'; END IF;
+  parametros := pg_catalog.jsonb_set(parametros,'{version}','2'::jsonb);
+  r := checkout_fase1a_prototipo.operar(1013,'finalizar_trabajo',parametros);
+  IF r ->> 'resultado' <> 'pendiente' OR r ->> 'generacion_completada' <> '1' THEN
+    RAISE EXCEPTION 'Generacion posterior perdida';
+  END IF;
+  reclamacion := checkout_fase1a_prototipo.operar(1014,'reclamar_trabajo','{"trabajo":1,"version":3}'::jsonb);
+  parametros := pg_catalog.jsonb_build_object('trabajo',1,'version',4,'fence',reclamacion -> 'fence',
+    'generacion',reclamacion -> 'generacion','token',reclamacion -> 'token','version_destino',2);
+  r := checkout_fase1a_prototipo.operar(1015,'finalizar_trabajo',parametros);
+  IF r ->> 'resultado' <> 'finalizado' OR r ->> 'generacion_completada' <> '2' THEN
+    RAISE EXCEPTION 'Finalizacion valida fallida';
+  END IF;
+  anterior := checkout_fase1a_prototipo.operar(1015,'finalizar_trabajo',parametros);
+  IF anterior <> r THEN RAISE EXCEPTION 'Repeticion no idempotente'; END IF;
+
+  -- Procesamiento atomico, repeticion y contradiccion posterior.
+  evento_reclamado := checkout_fase1a_prototipo.operar(1020,'reclamar_trabajo','{"trabajo":2,"version":0}'::jsonb);
+  parametros := pg_catalog.jsonb_build_object('trabajo',2,'version',1,'fence',evento_reclamado -> 'fence',
+    'generacion',evento_reclamado -> 'generacion','token',evento_reclamado -> 'token','version_destino',0);
+  r := checkout_fase1a_prototipo.operar(1021,'finalizar_trabajo',parametros);
+  IF r ->> 'resultado' <> 'finalizado' THEN RAISE EXCEPTION 'Evento sintetico no finalizado'; END IF;
+  r := checkout_fase1a_prototipo.operar(1022,'recibir_evento',
+    '{"evento":1,"intento":2,"caso":"sint_revision"}'::jsonb);
+  IF r ->> 'resultado' <> 'duplicado' OR r ->> 'estado' <> 'procesado' THEN
+    RAISE EXCEPTION 'Evento identico no reconocido';
+  END IF;
+  r := checkout_fase1a_prototipo.operar(1023,'recibir_evento',
+    '{"evento":1,"intento":2,"caso":"sint_descartar"}'::jsonb);
+  IF r ->> 'resultado' <> 'contradiccion' THEN RAISE EXCEPTION 'Contradiccion no registrada'; END IF;
+  rechazado := false;
+  BEGIN
+    PERFORM checkout_fase1a_prototipo.operar(1024,'solicitar_trabajo',
+      '{"trabajo":2,"tipo":"evento_simulado","destino":1}'::jsonb);
+  EXCEPTION WHEN object_not_in_prerequisite_state THEN rechazado := true;
+  END;
+  IF NOT rechazado THEN RAISE EXCEPTION 'Evento contradictorio reprocesado'; END IF;
+
+  -- Sin sesion no hay evidencia y no se finaliza.
+  PERFORM checkout_fase1a_prototipo.operar(1030,'crear_intento',
+    '{"intento":3,"cuenta":"sint_cuenta_a","clave":"sint_clave_c","lineas":[{"producto":"sint_producto_a","cantidad":1}]}'::jsonb);
+  PERFORM checkout_fase1a_prototipo.operar(1031,'comenzar_intento','{"intento":3,"version":0}'::jsonb);
+  PERFORM checkout_fase1a_prototipo.operar(1032,'solicitar_trabajo',
+    '{"trabajo":3,"tipo":"despacho_simulado","destino":3}'::jsonb);
+  sin_sesion := checkout_fase1a_prototipo.operar(1033,'reclamar_trabajo','{"trabajo":3,"version":0}'::jsonb);
+  parametros := pg_catalog.jsonb_build_object('trabajo',3,'version',1,'fence',sin_sesion -> 'fence',
+    'generacion',sin_sesion -> 'generacion','token',sin_sesion -> 'token','version_destino',1);
+  rechazado := false;
+  BEGIN
+    PERFORM checkout_fase1a_prototipo.operar(1034,'finalizar_trabajo',parametros);
+  EXCEPTION WHEN object_not_in_prerequisite_state THEN rechazado := true;
+  END;
+  IF NOT rechazado THEN RAISE EXCEPTION 'Trabajo finalizado sin evidencia'; END IF;
+  r := checkout_fase1a_prototipo.operar(1035,'revision_trabajo',
+    '{"trabajo":3,"version":1,"motivo":"sint_incertidumbre"}'::jsonb);
+  rechazado := false;
+  BEGIN
+    PERFORM checkout_fase1a_prototipo.operar(1036,'solicitar_trabajo',
+      '{"trabajo":3,"tipo":"despacho_simulado","destino":3}'::jsonb);
+  EXCEPTION WHEN object_not_in_prerequisite_state THEN rechazado := true;
+  END;
+  IF NOT rechazado THEN RAISE EXCEPTION 'Revision manual eludida'; END IF;
+
+  -- Una observacion tardia se conserva, pero no reabre la revision.
+  PERFORM checkout_fase1a_prototipo.operar(1037,'revision_intento',
+    '{"intento":3,"version":1,"motivo":"sint_incertidumbre"}'::jsonb);
+  r := checkout_fase1a_prototipo.operar(1038,'observar_sesion','{"intento":3,"version":2}'::jsonb);
+  IF r ->> 'resultado' <> 'observada' OR r ->> 'intento_estado' <> 'revision_manual' THEN
+    RAISE EXCEPTION 'Observacion tardia mal tratada';
+  END IF;
+  rechazado := false;
+  BEGIN
+    PERFORM checkout_fase1a_prototipo.operar(1039,'comenzar_intento','{"intento":3,"version":2}'::jsonb);
+  EXCEPTION WHEN object_not_in_prerequisite_state THEN rechazado := true;
+  END;
+  IF NOT rechazado THEN RAISE EXCEPTION 'Intento en revision reabierto'; END IF;
+END;
+$test$;
+ROLLBACK;

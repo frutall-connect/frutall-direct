@@ -1,0 +1,30 @@
+-- DATOS SINTETICOS 1B. NO EJECUTADO. NO USAR EN UNA BASE REAL.
+-- Requiere autorizacion futura, instancia desechable y conexion del actor A.
+BEGIN;
+DO $guard$
+BEGIN
+  IF pg_catalog.current_database() <> 'frutall_checkout_1b_test_disposable'
+    OR current_user <> 'frutall_1b_actor_a'
+    OR session_user <> 'frutall_1b_actor_a'
+    OR (pg_catalog.inet_server_addr() IS NOT NULL
+        AND pg_catalog.inet_server_addr() NOT IN ('127.0.0.1'::inet, '::1'::inet))
+  THEN
+    RAISE EXCEPTION 'Destino no autorizado para datos sinteticos';
+  END IF;
+END;
+$guard$;
+
+SELECT checkout_fase1a_prototipo.operar(1, 'crear_intento',
+  '{"intento":1,"cuenta":"sint_cuenta_a","clave":"sint_clave_a","lineas":[{"producto":"sint_producto_b","cantidad":2},{"producto":"sint_producto_a","cantidad":1}]}'::jsonb);
+SELECT checkout_fase1a_prototipo.operar(2, 'comenzar_intento', '{"intento":1,"version":0}'::jsonb);
+SELECT checkout_fase1a_prototipo.operar(3, 'observar_sesion', '{"intento":1,"version":1}'::jsonb);
+SELECT checkout_fase1a_prototipo.operar(4, 'solicitar_trabajo',
+  '{"trabajo":1,"tipo":"despacho_simulado","destino":1}'::jsonb);
+
+SELECT checkout_fase1a_prototipo.operar(5, 'crear_intento',
+  '{"intento":2,"cuenta":"sint_cuenta_b","clave":"sint_clave_b","lineas":[{"producto":"sint_producto_b","cantidad":1}]}'::jsonb);
+SELECT checkout_fase1a_prototipo.operar(6, 'recibir_evento',
+  '{"evento":1,"intento":2,"caso":"sint_revision"}'::jsonb);
+SELECT checkout_fase1a_prototipo.operar(7, 'solicitar_trabajo',
+  '{"trabajo":2,"tipo":"evento_simulado","destino":1}'::jsonb);
+COMMIT;

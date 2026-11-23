@@ -1,0 +1,102 @@
+PROTOCOLOS PREPARADOS; NO EJECUTADOS. NO SON UNA MIGRACION.
+Solo con autorizacion posterior e instancia PostgreSQL desechable identificada.
+Usar una instancia nueva con modelo y datos sinteticos iniciales. Preparar
+dos conexiones READ COMMITTED, A y B, autenticadas respectivamente como
+frutall_1b_actor_a y frutall_1b_actor_b. No usar SET ROLE para simularlas.
+Registrar SQLSTATE y resultados; un fallo inesperado invalida la prueba.
+Las barreras siguientes son coordinacion explicita, no pausas temporales.
+Las transacciones que reciben una excepcion deben revertirse. Si el cliente
+termina por ON_ERROR_STOP, reconectar antes del siguiente paso.
+
+CASO 1: bloqueo, CAS y generacion posterior
+
+1. A: BEGIN;
+   A: SELECT checkout_fase1a_prototipo.operar(2001,'reclamar_trabajo',
+        '{"trabajo":1,"version":0}'::jsonb);
+   Guardar token, fence=1, generacion=1, version=1 y lease_until. No confirmar.
+2. Barrera: A mantiene abierta la transaccion. B, en transaccion propia:
+   SELECT checkout_fase1a_prototipo.operar(2001,'reclamar_trabajo',
+     '{"trabajo":1,"version":0}'::jsonb);
+   Esperado: SQLSTATE 55P03; B revierte. No debe observar ni recuperar el token
+   de A. La clave de operacion es independiente por actor.
+3. A: COMMIT. B vuelve a intentar su misma operacion 2001 y mismos argumentos.
+   Esperado: P0001 por version obsoleta, no una reclamacion exitosa. B revierte.
+4. B, transaccion nueva:
+   SELECT checkout_fase1a_prototipo.operar(2002,'solicitar_trabajo',
+     '{"trabajo":1,"tipo":"despacho_simulado","destino":1}'::jsonb);
+   Esperado: generacion=2, version=2. Confirmar.
+5. Si el lease de A sigue vigente, A intenta finalizar con version=1, el token,
+   fence=1, generacion=1 y version_destino=1. Esperado: P0001; revertir.
+   Luego A repite con una nueva operacion y version=2. Esperado: resultado
+   pendiente, generacion_completada=1, generacion_solicitada=2. Confirmar.
+   Si el lease ha vencido, esta rama no mide lo previsto: reiniciar en una
+   instancia limpia y coordinar las barreras dentro del lease.
+6. El propietario inspecciona la auditoria: una reclamacion de A, la nueva
+   generacion de B y una finalizacion de A; ningun registro para operaciones
+   que fallaron. El intento debe tener una sola transicion a sesion_observada.
+
+CASO 2: lease caducado y trabajador anterior
+
+1. Reiniciar en una instancia limpia. A reclama trabajo 1 y confirma; guardar
+   token, version=1, fence=1, generacion=1 y lease_until.
+2. Esperar hasta que el reloj de la base haya superado lease_until. Este
+   escenario requiere transcurso de tiempo para caducidad; la coordinacion
+   de la intercalacion se hace mediante barreras, no suponiendo que dormir un
+   intervalo exacto garantiza el estado.
+3. B reclama trabajo 1 con version=1 y confirma. Esperado: version=2, fence=2,
+   token distinto y propietario B. Guardar resultado.
+4. A intenta finalizar usando version=2 pero su token y fence antiguos, con
+   generacion=1 y version_destino=1. Esperado: SQLSTATE 55000; revertir.
+   Repetir con fence=2 y token de A: tambien debe fallar. B finaliza con sus
+   propios datos vigentes: debe resultar finalizado y auditarse una sola vez.
+5. Inspeccionar auditoria con el propietario: las dos reclamaciones y la
+   finalizacion valida deben ser visibles; los intentos fallidos no tienen
+   necesariamente auditoria. Ningun efecto de A debe confirmarse.
+
+CASO 3: identidad de operacion y duplicado de evento
+
+1. En instancia limpia, A: BEGIN;
+   A: SELECT checkout_fase1a_prototipo.operar(3001,'recibir_evento',
+        '{"evento":9,"intento":2,"caso":"sint_revision"}'::jsonb);
+   Sin confirmar A, B llama a la misma expresion: recibe 55P03 y revierte.
+   Tras COMMIT de A, B reintenta la misma expresion: recibe duplicado y
+   confirma; solo existe el evento original.
+2. B: SELECT checkout_fase1a_prototipo.operar(3002,'recibir_evento',
+        '{"evento":9,"intento":2,"caso":"sint_descartar"}'::jsonb);
+   Esperado: contradiccion. Confirmar. El propietario comprueba que el caso
+   original no cambio, conflicto=true y el intento 2 esta en revision_manual.
+3. A y B pueden usar el mismo numero de operacion sin compartir resultados.
+   Un segundo uso por el mismo actor con parametros distintos debe fallar con
+   23505 y no cambiar datos.
+
+CASO 4: atomicidad y fallo de auditoria
+
+1. En instancia limpia, el propietario confirma esta inyeccion sobre la tabla
+   nueva del prototipo, nunca en una instancia compartida:
+   ALTER TABLE checkout_fase1a_prototipo.checkout_auditoria
+     ADD CONSTRAINT ensayo_fallo_auditoria CHECK (operacion_id <> 4001);
+2. A intenta:
+   SELECT checkout_fase1a_prototipo.operar(4001,'comenzar_intento',
+     '{"intento":2,"version":0}'::jsonb);
+   Esperado: 23514 y rollback. El propietario comprueba intento 2 en
+   preparado/version 0 y ausencia de auditoria de A/4001.
+3. El propietario confirma:
+   ALTER TABLE checkout_fase1a_prototipo.checkout_auditoria
+     DROP CONSTRAINT ensayo_fallo_auditoria;
+   A repite la misma operacion 4001: debe confirmarse una sola vez con
+   intento 2 en creacion_incierta/version 1 y una entrada de auditoria.
+
+Caso adicional: intentar UPDATE, DELETE, TRUNCATE o INSERT directo de auditoria
+como ambos actores; todos deben fallar por privilegios. No probar como
+superusuario ni considerar al propietario un adversario restringido.
+
+CASO 5: rollback de reclamacion
+
+1. En instancia limpia, A abre transaccion y reclama trabajo 1/version 0
+   mediante operacion 5001, sin confirmar. B intenta reclamar y recibe 55P03;
+   B revierte su transaccion.
+2. A revierte. B repite su reclamacion de trabajo 1/version 0 en otra
+   transaccion; debe obtener version 1 y fence 1, y confirmar.
+3. El propietario comprueba que no existe auditoria de A/5001, que existe
+   exactamente una reclamacion confirmada de B y que la reclamacion revertida
+   no dejo token, version ni fence persistidos.

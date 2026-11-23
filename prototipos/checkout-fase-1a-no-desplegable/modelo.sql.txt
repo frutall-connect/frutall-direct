@@ -1,0 +1,583 @@
+-- PROTOTIPO SINTETICO 1B. NO ES UNA MIGRACION. NO USAR EN UNA BASE REAL.
+-- NO EJECUTADO. Las guardas no demuestran que la instancia sea desechable.
+-- Requiere autorizacion futura y una instancia separada sin roles ni datos reales.
+BEGIN;
+
+DO $guard$
+DECLARE
+  r record;
+BEGIN
+  IF pg_catalog.current_database() <> 'frutall_checkout_1b_test_disposable'
+    OR current_user <> 'frutall_1b_owner'
+    OR session_user <> 'frutall_1b_owner'
+    OR pg_catalog.current_setting('server_version_num')::integer < 130000
+    OR (pg_catalog.inet_server_addr() IS NOT NULL
+        AND pg_catalog.inet_server_addr() NOT IN ('127.0.0.1'::inet, '::1'::inet))
+  THEN
+    RAISE EXCEPTION 'Destino no autorizado para el prototipo sintetico';
+  END IF;
+
+  FOR r IN
+    SELECT rolname, rolsuper, rolbypassrls, rolcreaterole, rolcreatedb
+    FROM pg_catalog.pg_roles
+    WHERE rolname IN ('frutall_1b_owner', 'frutall_1b_actor_a', 'frutall_1b_actor_b')
+  LOOP
+    IF r.rolsuper OR r.rolbypassrls OR r.rolcreaterole OR r.rolcreatedb THEN
+      RAISE EXCEPTION 'Rol sintetico con privilegios prohibidos: %', r.rolname;
+    END IF;
+  END LOOP;
+  IF (SELECT pg_catalog.count(*) FROM pg_catalog.pg_roles
+      WHERE rolname IN ('frutall_1b_owner', 'frutall_1b_actor_a', 'frutall_1b_actor_b')) <> 3
+    OR EXISTS (
+      SELECT 1 FROM pg_catalog.pg_auth_members m
+      JOIN pg_catalog.pg_roles r ON r.oid = m.member
+      WHERE r.rolname IN ('frutall_1b_owner', 'frutall_1b_actor_a', 'frutall_1b_actor_b')
+    )
+  THEN
+    RAISE EXCEPTION 'Roles sinteticos ausentes o con membresias';
+  END IF;
+END;
+$guard$;
+
+CREATE SCHEMA checkout_fase1a_prototipo;
+REVOKE ALL ON SCHEMA checkout_fase1a_prototipo FROM PUBLIC;
+
+CREATE TABLE checkout_fase1a_prototipo.checkout_intentos (
+  id bigint PRIMARY KEY CHECK (id BETWEEN 1 AND 1000000),
+  cuenta_sintetica text NOT NULL CHECK (cuenta_sintetica IN ('sint_cuenta_a', 'sint_cuenta_b')),
+  clave_sintetica text NOT NULL CHECK (clave_sintetica IN ('sint_clave_a', 'sint_clave_b', 'sint_clave_c')),
+  snapshot_version integer NOT NULL CHECK (snapshot_version = 1),
+  snapshot jsonb NOT NULL,
+  total_centimos bigint NOT NULL CHECK (total_centimos > 0),
+  estado text NOT NULL CHECK (estado IN ('preparado', 'creacion_incierta', 'sesion_observada', 'revision_manual')),
+  version bigint NOT NULL CHECK (version BETWEEN 0 AND 1000000),
+  UNIQUE (cuenta_sintetica, clave_sintetica),
+  UNIQUE (id, cuenta_sintetica)
+);
+
+CREATE TABLE checkout_fase1a_prototipo.checkout_sesiones (
+  id bigint PRIMARY KEY CHECK (id BETWEEN 1 AND 1000000),
+  intento_id bigint NOT NULL UNIQUE,
+  cuenta_sintetica text NOT NULL,
+  sesion_sintetica text NOT NULL,
+  observacion_original text NOT NULL CHECK (observacion_original = 'sint_observada'),
+  observada_op bigint NOT NULL,
+  observada_actor text NOT NULL,
+  FOREIGN KEY (intento_id, cuenta_sintetica)
+    REFERENCES checkout_fase1a_prototipo.checkout_intentos (id, cuenta_sintetica) ON DELETE RESTRICT,
+  UNIQUE (cuenta_sintetica, sesion_sintetica),
+  CHECK (id = intento_id AND sesion_sintetica = 'sint_sesion_' || intento_id::text)
+);
+
+CREATE TABLE checkout_fase1a_prototipo.checkout_webhook_inbox (
+  id bigint PRIMARY KEY CHECK (id BETWEEN 1 AND 1000000),
+  cuenta_sintetica text NOT NULL,
+  intento_id bigint NOT NULL,
+  evento_sintetico text NOT NULL,
+  caso text NOT NULL CHECK (caso IN ('sint_revision', 'sint_descartar')),
+  estado text NOT NULL CHECK (estado IN ('pendiente', 'procesado', 'descartado', 'revision_manual')),
+  conflicto boolean NOT NULL DEFAULT false,
+  version bigint NOT NULL CHECK (version BETWEEN 0 AND 1000000),
+  recibido_op bigint NOT NULL,
+  recibido_actor text NOT NULL,
+  evidencia_op bigint,
+  evidencia_actor text,
+  FOREIGN KEY (intento_id, cuenta_sintetica)
+    REFERENCES checkout_fase1a_prototipo.checkout_intentos (id, cuenta_sintetica) ON DELETE RESTRICT,
+  UNIQUE (cuenta_sintetica, evento_sintetico),
+  CHECK (evento_sintetico = 'sint_evento_' || id::text),
+  CHECK ((estado IN ('procesado', 'descartado')) = (evidencia_op IS NOT NULL)),
+  CHECK ((evidencia_op IS NULL) = (evidencia_actor IS NULL))
+);
+
+CREATE TABLE checkout_fase1a_prototipo.checkout_trabajos (
+  id bigint PRIMARY KEY CHECK (id BETWEEN 1 AND 1000000),
+  tipo text NOT NULL CHECK (tipo IN ('despacho_simulado', 'reconciliacion_simulada', 'evento_simulado')),
+  intento_id bigint REFERENCES checkout_fase1a_prototipo.checkout_intentos (id) ON DELETE RESTRICT,
+  evento_id bigint REFERENCES checkout_fase1a_prototipo.checkout_webhook_inbox (id) ON DELETE RESTRICT,
+  estado text NOT NULL CHECK (estado IN ('pendiente', 'ejecutando', 'finalizado', 'revision_manual')),
+  version bigint NOT NULL CHECK (version BETWEEN 0 AND 1000000),
+  fence bigint NOT NULL CHECK (fence BETWEEN 0 AND 1000000),
+  requested_generation bigint NOT NULL CHECK (requested_generation BETWEEN 1 AND 1000000),
+  claimed_generation bigint,
+  completed_generation bigint NOT NULL CHECK (completed_generation BETWEEN 0 AND 1000000),
+  lease_owner text,
+  lease_token uuid,
+  lease_until timestamptz,
+  evidencia_op bigint,
+  evidencia_actor text,
+  CHECK ((intento_id IS NOT NULL) <> (evento_id IS NOT NULL)),
+  CHECK ((tipo IN ('despacho_simulado', 'reconciliacion_simulada') AND intento_id IS NOT NULL)
+      OR (tipo = 'evento_simulado' AND evento_id IS NOT NULL)),
+  CHECK (completed_generation <= requested_generation),
+  CHECK (claimed_generation IS NULL OR claimed_generation BETWEEN 1 AND requested_generation),
+  CHECK (
+    (estado = 'ejecutando' AND lease_owner IS NOT NULL AND lease_token IS NOT NULL
+      AND lease_until IS NOT NULL AND claimed_generation IS NOT NULL)
+    OR
+    (estado <> 'ejecutando' AND lease_owner IS NULL AND lease_token IS NULL
+      AND lease_until IS NULL AND claimed_generation IS NULL)
+  ),
+  CHECK (estado <> 'finalizado'
+    OR (completed_generation = requested_generation AND evidencia_op IS NOT NULL)),
+  CHECK ((evidencia_op IS NULL) = (evidencia_actor IS NULL))
+);
+CREATE UNIQUE INDEX checkout_trabajos_intento_unico
+  ON checkout_fase1a_prototipo.checkout_trabajos (tipo, intento_id) WHERE intento_id IS NOT NULL;
+CREATE UNIQUE INDEX checkout_trabajos_evento_unico
+  ON checkout_fase1a_prototipo.checkout_trabajos (tipo, evento_id) WHERE evento_id IS NOT NULL;
+
+CREATE TABLE checkout_fase1a_prototipo.checkout_auditoria (
+  operacion_id bigint NOT NULL CHECK (operacion_id BETWEEN 1 AND 1000000),
+  actor_sintetico text NOT NULL CHECK (actor_sintetico IN ('frutall_1b_actor_a', 'frutall_1b_actor_b')),
+  accion text NOT NULL,
+  parametros jsonb NOT NULL,
+  resultado jsonb NOT NULL,
+  cambios jsonb NOT NULL CHECK (pg_catalog.jsonb_typeof(cambios) = 'array'),
+  registrada_at timestamptz NOT NULL DEFAULT pg_catalog.clock_timestamp(),
+  PRIMARY KEY (actor_sintetico, operacion_id)
+);
+
+ALTER TABLE checkout_fase1a_prototipo.checkout_sesiones
+  ADD FOREIGN KEY (observada_actor, observada_op)
+  REFERENCES checkout_fase1a_prototipo.checkout_auditoria (actor_sintetico, operacion_id)
+  DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE checkout_fase1a_prototipo.checkout_webhook_inbox
+  ADD FOREIGN KEY (recibido_actor, recibido_op)
+  REFERENCES checkout_fase1a_prototipo.checkout_auditoria (actor_sintetico, operacion_id)
+  DEFERRABLE INITIALLY DEFERRED,
+  ADD FOREIGN KEY (evidencia_actor, evidencia_op)
+  REFERENCES checkout_fase1a_prototipo.checkout_auditoria (actor_sintetico, operacion_id)
+  DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE checkout_fase1a_prototipo.checkout_trabajos
+  ADD FOREIGN KEY (evidencia_actor, evidencia_op)
+  REFERENCES checkout_fase1a_prototipo.checkout_auditoria (actor_sintetico, operacion_id)
+  DEFERRABLE INITIALLY DEFERRED;
+
+CREATE FUNCTION checkout_fase1a_prototipo.prohibir_borrado()
+RETURNS trigger LANGUAGE plpgsql SET search_path = pg_catalog AS $fn$
+BEGIN
+  RAISE EXCEPTION USING ERRCODE = '55000', MESSAGE = 'Borrado sintetico prohibido';
+END;
+$fn$;
+
+CREATE TRIGGER intento_no_borrar BEFORE DELETE OR TRUNCATE
+  ON checkout_fase1a_prototipo.checkout_intentos FOR EACH STATEMENT
+  EXECUTE FUNCTION checkout_fase1a_prototipo.prohibir_borrado();
+CREATE TRIGGER sesion_no_borrar BEFORE DELETE OR TRUNCATE
+  ON checkout_fase1a_prototipo.checkout_sesiones FOR EACH STATEMENT
+  EXECUTE FUNCTION checkout_fase1a_prototipo.prohibir_borrado();
+CREATE TRIGGER evento_no_borrar BEFORE DELETE OR TRUNCATE
+  ON checkout_fase1a_prototipo.checkout_webhook_inbox FOR EACH STATEMENT
+  EXECUTE FUNCTION checkout_fase1a_prototipo.prohibir_borrado();
+CREATE TRIGGER trabajo_no_borrar BEFORE DELETE OR TRUNCATE
+  ON checkout_fase1a_prototipo.checkout_trabajos FOR EACH STATEMENT
+  EXECUTE FUNCTION checkout_fase1a_prototipo.prohibir_borrado();
+CREATE TRIGGER auditoria_no_cambiar BEFORE UPDATE OR DELETE OR TRUNCATE
+  ON checkout_fase1a_prototipo.checkout_auditoria FOR EACH STATEMENT
+  EXECUTE FUNCTION checkout_fase1a_prototipo.prohibir_borrado();
+
+CREATE FUNCTION checkout_fase1a_prototipo.entero(p jsonb, k text, minimo bigint DEFAULT 1)
+RETURNS bigint LANGUAGE plpgsql IMMUTABLE SET search_path = pg_catalog AS $fn$
+DECLARE v text;
+BEGIN
+  IF pg_catalog.jsonb_typeof(p -> k) IS DISTINCT FROM 'number' THEN
+    RAISE EXCEPTION USING ERRCODE = '22023', MESSAGE = 'Entero sintetico requerido: ' || k;
+  END IF;
+  v := p ->> k;
+  IF v !~ '^(0|[1-9][0-9]{0,6})$' OR v::numeric < minimo OR v::numeric > 1000000 THEN
+    RAISE EXCEPTION USING ERRCODE = '22023', MESSAGE = 'Entero sintetico fuera de rango: ' || k;
+  END IF;
+  RETURN v::bigint;
+END;
+$fn$;
+
+CREATE FUNCTION checkout_fase1a_prototipo.texto(p jsonb, k text, permitidos text[])
+RETURNS text LANGUAGE plpgsql IMMUTABLE SET search_path = pg_catalog AS $fn$
+DECLARE v text;
+BEGIN
+  IF pg_catalog.jsonb_typeof(p -> k) IS DISTINCT FROM 'string' THEN
+    RAISE EXCEPTION USING ERRCODE = '22023', MESSAGE = 'Texto sintetico requerido: ' || k;
+  END IF;
+  v := p ->> k;
+  IF NOT (v = ANY (permitidos)) THEN
+    RAISE EXCEPTION USING ERRCODE = '22023', MESSAGE = 'Valor sintetico no permitido: ' || k;
+  END IF;
+  RETURN v;
+END;
+$fn$;
+
+CREATE FUNCTION checkout_fase1a_prototipo.lineas_canonicas(p jsonb)
+RETURNS jsonb LANGUAGE plpgsql IMMUTABLE SET search_path = pg_catalog AS $fn$
+DECLARE
+  item jsonb;
+  producto text;
+  cantidad bigint;
+  precio bigint;
+  salida jsonb := '[]'::jsonb;
+  vistos text[] := ARRAY[]::text[];
+BEGIN
+  IF pg_catalog.jsonb_typeof(p) IS DISTINCT FROM 'array' THEN
+    RAISE EXCEPTION USING ERRCODE = '22023', MESSAGE = 'Lineas sinteticas invalidas';
+  END IF;
+  IF pg_catalog.jsonb_array_length(p) NOT BETWEEN 1 AND 2 THEN
+    RAISE EXCEPTION USING ERRCODE = '22023', MESSAGE = 'Lineas sinteticas invalidas';
+  END IF;
+  FOR item IN SELECT value FROM pg_catalog.jsonb_array_elements(p) ORDER BY value ->> 'producto'
+  LOOP
+    IF pg_catalog.jsonb_typeof(item) IS DISTINCT FROM 'object'
+      OR item - 'producto' - 'cantidad' <> '{}'::jsonb THEN
+      RAISE EXCEPTION USING ERRCODE = '22023', MESSAGE = 'Forma de linea invalida';
+    END IF;
+    producto := checkout_fase1a_prototipo.texto(item, 'producto', ARRAY['sint_producto_a', 'sint_producto_b']);
+    cantidad := checkout_fase1a_prototipo.entero(item, 'cantidad');
+    IF cantidad > 100 OR producto = ANY (vistos) THEN
+      RAISE EXCEPTION USING ERRCODE = '22023', MESSAGE = 'Cantidad o producto duplicado invalido';
+    END IF;
+    vistos := pg_catalog.array_append(vistos, producto);
+    precio := CASE producto WHEN 'sint_producto_a' THEN 500 ELSE 300 END;
+    salida := salida || pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object(
+      'producto', producto, 'cantidad', cantidad, 'centimos', precio, 'subtotal_centimos', cantidad * precio));
+  END LOOP;
+  RETURN salida;
+END;
+$fn$;
+
+-- Una unica entrada privilegiada. Los actores no reciben DML ni ejecucion de helpers.
+-- Las operaciones se serializan con un bloqueo transaccional de prueba; si esta
+-- ocupado se devuelve 55P03. READ COMMITTED evita leer una instantanea anterior.
+CREATE FUNCTION checkout_fase1a_prototipo.operar(p_operacion bigint, p_accion text, p_args jsonb)
+RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path = pg_catalog AS $fn$
+DECLARE
+  a checkout_fase1a_prototipo.checkout_auditoria%ROWTYPE;
+  i checkout_fase1a_prototipo.checkout_intentos%ROWTYPE;
+  s checkout_fase1a_prototipo.checkout_sesiones%ROWTYPE;
+  e checkout_fase1a_prototipo.checkout_webhook_inbox%ROWTYPE;
+  t checkout_fase1a_prototipo.checkout_trabajos%ROWTYPE;
+  antes jsonb;
+  cambios jsonb := '[]'::jsonb;
+  resultado jsonb;
+  args jsonb := p_args;
+  claves text[];
+  ident bigint;
+  destino bigint;
+  version_esperada bigint;
+  cuenta text;
+  clave text;
+  v_tipo text;
+  caso text;
+  motivo text;
+  token uuid;
+  lineas jsonb;
+  total bigint;
+  ahora timestamptz;
+BEGIN
+  IF session_user NOT IN ('frutall_1b_actor_a', 'frutall_1b_actor_b') THEN
+    RAISE EXCEPTION USING ERRCODE = '42501', MESSAGE = 'Actor sintetico no autorizado';
+  END IF;
+  IF pg_catalog.current_setting('transaction_isolation') <> 'read committed' THEN
+    RAISE EXCEPTION USING ERRCODE = '25001', MESSAGE = 'Se requiere READ COMMITTED';
+  END IF;
+  IF p_operacion IS NULL OR p_operacion NOT BETWEEN 1 AND 1000000
+    OR pg_catalog.jsonb_typeof(args) IS DISTINCT FROM 'object' THEN
+    RAISE EXCEPTION USING ERRCODE = '22023', MESSAGE = 'Operacion sintetica invalida';
+  END IF;
+  IF NOT pg_catalog.pg_try_advisory_xact_lock(18001, 18002) THEN
+    RAISE EXCEPTION USING ERRCODE = '55P03', MESSAGE = 'Prototipo ocupado; reintentar';
+  END IF;
+
+  claves := CASE p_accion
+    WHEN 'crear_intento' THEN ARRAY['intento','cuenta','clave','lineas']
+    WHEN 'comenzar_intento' THEN ARRAY['intento','version']
+    WHEN 'revision_intento' THEN ARRAY['intento','version','motivo']
+    WHEN 'observar_sesion' THEN ARRAY['intento','version']
+    WHEN 'recibir_evento' THEN ARRAY['evento','intento','caso']
+    WHEN 'solicitar_trabajo' THEN ARRAY['trabajo','tipo','destino']
+    WHEN 'reclamar_trabajo' THEN ARRAY['trabajo','version']
+    WHEN 'renovar_trabajo' THEN ARRAY['trabajo','version','fence','generacion','token']
+    WHEN 'finalizar_trabajo' THEN ARRAY['trabajo','version','fence','generacion','token','version_destino']
+    WHEN 'revision_trabajo' THEN ARRAY['trabajo','version','motivo']
+    WHEN 'consultar_trabajo' THEN ARRAY['trabajo']
+    ELSE NULL END;
+  IF claves IS NULL OR NOT (args ?& claves) OR args - claves <> '{}'::jsonb THEN
+    RAISE EXCEPTION USING ERRCODE = '22023', MESSAGE = 'Accion o parametros invalidos';
+  END IF;
+  IF p_accion = 'crear_intento' THEN
+    lineas := checkout_fase1a_prototipo.lineas_canonicas(args -> 'lineas');
+    args := pg_catalog.jsonb_set(args, '{lineas}', lineas);
+  END IF;
+
+  SELECT * INTO a FROM checkout_fase1a_prototipo.checkout_auditoria
+    WHERE actor_sintetico = session_user AND operacion_id = p_operacion;
+  IF FOUND THEN
+    IF a.accion <> p_accion OR a.parametros <> args THEN
+      RAISE EXCEPTION USING ERRCODE = '23505', MESSAGE = 'Identidad de operacion reutilizada';
+    END IF;
+    RETURN a.resultado;
+  END IF;
+
+  IF p_accion = 'crear_intento' THEN
+    ident := checkout_fase1a_prototipo.entero(args, 'intento');
+    cuenta := checkout_fase1a_prototipo.texto(args, 'cuenta', ARRAY['sint_cuenta_a','sint_cuenta_b']);
+    clave := checkout_fase1a_prototipo.texto(args, 'clave', ARRAY['sint_clave_a','sint_clave_b','sint_clave_c']);
+    SELECT * INTO i FROM checkout_fase1a_prototipo.checkout_intentos
+      WHERE cuenta_sintetica = cuenta AND clave_sintetica = clave;
+    IF FOUND THEN
+      IF i.id <> ident OR i.snapshot <> lineas THEN
+        RAISE EXCEPTION USING ERRCODE = '23505', MESSAGE = 'Clave de intento contradictoria';
+      END IF;
+      resultado := pg_catalog.jsonb_build_object('resultado','existente','intento',i.id,'version',i.version);
+    ELSE
+      SELECT pg_catalog.sum((x ->> 'subtotal_centimos')::bigint) INTO total
+        FROM pg_catalog.jsonb_array_elements(lineas) x;
+      INSERT INTO checkout_fase1a_prototipo.checkout_intentos
+        (id, cuenta_sintetica, clave_sintetica, snapshot_version, snapshot, total_centimos, estado, version)
+      VALUES (ident, cuenta, clave, 1, lineas, total, 'preparado', 0) RETURNING * INTO i;
+      cambios := cambios || pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object(
+        'entidad','intento','antes',NULL,'despues',pg_catalog.to_jsonb(i)));
+      resultado := pg_catalog.jsonb_build_object('resultado','creado','intento',i.id,'version',i.version,'total_centimos',total);
+    END IF;
+
+  ELSIF p_accion IN ('comenzar_intento', 'revision_intento', 'observar_sesion') THEN
+    ident := checkout_fase1a_prototipo.entero(args, 'intento');
+    version_esperada := checkout_fase1a_prototipo.entero(args, 'version', 0);
+    SELECT * INTO i FROM checkout_fase1a_prototipo.checkout_intentos WHERE id = ident FOR UPDATE;
+    IF NOT FOUND THEN RAISE EXCEPTION USING ERRCODE = 'P0002', MESSAGE = 'Intento inexistente'; END IF;
+    IF i.version <> version_esperada THEN
+      RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'Conflicto de version de intento';
+    END IF;
+    IF p_accion = 'comenzar_intento' THEN
+      IF i.estado <> 'preparado' THEN RAISE EXCEPTION USING ERRCODE = '55000', MESSAGE = 'Estado invalido'; END IF;
+      antes := pg_catalog.to_jsonb(i);
+      UPDATE checkout_fase1a_prototipo.checkout_intentos SET estado = 'creacion_incierta', version = version + 1
+        WHERE id = ident RETURNING * INTO i;
+      cambios := cambios || pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object('entidad','intento','antes',antes,'despues',pg_catalog.to_jsonb(i)));
+      resultado := pg_catalog.jsonb_build_object('resultado','actualizado','intento',ident,'estado',i.estado,'version',i.version);
+    ELSIF p_accion = 'revision_intento' THEN
+      motivo := checkout_fase1a_prototipo.texto(args, 'motivo', ARRAY['sint_incertidumbre','sint_contradiccion','sint_operador']);
+      IF i.estado = 'revision_manual' THEN RAISE EXCEPTION USING ERRCODE = '55000', MESSAGE = 'Ya esta en revision'; END IF;
+      antes := pg_catalog.to_jsonb(i);
+      UPDATE checkout_fase1a_prototipo.checkout_intentos SET estado = 'revision_manual', version = version + 1
+        WHERE id = ident RETURNING * INTO i;
+      cambios := cambios || pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object('entidad','intento','motivo',motivo,'antes',antes,'despues',pg_catalog.to_jsonb(i)));
+      resultado := pg_catalog.jsonb_build_object('resultado','revision_manual','intento',ident,'version',i.version);
+    ELSE
+      IF i.estado NOT IN ('creacion_incierta','sesion_observada','revision_manual') THEN
+        RAISE EXCEPTION USING ERRCODE = '55000', MESSAGE = 'Observacion sintetica fuera de estado';
+      END IF;
+      SELECT * INTO s FROM checkout_fase1a_prototipo.checkout_sesiones WHERE intento_id = ident;
+      IF FOUND THEN
+        resultado := pg_catalog.jsonb_build_object('resultado','existente','sesion',s.id,'intento_estado',i.estado);
+      ELSE
+        INSERT INTO checkout_fase1a_prototipo.checkout_sesiones
+          (id,intento_id,cuenta_sintetica,sesion_sintetica,observacion_original,observada_op,observada_actor)
+        VALUES (ident,ident,i.cuenta_sintetica,'sint_sesion_' || ident::text,'sint_observada',p_operacion,session_user)
+        RETURNING * INTO s;
+        cambios := cambios || pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object('entidad','sesion','antes',NULL,'despues',pg_catalog.to_jsonb(s)));
+        resultado := pg_catalog.jsonb_build_object('resultado','observada','sesion',s.id,'intento_estado',i.estado);
+      END IF;
+    END IF;
+
+  ELSIF p_accion = 'recibir_evento' THEN
+    ident := checkout_fase1a_prototipo.entero(args, 'evento');
+    destino := checkout_fase1a_prototipo.entero(args, 'intento');
+    caso := checkout_fase1a_prototipo.texto(args, 'caso', ARRAY['sint_revision','sint_descartar']);
+    SELECT * INTO i FROM checkout_fase1a_prototipo.checkout_intentos WHERE id = destino FOR UPDATE;
+    IF NOT FOUND THEN RAISE EXCEPTION USING ERRCODE = 'P0002', MESSAGE = 'Intento inexistente'; END IF;
+    SELECT * INTO e FROM checkout_fase1a_prototipo.checkout_webhook_inbox WHERE id = ident FOR UPDATE;
+    IF NOT FOUND THEN
+      INSERT INTO checkout_fase1a_prototipo.checkout_webhook_inbox
+        (id,cuenta_sintetica,intento_id,evento_sintetico,caso,estado,version,recibido_op,recibido_actor)
+      VALUES (ident,i.cuenta_sintetica,destino,'sint_evento_' || ident::text,caso,'pendiente',0,p_operacion,session_user)
+      RETURNING * INTO e;
+      cambios := cambios || pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object('entidad','evento','antes',NULL,'despues',pg_catalog.to_jsonb(e)));
+      resultado := pg_catalog.jsonb_build_object('resultado','recibido','evento',ident,'version',e.version);
+    ELSIF e.intento_id = destino AND e.cuenta_sintetica = i.cuenta_sintetica AND e.caso = caso THEN
+      resultado := pg_catalog.jsonb_build_object('resultado','duplicado','evento',ident,'estado',e.estado,'conflicto',e.conflicto,'version',e.version);
+    ELSE
+      antes := pg_catalog.to_jsonb(e);
+      UPDATE checkout_fase1a_prototipo.checkout_webhook_inbox
+        SET conflicto = true, estado = CASE WHEN estado = 'pendiente' THEN 'revision_manual' ELSE estado END,
+            version = version + 1
+        WHERE id = ident RETURNING * INTO e;
+      cambios := cambios || pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object('entidad','evento','motivo','sint_contradiccion','antes',antes,'despues',pg_catalog.to_jsonb(e)));
+      SELECT * INTO i FROM checkout_fase1a_prototipo.checkout_intentos WHERE id = e.intento_id FOR UPDATE;
+      IF i.estado <> 'revision_manual' THEN
+        antes := pg_catalog.to_jsonb(i);
+        UPDATE checkout_fase1a_prototipo.checkout_intentos SET estado = 'revision_manual', version = version + 1
+          WHERE id = i.id RETURNING * INTO i;
+        cambios := cambios || pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object(
+          'entidad','intento','motivo','sint_contradiccion','antes',antes,'despues',pg_catalog.to_jsonb(i)));
+      END IF;
+      resultado := pg_catalog.jsonb_build_object('resultado','contradiccion','evento',ident,'version',e.version);
+    END IF;
+
+  ELSIF p_accion = 'solicitar_trabajo' THEN
+    ident := checkout_fase1a_prototipo.entero(args, 'trabajo');
+    destino := checkout_fase1a_prototipo.entero(args, 'destino');
+    v_tipo := checkout_fase1a_prototipo.texto(args, 'tipo', ARRAY['despacho_simulado','reconciliacion_simulada','evento_simulado']);
+    IF v_tipo = 'evento_simulado' THEN
+      SELECT * INTO e FROM checkout_fase1a_prototipo.checkout_webhook_inbox WHERE id = destino FOR UPDATE;
+      IF NOT FOUND THEN RAISE EXCEPTION USING ERRCODE = 'P0002', MESSAGE = 'Evento inexistente'; END IF;
+      IF e.conflicto OR e.estado = 'revision_manual' THEN
+        RAISE EXCEPTION USING ERRCODE = '55000', MESSAGE = 'Evento requiere revision';
+      END IF;
+    ELSE
+      SELECT * INTO i FROM checkout_fase1a_prototipo.checkout_intentos WHERE id = destino FOR UPDATE;
+      IF NOT FOUND THEN RAISE EXCEPTION USING ERRCODE = 'P0002', MESSAGE = 'Intento inexistente'; END IF;
+    END IF;
+    SELECT * INTO t FROM checkout_fase1a_prototipo.checkout_trabajos j
+      WHERE j.tipo = v_tipo AND ((v_tipo = 'evento_simulado' AND j.evento_id = destino)
+        OR (v_tipo <> 'evento_simulado' AND j.intento_id = destino)) FOR UPDATE;
+    IF FOUND THEN
+      IF t.id <> ident OR t.estado = 'revision_manual' THEN
+        RAISE EXCEPTION USING ERRCODE = '55000', MESSAGE = 'Trabajo en conflicto o revision';
+      END IF;
+      antes := pg_catalog.to_jsonb(t);
+      UPDATE checkout_fase1a_prototipo.checkout_trabajos
+        SET requested_generation = requested_generation + 1, version = version + 1,
+            estado = CASE WHEN estado = 'finalizado' THEN 'pendiente' ELSE estado END
+        WHERE id = ident RETURNING * INTO t;
+    ELSE
+      antes := NULL;
+      INSERT INTO checkout_fase1a_prototipo.checkout_trabajos
+        (id,tipo,intento_id,evento_id,estado,version,fence,requested_generation,completed_generation)
+      VALUES (ident,v_tipo,CASE WHEN v_tipo <> 'evento_simulado' THEN destino END,
+        CASE WHEN v_tipo = 'evento_simulado' THEN destino END,'pendiente',0,0,1,0) RETURNING * INTO t;
+    END IF;
+    cambios := cambios || pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object('entidad','trabajo','antes',antes,'despues',pg_catalog.to_jsonb(t)));
+    resultado := pg_catalog.jsonb_build_object('resultado','solicitado','trabajo',t.id,'version',t.version,'generacion',t.requested_generation);
+
+  ELSIF p_accion = 'consultar_trabajo' THEN
+    ident := checkout_fase1a_prototipo.entero(args, 'trabajo');
+    SELECT * INTO t FROM checkout_fase1a_prototipo.checkout_trabajos WHERE id = ident;
+    IF NOT FOUND THEN RAISE EXCEPTION USING ERRCODE = 'P0002', MESSAGE = 'Trabajo inexistente'; END IF;
+    resultado := pg_catalog.jsonb_build_object('trabajo',t.id,'estado',t.estado,'version',t.version,
+      'fence',t.fence,'generacion_solicitada',t.requested_generation,'generacion_reclamada',t.claimed_generation);
+
+  ELSE
+    ident := checkout_fase1a_prototipo.entero(args, 'trabajo');
+    version_esperada := checkout_fase1a_prototipo.entero(args, 'version', 0);
+    SELECT * INTO t FROM checkout_fase1a_prototipo.checkout_trabajos WHERE id = ident FOR UPDATE;
+    IF NOT FOUND THEN RAISE EXCEPTION USING ERRCODE = 'P0002', MESSAGE = 'Trabajo inexistente'; END IF;
+    IF t.version <> version_esperada THEN
+      RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'Conflicto de version de trabajo';
+    END IF;
+    ahora := pg_catalog.clock_timestamp();
+    IF p_accion = 'reclamar_trabajo' THEN
+      IF t.estado <> 'pendiente' AND NOT (t.estado = 'ejecutando' AND t.lease_until <= ahora) THEN
+        RAISE EXCEPTION USING ERRCODE = '55000', MESSAGE = 'Trabajo no reclamable';
+      END IF;
+      antes := pg_catalog.to_jsonb(t);
+      token := pg_catalog.gen_random_uuid();
+      UPDATE checkout_fase1a_prototipo.checkout_trabajos
+        SET estado = 'ejecutando', version = version + 1, fence = fence + 1,
+            claimed_generation = requested_generation, lease_owner = session_user,
+            lease_token = token, lease_until = ahora + interval '30 seconds'
+        WHERE id = ident RETURNING * INTO t;
+      cambios := cambios || pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object('entidad','trabajo','antes',antes,'despues',pg_catalog.to_jsonb(t)));
+      resultado := pg_catalog.jsonb_build_object('resultado','reclamado','trabajo',ident,'version',t.version,
+        'fence',t.fence,'generacion',t.claimed_generation,'token',token,'lease_until',t.lease_until);
+    ELSIF p_accion = 'revision_trabajo' THEN
+      motivo := checkout_fase1a_prototipo.texto(args, 'motivo', ARRAY['sint_incertidumbre','sint_contradiccion','sint_operador']);
+      IF t.estado NOT IN ('pendiente','ejecutando') THEN
+        RAISE EXCEPTION USING ERRCODE = '55000', MESSAGE = 'Trabajo no revisable';
+      END IF;
+      antes := pg_catalog.to_jsonb(t);
+      UPDATE checkout_fase1a_prototipo.checkout_trabajos
+        SET estado = 'revision_manual', version = version + 1, lease_owner = NULL,
+            lease_token = NULL, lease_until = NULL, claimed_generation = NULL
+        WHERE id = ident RETURNING * INTO t;
+      cambios := cambios || pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object('entidad','trabajo','motivo',motivo,'antes',antes,'despues',pg_catalog.to_jsonb(t)));
+      resultado := pg_catalog.jsonb_build_object('resultado','revision_manual','trabajo',ident,'version',t.version);
+    ELSE
+      IF pg_catalog.jsonb_typeof(args -> 'token') IS DISTINCT FROM 'string'
+        OR (args ->> 'token') !~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' THEN
+        RAISE EXCEPTION USING ERRCODE = '22023', MESSAGE = 'Token sintetico invalido';
+      END IF;
+      token := (args ->> 'token')::uuid;
+      IF t.estado <> 'ejecutando' OR t.lease_owner <> session_user OR t.lease_token <> token
+        OR t.lease_until <= ahora OR t.fence <> checkout_fase1a_prototipo.entero(args,'fence')
+        OR t.claimed_generation <> checkout_fase1a_prototipo.entero(args,'generacion') THEN
+        RAISE EXCEPTION USING ERRCODE = '55000', MESSAGE = 'Reclamacion sintetica obsoleta';
+      END IF;
+      IF p_accion = 'renovar_trabajo' THEN
+        antes := pg_catalog.to_jsonb(t);
+        UPDATE checkout_fase1a_prototipo.checkout_trabajos
+          SET lease_until = ahora + interval '30 seconds', version = version + 1
+          WHERE id = ident RETURNING * INTO t;
+        cambios := cambios || pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object('entidad','trabajo','antes',antes,'despues',pg_catalog.to_jsonb(t)));
+        resultado := pg_catalog.jsonb_build_object('resultado','renovado','trabajo',ident,'version',t.version,'lease_until',t.lease_until);
+      ELSE
+        version_esperada := checkout_fase1a_prototipo.entero(args, 'version_destino', 0);
+        IF t.tipo = 'evento_simulado' THEN
+          SELECT * INTO e FROM checkout_fase1a_prototipo.checkout_webhook_inbox WHERE id = t.evento_id FOR UPDATE;
+          IF e.version <> version_esperada OR e.conflicto OR e.estado = 'revision_manual' THEN
+            RAISE EXCEPTION USING ERRCODE = '55000', MESSAGE = 'Evento obsoleto o en revision';
+          END IF;
+          IF e.estado = 'pendiente' THEN
+            SELECT * INTO i FROM checkout_fase1a_prototipo.checkout_intentos WHERE id = e.intento_id FOR UPDATE;
+            IF e.caso = 'sint_revision' AND i.estado <> 'revision_manual' THEN
+              antes := pg_catalog.to_jsonb(i);
+              UPDATE checkout_fase1a_prototipo.checkout_intentos SET estado = 'revision_manual', version = version + 1
+                WHERE id = i.id RETURNING * INTO i;
+              cambios := cambios || pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object('entidad','intento','motivo','sint_evento','antes',antes,'despues',pg_catalog.to_jsonb(i)));
+            END IF;
+            antes := pg_catalog.to_jsonb(e);
+            UPDATE checkout_fase1a_prototipo.checkout_webhook_inbox
+              SET estado = CASE WHEN e.caso = 'sint_revision' THEN 'procesado' ELSE 'descartado' END,
+                  evidencia_op = p_operacion, evidencia_actor = session_user, version = version + 1
+              WHERE id = e.id RETURNING * INTO e;
+            cambios := cambios || pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object('entidad','evento','antes',antes,'despues',pg_catalog.to_jsonb(e)));
+          END IF;
+        ELSE
+          SELECT * INTO i FROM checkout_fase1a_prototipo.checkout_intentos WHERE id = t.intento_id FOR UPDATE;
+          IF i.version <> version_esperada THEN
+            RAISE EXCEPTION USING ERRCODE = 'P0001', MESSAGE = 'Conflicto de version de intento';
+          END IF;
+          IF t.tipo = 'despacho_simulado' THEN
+            IF i.estado NOT IN ('creacion_incierta','sesion_observada') THEN
+              RAISE EXCEPTION USING ERRCODE = '55000', MESSAGE = 'Despacho sintetico requiere revision';
+            END IF;
+            SELECT * INTO s FROM checkout_fase1a_prototipo.checkout_sesiones WHERE intento_id = i.id FOR UPDATE;
+            IF NOT FOUND THEN RAISE EXCEPTION USING ERRCODE = '55000', MESSAGE = 'Falta evidencia de sesion'; END IF;
+            IF i.estado = 'creacion_incierta' THEN
+              antes := pg_catalog.to_jsonb(i);
+              UPDATE checkout_fase1a_prototipo.checkout_intentos SET estado = 'sesion_observada', version = version + 1
+                WHERE id = i.id RETURNING * INTO i;
+              cambios := cambios || pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object('entidad','intento','sesion',s.id,'antes',antes,'despues',pg_catalog.to_jsonb(i)));
+            END IF;
+          ELSE
+            IF i.estado <> 'revision_manual' THEN
+              antes := pg_catalog.to_jsonb(i);
+              UPDATE checkout_fase1a_prototipo.checkout_intentos SET estado = 'revision_manual', version = version + 1
+                WHERE id = i.id RETURNING * INTO i;
+              cambios := cambios || pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object('entidad','intento','motivo','sint_reconciliacion','antes',antes,'despues',pg_catalog.to_jsonb(i)));
+            END IF;
+          END IF;
+        END IF;
+        antes := pg_catalog.to_jsonb(t);
+        UPDATE checkout_fase1a_prototipo.checkout_trabajos
+          SET estado = CASE WHEN requested_generation = claimed_generation THEN 'finalizado' ELSE 'pendiente' END,
+              completed_generation = claimed_generation, evidencia_op = p_operacion, evidencia_actor = session_user, version = version + 1,
+              lease_owner = NULL, lease_token = NULL, lease_until = NULL, claimed_generation = NULL
+          WHERE id = ident RETURNING * INTO t;
+        cambios := cambios || pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object('entidad','trabajo','antes',antes,'despues',pg_catalog.to_jsonb(t)));
+        resultado := pg_catalog.jsonb_build_object('resultado',t.estado,'trabajo',ident,'version',t.version,
+          'generacion_completada',t.completed_generation,'generacion_solicitada',t.requested_generation);
+      END IF;
+    END IF;
+  END IF;
+
+  INSERT INTO checkout_fase1a_prototipo.checkout_auditoria
+    (operacion_id,actor_sintetico,accion,parametros,resultado,cambios)
+  VALUES (p_operacion,session_user,p_accion,args,resultado,cambios);
+  RETURN resultado;
+END;
+$fn$;
+
+REVOKE ALL ON ALL TABLES IN SCHEMA checkout_fase1a_prototipo FROM PUBLIC, frutall_1b_actor_a, frutall_1b_actor_b;
+REVOKE ALL ON ALL FUNCTIONS IN SCHEMA checkout_fase1a_prototipo FROM PUBLIC, frutall_1b_actor_a, frutall_1b_actor_b;
+GRANT USAGE ON SCHEMA checkout_fase1a_prototipo TO frutall_1b_actor_a, frutall_1b_actor_b;
+GRANT EXECUTE ON FUNCTION checkout_fase1a_prototipo.operar(bigint,text,jsonb) TO frutall_1b_actor_a, frutall_1b_actor_b;
+COMMIT;
