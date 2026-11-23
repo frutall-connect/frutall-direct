@@ -257,7 +257,42 @@ export async function POST(request: Request) {
                   : /deadlock|serialization|lock timeout/i.test(message) ? 'concurrencia'
                     : /network|fetch failed|connection|timeout/i.test(message) ? 'conexion'
                       : 'desconocido'
-        console.error('Checkout claim RPC failed', { code, errorType, messageCategory })
+        if (code === '42501') {
+          const match = /^permission denied for (table|function|schema|sequence) ((?:"[a-z_][a-z0-9_]*"|[a-z_][a-z0-9_]*)(?:\.(?:"[a-z_][a-z0-9_]*"|[a-z_][a-z0-9_]*))?)$/i.exec(message.trim())
+          const type = match?.[1].toLowerCase()
+          const objectType =
+            type === 'table' ? 'tabla'
+              : type === 'function' ? 'funcion'
+                : type === 'schema' ? 'esquema'
+                  : type === 'sequence' ? 'secuencia'
+                    : 'otro'
+
+          const knownObjects = new Set([
+            'public', 'auth', 'pg_catalog',
+            ...[
+              'pedidos', 'lineas_pedido', 'productos',
+              'frutall_claim_checkout', 'frutall_sync_checkout_snapshot_prices',
+              'frutall_guard_checkout_metadata', 'frutall_guard_checkout_line_mutation'
+            ].flatMap(name => [name, `public.${name}`]),
+            'role', 'auth.role',
+            ...[
+              'jsonb_array_elements', 'jsonb_array_length', 'jsonb_typeof',
+              'jsonb_build_object', 'jsonb_build_array', 'jsonb_concat',
+              'pg_advisory_xact_lock', 'count', 'sum', 'trunc', 'btrim',
+              'round', 'now', 'gen_random_uuid'
+            ].flatMap(name => [name, `pg_catalog.${name}`])
+          ])
+          const candidate = match?.[2].replace(/"/g, '')
+          const objectName = candidate && knownObjects.has(candidate)
+            ? candidate
+            : 'objeto_no_identificado'
+
+          console.error('Checkout claim RPC failed', {
+            code, errorType, messageCategory, objectType, objectName
+          })
+        } else {
+          console.error('Checkout claim RPC failed', { code, errorType, messageCategory })
+        }
         return { claim: null, error: true }
       }
 
