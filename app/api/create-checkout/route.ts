@@ -238,7 +238,26 @@ export async function POST(request: Request) {
       })
 
       if (error) {
-        console.error('Checkout claim RPC failed')
+        const code = typeof error.code === 'string'
+          && /^(?:[A-Z0-9]{5}|PGRST[0-9]{3})$/.test(error.code)
+          ? error.code
+          : null
+        const message = typeof error.message === 'string' ? error.message : ''
+        const errorType =
+          code === '42501' ? 'permisos'
+            : code === 'PGRST202' || code === '42883' ? 'funcion_no_encontrada'
+              : code === '40001' || code === '40P01' || code?.startsWith('23') ? 'conflicto'
+                : code && /^[A-Z0-9]{5}$/.test(code) ? 'error_sql'
+                  : 'desconocido'
+        const messageCategory =
+          /permission denied|not authorized|requires service role/i.test(message) ? 'permisos'
+            : /could not find the function|function .+ does not exist/i.test(message) ? 'funcion_no_encontrada'
+              : /column .+ does not exist|relation .+ does not exist/i.test(message) ? 'esquema'
+                : /checkout (snapshot|lines|order|attempt)/i.test(message) ? 'consistencia_checkout'
+                  : /deadlock|serialization|lock timeout/i.test(message) ? 'concurrencia'
+                    : /network|fetch failed|connection|timeout/i.test(message) ? 'conexion'
+                      : 'desconocido'
+        console.error('Checkout claim RPC failed', { code, errorType, messageCategory })
         return { claim: null, error: true }
       }
 
