@@ -206,6 +206,26 @@ try {
 
     try {
 
+      const {
+        data: sessionData,
+        error: sessionError
+      } = await supabase.auth.getSession()
+
+      const accessToken =
+        sessionData.session?.access_token
+
+      if (
+        sessionError
+        || !accessToken
+        || sessionData.session?.user.id !== usuario.id
+      ) {
+
+        alert('Debes iniciar sesión de nuevo')
+
+        return
+
+      }
+
       const response = await fetch(
 
         '/api/create-checkout',
@@ -217,18 +237,19 @@ try {
           headers: {
 
             'Content-Type':
-              'application/json'
+              'application/json',
+
+            Authorization:
+              `Bearer ${accessToken}`
 
           },
 
           body: JSON.stringify({
 
-  items,
+            pedidoId:
+              pedidoData.id
 
-  pedidoId:
-    pedidoData.id
-
-})
+          })
 
         }
 
